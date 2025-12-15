@@ -1,0 +1,14 @@
+/home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/deps/serde-75a96db2f775cc70.d: /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/build/serde-70845d3edba7a84e/out/private.rs
+
+/home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/deps/libserde-75a96db2f775cc70.rlib: /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/build/serde-70845d3edba7a84e/out/private.rs
+
+/home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/deps/libserde-75a96db2f775cc70.rmeta: /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/build/serde-70845d3edba7a84e/out/private.rs
+
+/home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/shuppel/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/build/serde-70845d3edba7a84e/out/private.rs:
+
+# env-dep:OUT_DIR=/home/shuppel/daemon/apps/dendrite/crates/target/wasm32-unknown-unknown/release/build/serde-70845d3edba7a84e/out
