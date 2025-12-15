@@ -1,0 +1,266 @@
+# ============================================
+# DENDRITE IDE - BUILD BOOK
+# ============================================
+# This file defines the incremental build eras for Dendrite IDE
+
+meta:
+  project: "dendrite-core"
+  cats_ref: "docs/build/cats/dendrite-core.cats.yaml"
+  total_eras: 3
+
+# ============================================
+# ERA 1: Rust/WASM Foundation
+# ============================================
+era_1:
+  name: "Rust/WASM Foundation"
+  description: "Core Rust workspace and WASM compilation infrastructure"
+  assignee: "agent_1"
+  status: "in_progress"
+  
+  goals:
+    - "Establish Rust workspace structure"
+    - "Create dendrite_core crate with WASM compilation"
+    - "Implement core data models (Session, StoredSession, GrowthProfile)"
+    - "Set up WASM-bindgen exports for TypeScript interop"
+    - "Create build scripts for WASM compilation"
+    - "Verify WASM output and basic functionality"
+  
+  dependencies:
+    external:
+      - name: "rustc"
+        version: ">=1.70.0"
+        check: "rustc --version"
+      - name: "cargo"
+        version: ">=1.70.0"
+        check: "cargo --version"
+      - name: "wasm-pack"
+        version: ">=0.12.0"
+        check: "wasm-pack --version"
+        install: "cargo install wasm-pack"
+    
+  structure:
+    create:
+      # Rust workspace root
+      - path: "crates/"
+        type: "directory"
+        description: "Rust workspace root"
+      
+      - path: "crates/Cargo.toml"
+        type: "file"
+        template: "workspace_manifest"
+        description: "Workspace manifest defining all crates"
+      
+      # dendrite_core crate
+      - path: "crates/dendrite_core/"
+        type: "directory"
+        description: "Main WASM-compiled core engine"
+      
+      - path: "crates/dendrite_core/Cargo.toml"
+        type: "file"
+        template: "crate_manifest"
+        description: "Crate manifest with dependencies"
+      
+      - path: "crates/dendrite_core/src/"
+        type: "directory"
+      
+      - path: "crates/dendrite_core/src/lib.rs"
+        type: "file"
+        description: "Crate entry point, WASM exports"
+        implements:
+          - "WASM initialization"
+          - "Export all public WASM functions"
+          - "Module setup and configuration"
+      
+      - path: "crates/dendrite_core/src/session.rs"
+        type: "file"
+        description: "Session tracking logic"
+        implements:
+          - "Session struct"
+          - "IdlePeriod struct"
+          - "SessionState enum"
+          - "Session lifecycle methods (start, pause, resume, end)"
+          - "Keystroke and file edit tracking"
+      
+      - path: "crates/dendrite_core/src/storage.rs"
+        type: "file"
+        description: "Persistence structures"
+        implements:
+          - "StoredSession struct"
+          - "SessionStats struct"
+          - "GrowthProfile struct"
+          - "DailyAggregate struct"
+          - "LifetimeStats struct"
+          - "Serialization/deserialization helpers"
+      
+      - path: "crates/dendrite_core/src/visualization.rs"
+        type: "file"
+        description: "Heatmap and chart data generation"
+        implements:
+          - "HeatmapCell struct"
+          - "HeatmapData struct"
+          - "LanguageStat struct"
+          - "Heatmap generation algorithm"
+          - "Hourly distribution calculation"
+          - "Language breakdown calculation"
+      
+      - path: "crates/dendrite_core/src/git.rs"
+        type: "file"
+        description: "Git commit correlation"
+        implements:
+          - "CommitRef struct"
+          - "Commit tracking functions"
+          - "Session-commit correlation logic"
+      
+      - path: "crates/dendrite_core/src/export.rs"
+        type: "file"
+        description: "Portfolio export formats"
+        implements:
+          - "ExportOptions struct"
+          - "ExportFormat enum"
+          - "JSON export function"
+          - "Markdown export function"
+          - "SVG badge generation"
+          - "Badge URL generation"
+      
+      # Build scripts
+      - path: "scripts/build-dendrite.sh"
+        type: "file"
+        description: "WASM build and deployment script"
+        implements:
+          - "wasm-pack build command"
+          - "Copy WASM to src/vs/workbench/contrib/dendrite/browser/"
+          - "Build verification"
+  
+  tasks:
+    - id: "1.1"
+      name: "Create Rust workspace structure"
+      status: "pending"
+      files:
+        - "crates/Cargo.toml"
+      validation:
+        - "cargo metadata succeeds"
+        - "Workspace structure is valid"
+    
+    - id: "1.2"
+      name: "Create dendrite_core crate manifest"
+      status: "pending"
+      depends_on: ["1.1"]
+      files:
+        - "crates/dendrite_core/Cargo.toml"
+      validation:
+        - "cargo check passes in dendrite_core"
+        - "All dependencies resolve"
+    
+    - id: "1.3"
+      name: "Implement core data models"
+      status: "pending"
+      depends_on: ["1.2"]
+      files:
+        - "crates/dendrite_core/src/session.rs"
+        - "crates/dendrite_core/src/storage.rs"
+        - "crates/dendrite_core/src/git.rs"
+      validation:
+        - "All structs compile"
+        - "Serde serialization works"
+    
+    - id: "1.4"
+      name: "Implement visualization data generation"
+      status: "pending"
+      depends_on: ["1.3"]
+      files:
+        - "crates/dendrite_core/src/visualization.rs"
+      validation:
+        - "Heatmap generation compiles"
+        - "Language breakdown logic is correct"
+    
+    - id: "1.5"
+      name: "Implement export functionality"
+      status: "pending"
+      depends_on: ["1.3"]
+      files:
+        - "crates/dendrite_core/src/export.rs"
+      validation:
+        - "All export formats work"
+        - "JSON output is valid"
+    
+    - id: "1.6"
+      name: "Set up WASM exports"
+      status: "pending"
+      depends_on: ["1.3", "1.4", "1.5"]
+      files:
+        - "crates/dendrite_core/src/lib.rs"
+      validation:
+        - "All wasm-bindgen exports are present"
+        - "Function signatures match CATS spec"
+    
+    - id: "1.7"
+      name: "Create WASM build script"
+      status: "pending"
+      depends_on: ["1.6"]
+      files:
+        - "scripts/build-dendrite.sh"
+      validation:
+        - "Script is executable"
+        - "wasm-pack build succeeds"
+        - "WASM artifacts are generated"
+    
+    - id: "1.8"
+      name: "Test WASM build and verify output"
+      status: "pending"
+      depends_on: ["1.7"]
+      validation:
+        - "WASM module loads successfully"
+        - "All exported functions are accessible"
+        - "Basic smoke tests pass"
+  
+  artifacts:
+    output:
+      - "crates/dendrite_core/pkg/*.wasm"
+      - "crates/dendrite_core/pkg/*.js"
+      - "crates/dendrite_core/pkg/*.d.ts"
+    
+    verification:
+      - command: "cargo test --package dendrite_core"
+        description: "Run Rust unit tests"
+      - command: "wasm-pack test --node"
+        description: "Run WASM tests"
+      - command: "ls -lh crates/dendrite_core/pkg/"
+        description: "Verify WASM artifacts"
+
+# ============================================
+# ERA 2: VS Code Integration
+# ============================================
+era_2:
+  name: "VS Code Integration Layer"
+  description: "TypeScript services and VS Code contribution"
+  assignee: "agent_2"
+  status: "not_started"
+  depends_on: ["era_1"]
+  
+  goals:
+    - "Create VS Code contribution structure"
+    - "Implement WASM bridge for TypeScript"
+    - "Create service layer (storage, session lifecycle, git integration)"
+    - "Register Growth view container"
+    - "Implement basic dashboard webview"
+  
+  note: "To be detailed by agent_2"
+
+# ============================================
+# ERA 3: UI and Polish
+# ============================================
+era_3:
+  name: "UI Implementation and Polish"
+  description: "Visualization renderers, commands, and final integration"
+  assignee: "agent_3"
+  status: "not_started"
+  depends_on: ["era_2"]
+  
+  goals:
+    - "Implement visualization renderers (heatmap, charts, streak)"
+    - "Create export and badge commands"
+    - "Implement settings and configuration"
+    - "Apply product.json mutations"
+    - "Final integration testing"
+  
+  note: "To be detailed by agent_3"
