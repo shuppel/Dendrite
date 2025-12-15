@@ -288,6 +288,7 @@ import './contrib/externalUriOpener/common/externalUriOpener.contribution.js';
 
 // Extensions Management
 import './contrib/extensions/browser/extensions.contribution.js';
+import './contrib/dendrite/browser/dendrite.contribution.js';
 import './contrib/extensions/browser/extensionsViewlet.js';
 
 // Output View
