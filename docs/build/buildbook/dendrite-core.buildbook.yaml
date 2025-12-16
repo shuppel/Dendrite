@@ -15,7 +15,8 @@ era_1:
   name: "Rust/WASM Foundation"
   description: "Core Rust workspace and WASM compilation infrastructure"
   assignee: "agent_1"
-  status: "in_progress"
+  status: "completed"
+  completed_date: "2025-12-15"
   
   goals:
     - "Establish Rust workspace structure"
@@ -134,7 +135,7 @@ era_1:
   tasks:
     - id: "1.1"
       name: "Create Rust workspace structure"
-      status: "pending"
+      status: "completed"
       files:
         - "crates/Cargo.toml"
       validation:
@@ -143,7 +144,7 @@ era_1:
     
     - id: "1.2"
       name: "Create dendrite_core crate manifest"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.1"]
       files:
         - "crates/dendrite_core/Cargo.toml"
@@ -153,7 +154,7 @@ era_1:
     
     - id: "1.3"
       name: "Implement core data models"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.2"]
       files:
         - "crates/dendrite_core/src/session.rs"
@@ -165,7 +166,7 @@ era_1:
     
     - id: "1.4"
       name: "Implement visualization data generation"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.3"]
       files:
         - "crates/dendrite_core/src/visualization.rs"
@@ -175,7 +176,7 @@ era_1:
     
     - id: "1.5"
       name: "Implement export functionality"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.3"]
       files:
         - "crates/dendrite_core/src/export.rs"
@@ -185,7 +186,7 @@ era_1:
     
     - id: "1.6"
       name: "Set up WASM exports"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.3", "1.4", "1.5"]
       files:
         - "crates/dendrite_core/src/lib.rs"
@@ -195,7 +196,7 @@ era_1:
     
     - id: "1.7"
       name: "Create WASM build script"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.6"]
       files:
         - "scripts/build-dendrite.sh"
@@ -206,7 +207,7 @@ era_1:
     
     - id: "1.8"
       name: "Test WASM build and verify output"
-      status: "pending"
+      status: "completed"
       depends_on: ["1.7"]
       validation:
         - "WASM module loads successfully"
@@ -234,7 +235,8 @@ era_2:
   name: "VS Code Integration Layer"
   description: "TypeScript services and VS Code contribution"
   assignee: "agent_2"
-  status: "not_started"
+  status: "completed"
+  completed_date: "2025-12-15"
   depends_on: ["era_1"]
   
   goals:
@@ -244,7 +246,90 @@ era_2:
     - "Register Growth view container"
     - "Implement basic dashboard webview"
   
-  note: "To be detailed by agent_2"
+  tasks:
+    - id: "2.1"
+      name: "Create contribution structure"
+      status: "completed"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        - "src/vs/workbench/contrib/dendrite/common/types.ts"
+        - "src/vs/workbench/contrib/dendrite/common/constants.ts"
+      validation:
+        - "Contribution registers successfully"
+        - "Types mirror CATS data models"
+    
+    - id: "2.2"
+      name: "Implement WASM bridge"
+      status: "completed"
+      depends_on: ["2.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/wasmBridge.ts"
+      validation:
+        - "WASM loads from correct path (./wasm/)"
+        - "JSON parsing wrapper works"
+        - "All 23 WASM functions wrapped"
+    
+    - id: "2.3"
+      name: "Create storage service"
+      status: "completed"
+      depends_on: ["2.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/storageService.ts"
+      validation:
+        - "Profile persists to global scope"
+        - "Session handle persists to workspace scope"
+    
+    - id: "2.4"
+      name: "Create session lifecycle service"
+      status: "completed"
+      depends_on: ["2.2", "2.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/sessionLifecycleService.ts"
+      validation:
+        - "Auto-start on editor activity"
+        - "Idle detection working"
+        - "Sessions saved on shutdown"
+    
+    - id: "2.5"
+      name: "Create git integration service"
+      status: "completed"
+      depends_on: ["2.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/gitIntegrationService.ts"
+      validation:
+        - "Watches .git/HEAD for commits"
+        - "Commits tracked to active session"
+    
+    - id: "2.6"
+      name: "Register view container"
+      status: "completed"
+      depends_on: ["2.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/growthViewPaneContainer.ts"
+      validation:
+        - "Growth container appears in sidebar"
+        - "Icon displays correctly"
+    
+    - id: "2.7"
+      name: "Implement dashboard view"
+      status: "completed"
+      depends_on: ["2.4", "2.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      validation:
+        - "View shows session state"
+        - "Updates on state changes"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/wasm/*.wasm"
+      - "src/vs/workbench/contrib/dendrite/browser/wasm/*.js"
+      - "src/vs/workbench/contrib/dendrite/**/*.ts"
+    
+    verification:
+      - "WASM bridge loads successfully"
+      - "Services instantiate without errors"
+      - "View container registered"
 
 # ============================================
 # ERA 3: UI and Polish
