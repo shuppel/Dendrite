@@ -342,10 +342,572 @@ era_3:
   depends_on: ["era_2"]
   
   goals:
-    - "Implement visualization renderers (heatmap, charts, streak)"
-    - "Create export and badge commands"
-    - "Implement settings and configuration"
-    - "Apply product.json mutations"
-    - "Final integration testing"
+    - "Implement all visualization renderers (heatmap, language chart, streak, commit timeline)"
+    - "Implement all command handlers and register commands"
+    - "Register and wire all settings with change listeners"
+    - "Complete dashboard UI with all 6 sections and 8 components"
+    - "Implement status bar integration"
+    - "Apply remaining VS Code file mutations"
+    - "Integrate WASM build into VS Code build process"
+    - "Comprehensive integration testing and polish"
   
-  note: "To be detailed by agent_3"
+  phases:
+    - name: "Phase 1: Renderer Infrastructure"
+      description: "Create all visualization renderers"
+      tasks: ["3.1", "3.2", "3.3", "3.4", "3.5"]
+    
+    - name: "Phase 2: Command Handlers"
+      description: "Implement and register all commands"
+      tasks: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+    
+    - name: "Phase 3: Settings & Configuration"
+      description: "Register settings and implement listeners"
+      tasks: ["3.11", "3.12", "3.13"]
+    
+    - name: "Phase 4: Dashboard UI Components"
+      description: "Complete all dashboard sections"
+      tasks: ["3.14", "3.15", "3.16", "3.17", "3.18", "3.19"]
+    
+    - name: "Phase 5: Status Bar Integration"
+      description: "Add session status to status bar"
+      tasks: ["3.20"]
+    
+    - name: "Phase 6: VS Code Mutations"
+      description: "Apply remaining file modifications"
+      tasks: ["3.21", "3.22", "3.23", "3.24"]
+    
+    - name: "Phase 7: Build Integration"
+      description: "Integrate WASM into build process"
+      tasks: ["3.25"]
+    
+    - name: "Phase 8: Testing & Polish"
+      description: "End-to-end testing and documentation"
+      tasks: ["3.26", "3.27"]
+  
+  tasks:
+    # ============================================
+    # Phase 1: Renderer Infrastructure
+    # ============================================
+    - id: "3.1"
+      name: "Create renderers directory structure"
+      status: "not_started"
+      phase: 1
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/renderers/"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "3.2"
+      name: "Implement heatmapRenderer.ts"
+      status: "not_started"
+      phase: 1
+      depends_on: ["3.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/renderers/heatmapRenderer.ts"
+      implements:
+        - "HeatmapRenderer class"
+        - "Calls WASM generate_heatmap(profile, weeks)"
+        - "Renders HeatmapData as SVG or Canvas grid"
+        - "Respects dendrite.heatmapWeeks setting"
+        - "Interactive hover tooltips showing raw_minutes"
+      validation:
+        - "Renders 12 weeks by default"
+        - "Updates when dendrite.heatmapWeeks changes"
+        - "Handles empty data gracefully"
+        - "Tooltips show date and activity duration"
+    
+    - id: "3.3"
+      name: "Implement languageChartRenderer.ts"
+      status: "not_started"
+      phase: 1
+      depends_on: ["3.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/renderers/languageChartRenderer.ts"
+      implements:
+        - "LanguageChartRenderer class"
+        - "Calls WASM generate_language_breakdown(profile)"
+        - "Renders Vec<LanguageStat> as pie or bar chart"
+        - "Uses language_colors from constants"
+        - "Fallback to 'other' color for unknown languages"
+      validation:
+        - "Colors match CATS specification"
+        - "Percentages sum to 100%"
+        - "Shows top N languages, groups rest as 'Other'"
+        - "Renders correctly with 1 language or 10+ languages"
+    
+    - id: "3.4"
+      name: "Implement streakRenderer.ts"
+      status: "not_started"
+      phase: 1
+      depends_on: ["3.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/renderers/streakRenderer.ts"
+      implements:
+        - "StreakRenderer class"
+        - "Displays current_streak and longest_streak from LifetimeStats"
+        - "Uses WASM get_current_streak() and get_longest_streak()"
+        - "Visual streak indicator (flame/fire icon with count)"
+        - "Shows notification on streak increase if dendrite.showStreakNotification enabled"
+      validation:
+        - "Streak updates on new day with activity"
+        - "Shows both current and longest streak"
+        - "Notification appears when setting enabled"
+        - "Visual indicator scales with streak length"
+    
+    - id: "3.5"
+      name: "Implement commitTimelineRenderer.ts"
+      status: "not_started"
+      phase: 1
+      depends_on: ["3.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/renderers/commitTimelineRenderer.ts"
+      implements:
+        - "CommitTimelineRenderer class"
+        - "Calls WASM get_commit_correlations(profile)"
+        - "Renders commit timeline with session correlation"
+        - "Shows commit hash (short), message, timestamp"
+        - "Links commit to session that included it"
+        - "Shows files changed count"
+      validation:
+        - "Timeline shows chronological order"
+        - "Clicking commit shows session details"
+        - "Handles repos with no commits"
+        - "Updates when new commits added"
+    
+    # ============================================
+    # Phase 2: Command Handlers
+    # ============================================
+    - id: "3.6"
+      name: "Create commands directory structure"
+      status: "not_started"
+      phase: 2
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commands/"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "3.7"
+      name: "Implement exportCommand.ts"
+      status: "not_started"
+      phase: 2
+      depends_on: ["3.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commands/exportCommand.ts"
+      implements:
+        - "ExportPortfolioCommand class"
+        - "Quick pick for format selection (JSON, Markdown, SVG Heatmap, Badge SVG, Badge URL)"
+        - "Calls corresponding WASM export function based on selection"
+        - "File save dialog for JSON/Markdown/SVG"
+        - "Clipboard copy for Badge URL/Markdown"
+        - "Success notification with file path or clipboard status"
+      validation:
+        - "All 5 export formats work"
+        - "File saves to chosen location"
+        - "Markdown and JSON are syntactically valid"
+        - "SVG renders correctly in browser"
+        - "Badge URL is accessible"
+    
+    - id: "3.8"
+      name: "Implement badgeCommand.ts"
+      status: "not_started"
+      phase: 2
+      depends_on: ["3.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commands/badgeCommand.ts"
+      implements:
+        - "CopyBadgeCommand class"
+        - "Calls WASM generate_badge_svg() or generate_badge_url()"
+        - "Formats as markdown: ![Dendrite](url) or ![Dendrite](data:image/svg+xml,...)"
+        - "Copies to clipboard using IClipboardService"
+        - "Shows success notification"
+      validation:
+        - "Badge markdown is valid"
+        - "Clipboard receives correct text"
+        - "Badge displays current stats (streak, time, etc)"
+        - "SVG or URL format works in GitHub markdown"
+    
+    - id: "3.9"
+      name: "Implement session control commands"
+      status: "not_started"
+      phase: 2
+      depends_on: ["3.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commands/sessionCommands.ts"
+      implements:
+        - "PauseSessionCommand - calls sessionLifecycleService.pauseSession()"
+        - "ResumeSessionCommand - calls sessionLifecycleService.resumeSession()"
+        - "ShowStatsCommand - shows notification with today's stats"
+        - "OpenGrowthCommand - focuses Growth view container"
+      validation:
+        - "Pause/resume changes session state correctly"
+        - "Stats notification shows: time, keystrokes, files, languages"
+        - "OpenGrowth focuses sidebar and Growth view"
+        - "Commands respect dendrite.enabled setting"
+    
+    - id: "3.10"
+      name: "Register all commands in contribution"
+      status: "not_started"
+      phase: 2
+      depends_on: ["3.7", "3.8", "3.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Register dendrite.pauseSession"
+        - "Register dendrite.resumeSession"
+        - "Register dendrite.exportPortfolio"
+        - "Register dendrite.copyBadge"
+        - "Register dendrite.openGrowth with keybinding ctrl+shift+g"
+        - "Register dendrite.showStats"
+      validation:
+        - "All 6 commands appear in command palette"
+        - "Commands show correct titles from CATS"
+        - "ctrl+shift+g keybinding works for openGrowth"
+        - "Commands are enabled/disabled based on session state"
+    
+    # ============================================
+    # Phase 3: Settings & Configuration
+    # ============================================
+    - id: "3.11"
+      name: "Register settings schema"
+      status: "not_started"
+      phase: 3
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Register dendrite.enabled (boolean, default: true)"
+        - "Register dendrite.idleThresholdMs (number, default: 300000)"
+        - "Register dendrite.autoStart (boolean, default: true)"
+        - "Register dendrite.trackGit (boolean, default: true)"
+        - "Register dendrite.heatmapWeeks (number, default: 12)"
+        - "Register dendrite.showStreakNotification (boolean, default: true)"
+        - "JSON schema with types, defaults, descriptions from CATS"
+      validation:
+        - "All 6 settings appear in Settings UI"
+        - "Settings show under 'Dendrite' category"
+        - "Defaults match CATS specification exactly"
+        - "Type validation prevents invalid values"
+    
+    - id: "3.12"
+      name: "Implement settings change listeners"
+      status: "not_started"
+      phase: 3
+      depends_on: ["3.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/settingsService.ts"
+      implements:
+        - "DendriteSettingsService class"
+        - "Listen to IConfigurationService changes"
+        - "dendrite.enabled → pause/resume sessionLifecycleService"
+        - "dendrite.idleThresholdMs → update sessionLifecycleService threshold"
+        - "dendrite.autoStart → affect session start behavior"
+        - "dendrite.trackGit → enable/disable gitIntegrationService"
+        - "dendrite.heatmapWeeks → refresh heatmap renderer"
+        - "dendrite.showStreakNotification → control streak notifications"
+      validation:
+        - "Changing enabled immediately pauses/resumes tracking"
+        - "Changing idleThresholdMs updates idle detection"
+        - "Changing trackGit starts/stops git watcher"
+        - "Changing heatmapWeeks re-renders heatmap"
+        - "All changes take effect without restart"
+    
+    - id: "3.13"
+      name: "Define language color constants"
+      status: "not_started"
+      phase: 3
+      files:
+        - "src/vs/workbench/contrib/dendrite/common/constants.ts"
+      implements:
+        - "LANGUAGE_COLORS constant map with 12 languages from CATS"
+        - "typescript: #3178c6, javascript: #f7df1e, python: #3776ab"
+        - "rust: #dea584, go: #00add8, java: #b07219"
+        - "csharp: #239120, cpp: #f34b7d, ruby: #cc342d"
+        - "swift: #fa7343, kotlin: #a97bff, other: #6e7681"
+      validation:
+        - "Colors match CATS specification exactly"
+        - "Used by languageChartRenderer"
+        - "Fallback to 'other' for unknown languages"
+    
+    # ============================================
+    # Phase 4: Dashboard UI Components
+    # ============================================
+    - id: "3.14"
+      name: "Implement dashboard header section"
+      status: "not_started"
+      phase: 4
+      depends_on: ["3.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Header section with session indicator"
+        - "Shows ACTIVE/IDLE/PAUSED/ENDED state with icon"
+        - "Export button triggers dendrite.exportPortfolio"
+        - "Updates in real-time on session state changes"
+      validation:
+        - "Indicator shows correct state and icon"
+        - "Export button works"
+        - "UI updates immediately on state change"
+        - "State transitions animate smoothly"
+    
+    - id: "3.15"
+      name: "Implement dashboard streak section"
+      status: "not_started"
+      phase: 4
+      depends_on: ["3.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Streak section using StreakRenderer"
+        - "Shows current streak and longest streak side-by-side"
+        - "Visual flame/fire icon"
+      validation:
+        - "Streak displays correctly"
+        - "Updates at midnight on new day"
+        - "Shows 0 when no activity"
+    
+    - id: "3.16"
+      name: "Implement dashboard today stats section"
+      status: "not_started"
+      phase: 4
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Today's active time (formatted as Xh Ym)"
+        - "Today's keystroke count"
+        - "Today's files edited count"
+        - "Today's languages used (top 3)"
+      validation:
+        - "Stats update in real-time during session"
+        - "Time formats correctly (e.g., 2h 34m, 45m, 3s)"
+        - "Resets at midnight"
+        - "Shows 0/empty state gracefully"
+    
+    - id: "3.17"
+      name: "Implement dashboard heatmap section"
+      status: "not_started"
+      phase: 4
+      depends_on: ["3.2", "3.12"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Heatmap section using HeatmapRenderer"
+        - "Respects dendrite.heatmapWeeks setting"
+        - "Shows GitHub-style activity grid"
+      validation:
+        - "Heatmap renders correctly"
+        - "Tooltips show date and duration on hover"
+        - "Updates when data changes"
+        - "Updates when dendrite.heatmapWeeks setting changes"
+    
+    - id: "3.18"
+      name: "Implement dashboard languages section"
+      status: "not_started"
+      phase: 4
+      depends_on: ["3.3", "3.13"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Languages section using LanguageChartRenderer"
+        - "Uses language colors from constants"
+        - "Shows percentages and time per language"
+      validation:
+        - "Chart renders with correct colors"
+        - "Colors are consistent with CATS spec"
+        - "Shows percentages that sum to 100%"
+        - "Updates when language usage changes"
+    
+    - id: "3.19"
+      name: "Implement dashboard git timeline tab"
+      status: "not_started"
+      phase: 4
+      depends_on: ["3.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+      implements:
+        - "Tab navigation for git section"
+        - "Git tab using CommitTimelineRenderer"
+        - "Only visible if dendrite.trackGit is enabled"
+        - "Tab shows commit count badge"
+      validation:
+        - "Tab switches correctly"
+        - "Timeline renders in tab panel"
+        - "Hidden when dendrite.trackGit disabled"
+        - "Badge shows correct commit count"
+    
+    # ============================================
+    # Phase 5: Status Bar Integration
+    # ============================================
+    - id: "3.20"
+      name: "Implement status bar item"
+      status: "not_started"
+      phase: 5
+      depends_on: ["3.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/statusBarService.ts"
+      implements:
+        - "DendriteStatusBarService class"
+        - "Status bar item: dendrite.sessionStatus"
+        - "Alignment: StatusbarAlignment.RIGHT, Priority: 100"
+        - "Shows session state icon and active time"
+        - "Tooltip: 'Dendrite: Click for stats'"
+        - "onClick triggers dendrite.showStats command"
+      validation:
+        - "Status bar item appears on right side"
+        - "Shows correct state icon (active/idle/paused)"
+        - "Active time updates every second when active"
+        - "Clicking shows stats notification"
+        - "Tooltip appears on hover"
+    
+    # ============================================
+    # Phase 6: VS Code Mutations
+    # ============================================
+    - id: "3.21"
+      name: "Apply remaining product.json mutations"
+      status: "not_started"
+      phase: 6
+      files:
+        - "product.json"
+      implements:
+        - "Verify removed: extensionsGallery (already done)"
+        - "Verify removed: extensionAllowedBadgeProviders (already done)"
+        - "Verify removed: AIF-* telemetry keys (already done)"
+        - "Verify added: dendrite.enabled: true (already done)"
+        - "Remove if exists: aiKey, msftInternalDomains, sendASmile"
+      validation:
+        - "product.json parses correctly"
+        - "No JSON syntax errors"
+        - "VS Code builds successfully"
+        - "No telemetry endpoints remain"
+    
+    - id: "3.22"
+      name: "Comment out Extensions view container"
+      status: "not_started"
+      phase: 6
+      files:
+        - "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts"
+      implements:
+        - "Comment out ViewContainer registration for Extensions"
+        - "Add comment: // DENDRITE: Disabled - replaced by Growth view"
+      validation:
+        - "Extensions view container not registered"
+        - "No runtime errors"
+        - "Growth view appears in its place"
+    
+    - id: "3.23"
+      name: "Verify Dendrite import in workbench.common.main.ts"
+      status: "completed"
+      phase: 6
+      files:
+        - "src/vs/workbench/workbench.common.main.ts"
+      note: "Already completed in Era 2 - just verify present"
+      validation:
+        - "Import line exists: import 'vs/workbench/contrib/dendrite/browser/dendrite.contribution'"
+        - "Dendrite loads on startup"
+    
+    - id: "3.24"
+      name: "Verify telemetry service disabled"
+      status: "completed"
+      phase: 6
+      files:
+        - "src/vs/platform/telemetry/common/telemetryService.ts"
+      note: "Already completed in Era 2 - just verify disabled"
+      validation:
+        - "Telemetry disabled or using NullTelemetryService"
+        - "No telemetry events sent"
+    
+    # ============================================
+    # Phase 7: Build Integration
+    # ============================================
+    - id: "3.25"
+      name: "Integrate WASM build into VS Code build"
+      status: "not_started"
+      phase: 7
+      files:
+        - "build/gulpfile.vscode.js"
+      implements:
+        - "Add task to call scripts/build-dendrite.sh"
+        - "Ensure WASM builds before TypeScript compilation"
+        - "Copy WASM artifacts to src/vs/workbench/contrib/dendrite/browser/wasm/"
+        - "Include WASM files in distribution package"
+      validation:
+        - "yarn watch builds WASM automatically"
+        - "WASM files present in dist/output"
+        - "wasmBridge loads WASM successfully at runtime"
+        - "Build fails if WASM compilation fails"
+    
+    # ============================================
+    # Phase 8: Testing & Polish
+    # ============================================
+    - id: "3.26"
+      name: "End-to-end integration testing"
+      status: "not_started"
+      phase: 8
+      depends_on: ["3.20", "3.25"]
+      implements:
+        - "Test complete user flow:"
+        - "  1. Launch Dendrite IDE"
+        - "  2. Session auto-starts on first edit"
+        - "  3. Edit files → keystroke tracking works"
+        - "  4. Make git commit → commit appears in timeline"
+        - "  5. View dashboard → all 6 sections render"
+        - "  6. Export portfolio → all formats work"
+        - "  7. Change settings → immediate effect"
+        - "  8. Session goes idle → state changes"
+        - "  9. Resume activity → session resumes"
+        - "  10. Close IDE → session saves"
+        - "  11. Reopen IDE → data persists"
+      validation:
+        - "All features work together seamlessly"
+        - "No runtime errors in console"
+        - "Performance is acceptable (no lag)"
+        - "Data persists correctly across restarts"
+        - "Memory usage is reasonable"
+    
+    - id: "3.27"
+      name: "Documentation and polish"
+      status: "not_started"
+      phase: 8
+      depends_on: ["3.26"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/README.md"
+      implements:
+        - "User guide: How to use Dendrite features"
+        - "Developer guide: Architecture and contribution"
+        - "Build instructions: WASM requirements"
+        - "Troubleshooting: Common issues and solutions"
+        - "Screenshots: Dashboard, heatmap, exports"
+      validation:
+        - "Documentation is clear and complete"
+        - "Examples are accurate and tested"
+        - "Screenshots are up-to-date"
+        - "Links work correctly"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/renderers/*.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/commands/*.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/settingsService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/statusBarService.ts"
+      - "Modified product.json"
+      - "Modified extensions.contribution.ts"
+      - "Modified gulpfile for WASM build"
+      - "src/vs/workbench/contrib/dendrite/README.md"
+    
+    verification:
+      - "All 6 commands registered and working"
+      - "All 6 settings registered and functional"
+      - "All 4 renderers display correctly"
+      - "All 6 dashboard sections complete"
+      - "Status bar shows session state"
+      - "Export generates valid files in all formats"
+      - "WASM builds automatically with VS Code"
+      - "No telemetry sent"
+      - "Integration tests pass"
+  
+  completion_criteria:
+    - "All 27 tasks completed"
+    - "All CATS UI components implemented"
+    - "All CATS commands implemented"
+    - "All CATS settings implemented"
+    - "Dashboard matches CATS dashboard_layout spec"
+    - "End-to-end user flow works flawlessly"
+    - "Documentation complete"

@@ -9,6 +9,8 @@ cats:
     version: "0.1.0"
     domain: "learning-ide"
     owners: ["@shupp"]
+    buildbook_ref: "docs/build/buildbook/dendrite-core.buildbook.yaml"
+    note: "Era and task annotations reference the build book for implementation tracking"
 
   branding:
     product_name: "Dendrite"
@@ -24,124 +26,214 @@ cats:
   structure:
     root: "."
     tree:
-      # Rust workspace
+      # Rust workspace (Era 1)
       - path: "crates/"
         type: directory
         description: "Rust workspace root"
+        era: 1
+        task: "1.1"
       - path: "crates/Cargo.toml"
         type: file
         description: "Workspace manifest"
+        era: 1
+        task: "1.1"
       - path: "crates/dendrite_core/"
         type: directory
         description: "WASM-compiled core engine"
+        era: 1
+        task: "1.2"
       - path: "crates/dendrite_core/Cargo.toml"
         type: file
+        era: 1
+        task: "1.2"
       - path: "crates/dendrite_core/src/lib.rs"
         type: file
         description: "Crate entry, WASM exports"
+        era: 1
+        task: "1.6"
       - path: "crates/dendrite_core/src/session.rs"
         type: file
         description: "Session tracking logic"
+        era: 1
+        task: "1.3"
       - path: "crates/dendrite_core/src/storage.rs"
         type: file
         description: "Persistence structures"
+        era: 1
+        task: "1.3"
       - path: "crates/dendrite_core/src/visualization.rs"
         type: file
         description: "Heatmap, charts data generation"
+        era: 1
+        task: "1.4"
       - path: "crates/dendrite_core/src/git.rs"
         type: file
         description: "Git commit correlation"
+        era: 1
+        task: "1.3"
       - path: "crates/dendrite_core/src/export.rs"
         type: file
         description: "Portfolio export formats"
+        era: 1
+        task: "1.5"
       
-      # VS Code contribution
+      # VS Code contribution (Era 2 & 3)
       - path: "src/vs/workbench/contrib/dendrite/"
         type: directory
         description: "Dendrite workbench contribution"
+        era: 2
+        task: "2.1"
       - path: "src/vs/workbench/contrib/dendrite/browser/"
         type: directory
         description: "Browser-side implementation"
+        era: 2
+        task: "2.1"
       - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
         type: file
         description: "Contribution registration"
+        era: 2
+        task: "2.1"
       - path: "src/vs/workbench/contrib/dendrite/browser/wasmBridge.ts"
         type: file
         description: "TypeScript <-> WASM interface"
+        era: 2
+        task: "2.2"
       - path: "src/vs/workbench/contrib/dendrite/browser/storageService.ts"
         type: file
         description: "VS Code storage integration"
+        era: 2
+        task: "2.3"
       - path: "src/vs/workbench/contrib/dendrite/browser/sessionLifecycleService.ts"
         type: file
         description: "Session start/stop/idle management"
+        era: 2
+        task: "2.4"
       - path: "src/vs/workbench/contrib/dendrite/browser/gitIntegrationService.ts"
         type: file
         description: "Git commit tracking"
+        era: 2
+        task: "2.5"
       - path: "src/vs/workbench/contrib/dendrite/browser/growthViewPaneContainer.ts"
         type: file
         description: "Growth view container"
+        era: 2
+        task: "2.6"
       - path: "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
         type: file
         description: "Main dashboard view"
+        era: 2
+        task: "2.7"
+        note: "Basic structure in Era 2, full UI in Era 3 (tasks 3.14-3.19)"
       - path: "src/vs/workbench/contrib/dendrite/browser/renderers/"
         type: directory
         description: "Visualization renderers"
+        era: 3
+        task: "3.1"
       - path: "src/vs/workbench/contrib/dendrite/browser/renderers/heatmapRenderer.ts"
         type: file
+        description: "Heatmap visualization renderer"
+        era: 3
+        task: "3.2"
       - path: "src/vs/workbench/contrib/dendrite/browser/renderers/languageChartRenderer.ts"
         type: file
+        description: "Language breakdown chart renderer"
+        era: 3
+        task: "3.3"
       - path: "src/vs/workbench/contrib/dendrite/browser/renderers/streakRenderer.ts"
         type: file
+        description: "Streak display renderer"
+        era: 3
+        task: "3.4"
       - path: "src/vs/workbench/contrib/dendrite/browser/renderers/commitTimelineRenderer.ts"
         type: file
+        description: "Git commit timeline renderer"
+        era: 3
+        task: "3.5"
       - path: "src/vs/workbench/contrib/dendrite/browser/commands/"
         type: directory
         description: "Command implementations"
+        era: 3
+        task: "3.6"
       - path: "src/vs/workbench/contrib/dendrite/browser/commands/exportCommand.ts"
         type: file
+        description: "Portfolio export command handler"
+        era: 3
+        task: "3.7"
       - path: "src/vs/workbench/contrib/dendrite/browser/commands/badgeCommand.ts"
         type: file
+        description: "Badge copy command handler"
+        era: 3
+        task: "3.8"
       - path: "src/vs/workbench/contrib/dendrite/common/"
         type: directory
         description: "Shared types and constants"
+        era: 2
+        task: "2.1"
       - path: "src/vs/workbench/contrib/dendrite/common/types.ts"
         type: file
+        description: "TypeScript data model types"
+        era: 2
+        task: "2.1"
       - path: "src/vs/workbench/contrib/dendrite/common/constants.ts"
         type: file
+        description: "Constants (view IDs, storage keys, commands, language colors)"
+        era: 2
+        task: "2.1"
+        note: "Language colors added in Era 3 task 3.13"
       
       # Scripts
       - path: "scripts/build-dendrite.sh"
         type: file
         description: "Build WASM and copy to contribution"
+        era: 1
+        task: "1.7"
+        note: "Integration into VS Code build in Era 3 task 3.25"
 
   mutations:
     description: "Changes to existing VS Code files"
+    note: "Some mutations completed in Era 2, others in Era 3"
     files_modified:
       - path: "product.json"
+        era: 3
+        task: "3.21"
+        status: "partial (some done in Era 2)"
         changes:
           - action: "remove"
             keys: ["extensionsGallery", "extensionAllowedBadgeProviders", "extensionAllowedBadgeProvidersRegex"]
+            status: "completed (Era 2)"
           - action: "remove_if_exists"
             pattern: "AIF-*"
             description: "Telemetry instrumentation keys"
+            status: "completed (Era 2)"
           - action: "remove_if_exists"
             keys: ["aiKey", "msftInternalDomains", "sendASmile"]
+            status: "pending (Era 3)"
           - action: "add"
             key: "dendrite"
             value: { "enabled": true }
+            status: "completed (Era 2)"
             
       - path: "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts"
+        era: 3
+        task: "3.22"
+        status: "partial (commented in Era 2)"
         changes:
           - action: "comment_out"
             target: "ViewContainer registration"
             comment: "// DENDRITE: Disabled - replaced by Growth view"
             
       - path: "src/vs/workbench/workbench.common.main.ts"
+        era: 2
+        task: "2.1"
+        status: "completed"
         changes:
           - action: "add_import"
             value: "import 'vs/workbench/contrib/dendrite/browser/dendrite.contribution';"
             
       - path: "src/vs/platform/telemetry/common/telemetryService.ts"
+        era: 2
+        task: "2.1"
+        status: "completed"
         changes:
           - action: "replace_implementation"
             description: "Replace with NullTelemetryService"
@@ -425,72 +517,118 @@ cats:
   commands:
     description: "VS Code commands registered by Dendrite"
     prefix: "dendrite"
+    era: 3
+    tasks: ["3.9", "3.10"]
     
     items:
       - id: "dendrite.pauseSession"
         title: "Dendrite: Pause Session"
         description: "Manually pause the current session"
         keybinding: null
+        era: 3
+        task: "3.9"
         
       - id: "dendrite.resumeSession"
         title: "Dendrite: Resume Session"
         description: "Resume a paused session"
         keybinding: null
+        era: 3
+        task: "3.9"
         
       - id: "dendrite.exportPortfolio"
         title: "Dendrite: Export Portfolio"
         description: "Export learning data in various formats"
         keybinding: null
+        era: 3
+        task: "3.7"
         
       - id: "dendrite.copyBadge"
         title: "Dendrite: Copy Badge"
         description: "Copy markdown badge to clipboard"
         keybinding: null
+        era: 3
+        task: "3.8"
         
       - id: "dendrite.openGrowth"
         title: "Dendrite: Open Growth"
         description: "Focus the Growth view"
         keybinding: "ctrl+shift+g"
+        era: 3
+        task: "3.9"
         
       - id: "dendrite.showStats"
         title: "Dendrite: Show Today's Stats"
         description: "Show quick stats in notification"
         keybinding: null
+        era: 3
+        task: "3.9"
+    
+    registration:
+      task: "3.10"
+      file: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
 
   settings:
     description: "VS Code settings contributed by Dendrite"
     prefix: "dendrite"
+    era: 3
+    tasks: ["3.11", "3.12"]
     
     items:
       - id: "dendrite.enabled"
         type: "boolean"
         default: true
         description: "Enable Dendrite session tracking"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
         
       - id: "dendrite.idleThresholdMs"
         type: "number"
         default: 300000
         description: "Milliseconds of inactivity before marking idle (default 5 min)"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
         
       - id: "dendrite.autoStart"
         type: "boolean"
         default: true
         description: "Automatically start session on editor focus"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
         
       - id: "dendrite.trackGit"
         type: "boolean"
         default: true
         description: "Correlate sessions with git commits"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
         
       - id: "dendrite.heatmapWeeks"
         type: "number"
         default: 12
         description: "Number of weeks to show in heatmap"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
         
       - id: "dendrite.showStreakNotification"
         type: "boolean"
         default: true
         description: "Show notification when streak increases"
+        era: 3
+        task: "3.11"
+        listener: "3.12"
+    
+    registration:
+      task: "3.11"
+      file: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+    
+    listener_service:
+      task: "3.12"
+      file: "src/vs/workbench/contrib/dendrite/browser/settingsService.ts"
 
   ui:
     view_containers:
@@ -499,28 +637,52 @@ cats:
         location: "activitybar"  # sidebar icon
         icon: "pulse"
         order: 100  # after explorer, search, git, debug
+        era: 2
+        task: "2.6"
+        file: "src/vs/workbench/contrib/dendrite/browser/growthViewPaneContainer.ts"
 
     views:
       - id: "dendrite.dashboard"
         name: "Dashboard"
         container: "growth"
         type: "webview"
+        era: 2
+        task: "2.7"
+        file: "src/vs/workbench/contrib/dendrite/browser/dashboardView.ts"
+        note: "Basic structure in Era 2, full UI sections in Era 3"
         
     dashboard_layout:
+      note: "All sections implemented in Era 3, Phase 4 (tasks 3.14-3.19)"
       sections:
         - id: "header"
           components: ["session_indicator", "export_button"]
+          era: 3
+          task: "3.14"
         - id: "streak"
           components: ["streak_display"]
+          era: 3
+          task: "3.15"
+          renderer: "3.4"
         - id: "today"
           components: ["today_stats"]
+          era: 3
+          task: "3.16"
         - id: "heatmap"
           components: ["activity_heatmap"]
+          era: 3
+          task: "3.17"
+          renderer: "3.2"
         - id: "languages"
           components: ["language_chart"]
+          era: 3
+          task: "3.18"
+          renderer: "3.3"
         - id: "git"
           components: ["commit_timeline"]
           tab: true
+          era: 3
+          task: "3.19"
+          renderer: "3.5"
 
     status_bar:
       - id: "dendrite.sessionStatus"
@@ -528,6 +690,9 @@ cats:
         priority: 100
         tooltip: "Dendrite: Click for stats"
         command: "dendrite.showStats"
+        era: 3
+        task: "3.20"
+        file: "src/vs/workbench/contrib/dendrite/browser/statusBarService.ts"
 
   config:
     build_requirements:
@@ -550,6 +715,9 @@ cats:
 
     language_colors:
       description: "Default colors for language chart"
+      era: 3
+      task: "3.13"
+      file: "src/vs/workbench/contrib/dendrite/common/constants.ts"
       mapping:
         typescript: "#3178c6"
         javascript: "#f7df1e"
