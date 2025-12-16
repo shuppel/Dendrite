@@ -257,3 +257,54 @@ To achieve a functional Minimum Viable Product, complete these tasks in order:
 **Last Updated**: 2025-12-15  
 **Overall Progress**: 39% (17/44 components complete)  
 **Next Milestone**: Era 3 Phase 1 - Visualization Renderers
+
+---
+
+## 11. Terminal Velocity (Era 4) - ❌ 0% Complete
+
+| Component | File Path | Era | Task | Status |
+|-----------|-----------|-----|------|--------|
+| Terminal directory | `src/.../terminal/` | 4 | 4.1 | ❌ |
+| SmoothCursorAddon | `src/.../terminal/smoothCursorAddon.ts` | 4 | 4.2 | ❌ |
+| Terminal integration | Modified `xtermTerminal.ts` | 4 | 4.3 | ❌ |
+| Terminal settings | 4 settings registered | 4 | 4.4 | ❌ |
+| Settings listeners | `terminalVelocityService.ts` | 4 | 4.5 | ❌ |
+| Input latency audit | Performance optimization | 4 | 4.6 | ❌ |
+| Visual testing | Smoothness validation | 4 | 4.7 | ❌ |
+| Documentation | Terminal velocity README | 4 | 4.8 | ❌ |
+
+---
+
+## Progress by Era (Updated)
+
+### Era 4: Velocity - Terminal & UI Polish
+**Status**: ❌ **0% Complete** (0/8 tasks)
+
+**Focus**: Hyprland-like fluidity with smooth cursor and GPU acceleration
+
+| Feature | Target | Status |
+|---------|--------|--------|
+| Smooth Cursor FPS | 60+ | ❌ |
+| Input Latency | < 16ms | ❌ |
+| Frame Overhead | < 1ms | ❌ |
+| GPU Acceleration | Mandatory | ❌ |
+| Visual Quality | Hyprland-equivalent | ❌ |
+
+---
+
+## Updated Overall Progress
+
+| Era | Name | Tasks | Complete | Status |
+|-----|------|-------|----------|--------|
+| **1** | Rust/WASM Foundation | 8 | 8 | ✅ 100% |
+| **2** | VS Code Integration | 7 | 7 | ✅ 100% |
+| **3** | UI Implementation | 27 | 0 | ❌ 0% |
+| **4** | Velocity & Polish | 8 | 0 | ❌ 0% |
+| **TOTAL** | **All Eras** | **50** | **15** | **30%** |
+
+---
+
+**Last Updated**: 2025-12-15 (Era 4 added)  
+**Overall Progress**: 30% (15/50 tasks complete)  
+**Next Milestone**: Era 3 Phase 1 - Visualization Renderers  
+**Future Milestone**: Era 4 - Terminal Velocity Implementation
