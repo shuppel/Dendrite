@@ -758,3 +758,126 @@ cats:
       - "ICommandService"
       - "INotificationService"
       - "IViewPaneContainer"
+      # Terminal velocity (Era 4)
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/"
+        type: directory
+        description: "Terminal velocity enhancements"
+        era: 4
+        task: "4.1"
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+        type: file
+        description: "Smooth cursor interpolation addon for xterm.js"
+        era: 4
+        task: "4.2"
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+        type: file
+        description: "Settings listener for terminal velocity features"
+        era: 4
+        task: "4.5"
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+        type: file
+        description: "Terminal velocity documentation"
+        era: 4
+        task: "4.8"
+
+  terminal_velocity:
+    description: "Era 4 - Hyprland-inspired terminal fluidity"
+    goals:
+      - "Sub-frame cursor latency with smooth interpolation"
+      - "GPU-accelerated rendering (WebGL)"
+      - "60+ FPS cursor movement"
+      - "< 16ms input-to-render latency"
+    
+    smooth_cursor:
+      description: "Ghost cursor overlay with lerp interpolation"
+      implementation: "DOM overlay with requestAnimationFrame loop"
+      performance: "< 1ms overhead per frame"
+      features:
+        - "Independent of terminal grid refresh"
+        - "CSS translate3d for GPU acceleration"
+        - "Configurable physics (duration, easing)"
+        - "Matches terminal cursor shape"
+    
+    settings:
+      - id: "dendrite.terminal.smoothCursor"
+        type: "boolean"
+        default: true
+        description: "Enable smooth cursor interpolation"
+        era: 4
+        task: "4.4"
+      
+      - id: "dendrite.terminal.cursorPhysics"
+        type: "object"
+        default:
+          duration: 80
+          easing: "ease-out"
+        description: "Cursor interpolation physics"
+        era: 4
+        task: "4.4"
+        properties:
+          duration:
+            type: "number"
+            description: "Interpolation duration in milliseconds"
+            default: 80
+            range: [20, 200]
+          easing:
+            type: "string"
+            description: "CSS easing function"
+            default: "ease-out"
+            enum: ["linear", "ease", "ease-in", "ease-out", "ease-in-out"]
+      
+      - id: "dendrite.terminal.forceGPU"
+        type: "boolean"
+        default: true
+        description: "Force WebGL renderer for terminal"
+        era: 4
+        task: "4.4"
+      
+      - id: "dendrite.terminal.targetFPS"
+        type: "number"
+        default: 60
+        description: "Target frame rate for cursor animation"
+        era: 4
+        task: "4.4"
+        range: [30, 120]
+    
+    integration_points:
+      - file: "src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts"
+        modification: "Load SmoothCursorAddon when enabled"
+        era: 4
+        task: "4.3"
+      
+      - file: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        modification: "Register terminal velocity settings"
+        era: 4
+        task: "4.4"
+    
+    performance_targets:
+      cursor_fps: 60
+      input_latency_ms: 16
+      frame_overhead_ms: 1
+      gpu_required: true
+      visual_quality: "Hyprland-equivalent smooth motion"
+    
+    technical_algorithm:
+      name: "Linear Interpolation (Lerp) Cursor"
+      description: |
+        The smooth cursor uses a high-frequency requestAnimationFrame loop
+        independent of terminal render cycles. On each frame:
+        
+        1. Read target position from xterm cursor coordinates
+        2. Lerp current position towards target using configurable physics
+        3. Update overlay DOM element with transform: translate3d
+        4. GPU composites the overlay without blocking terminal rendering
+        
+        Key advantage: Cursor movement appears instant and fluid regardless
+        of terminal refresh rate or heavy rendering operations.
+      
+      pseudo_code: |
+        loop:
+          target = getTerminalCursorPosition()
+          alpha = physics.duration / 1000 * deltaTime
+          current.x += (target.x - current.x) * alpha
+          current.y += (target.y - current.y) * alpha
+          overlay.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`
+          requestAnimationFrame(loop)

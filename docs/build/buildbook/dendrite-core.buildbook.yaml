@@ -6,7 +6,7 @@
 meta:
   project: "dendrite-core"
   cats_ref: "docs/build/cats/dendrite-core.cats.yaml"
-  total_eras: 3
+  total_eras: 4
 
 # ============================================
 # ERA 1: Rust/WASM Foundation
@@ -911,3 +911,251 @@ era_3:
     - "Dashboard matches CATS dashboard_layout spec"
     - "End-to-end user flow works flawlessly"
     - "Documentation complete"
+
+# ============================================
+# ERA 4: Velocity - Terminal & UI Polish
+# ============================================
+era_4:
+  name: "Velocity - Terminal & UI Polish"
+  description: "Achieve Hyprland-like fluidity with smooth cursor, GPU acceleration, and minimal input latency"
+  assignee: "agent_4"
+  status: "not_started"
+  depends_on: ["era_3"]
+  
+  goals:
+    - "Implement smooth cursor with sub-frame interpolation"
+    - "Force GPU acceleration for terminal rendering"
+    - "Minimize input-to-render latency"
+    - "Add cursor physics configuration"
+    - "Achieve 60+ FPS terminal rendering"
+  
+  motivation: |
+    Era 4 focuses on achieving exceptional UI fluidity inspired by Hyprland's
+    window manager speed. The goal is sub-frame cursor latency with smooth
+    interpolation independent of terminal grid updates.
+    
+    Key principle: Cursor movement should feel instant and buttery-smooth,
+    never locked to terminal cell boundaries or refresh rates.
+  
+  tasks:
+    - id: "4.1"
+      name: "Scaffold terminal contribution structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/"
+      implements:
+        - "Create terminal subdirectory under dendrite contrib"
+        - "Set up module structure for xterm.js integration"
+      validation:
+        - "Directory exists and is importable"
+        - "Module structure follows VS Code patterns"
+    
+    - id: "4.2"
+      name: "Implement SmoothCursorAddon"
+      status: "not_started"
+      depends_on: ["4.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+      implements:
+        - "SmoothCursorAddon class implementing ITerminalAddon"
+        - "Monitor xterm.onCursorMove events"
+        - "Create high-performance floating DOM overlay (position: absolute)"
+        - "Implement lerp (linear interpolation) for smooth movement"
+        - "Use CSS transform: translate3d for GPU acceleration"
+        - "Configurable physics: duration (ms) and easing function"
+        - "Ghost cursor that leads actual terminal cursor"
+      technical_details:
+        animation_strategy: "requestAnimationFrame loop with lerp interpolation"
+        dom_structure: "Overlay div with pointer-events: none"
+        performance_target: "< 1ms overhead per frame"
+        cursor_shape: "Match terminal cursor style (block/underline/bar)"
+      validation:
+        - "Cursor interpolation runs at 60+ FPS"
+        - "No visual lag between keystroke and cursor movement"
+        - "Cursor position lerps smoothly between grid cells"
+        - "Performance overhead < 1ms per frame"
+        - "Works with all cursor shapes"
+    
+    - id: "4.3"
+      name: "Integrate with XtermTerminal"
+      status: "not_started"
+      depends_on: ["4.2"]
+      files:
+        - "src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts"
+      implements:
+        - "Import and load SmoothCursorAddon"
+        - "Attach addon to xterm instance when dendrite.terminal.smoothCursor enabled"
+        - "Configure WebGL renderer as default (force GPU acceleration)"
+        - "Disable native cursor rendering when smooth cursor active"
+        - "Pass configuration to addon (physics, easing)"
+      validation:
+        - "Smooth cursor loads automatically when enabled"
+        - "Terminal uses WebGL renderer by default"
+        - "Native cursor hidden when smooth cursor active"
+        - "Configuration changes apply immediately"
+    
+    - id: "4.4"
+      name: "Add terminal velocity settings"
+      status: "not_started"
+      depends_on: ["4.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Register dendrite.terminal.smoothCursor (boolean, default: true)"
+        - "Register dendrite.terminal.cursorPhysics (object)"
+        - "  - duration: number (milliseconds, default: 80)"
+        - "  - easing: string (CSS easing, default: 'ease-out')"
+        - "Register dendrite.terminal.forceGPU (boolean, default: true)"
+        - "Register dendrite.terminal.targetFPS (number, default: 60)"
+      validation:
+        - "All 4 settings appear in Settings UI under 'Dendrite > Terminal'"
+        - "Defaults match specification"
+        - "Type validation works (number ranges, valid easing functions)"
+    
+    - id: "4.5"
+      name: "Implement settings change listeners"
+      status: "not_started"
+      depends_on: ["4.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+      implements:
+        - "TerminalVelocityService class"
+        - "Listen to configuration changes"
+        - "Update SmoothCursorAddon physics on change"
+        - "Toggle smooth cursor on/off dynamically"
+        - "Reload terminal renderer when forceGPU changes"
+      validation:
+        - "Changing smoothCursor toggles feature immediately"
+        - "Changing cursorPhysics updates interpolation feel"
+        - "Changing forceGPU switches renderer without restart"
+        - "No terminal flicker or artifacts on config change"
+    
+    - id: "4.6"
+      name: "Input latency optimization audit"
+      status: "not_started"
+      depends_on: ["4.3"]
+      implements:
+        - "Profile input-to-render pipeline"
+        - "Measure keystroke → terminal update → screen render latency"
+        - "Identify and remove unnecessary async boundaries"
+        - "Batch DOM updates where possible"
+        - "Use passive event listeners for input"
+        - "Optimize hot paths in cursor movement"
+      validation:
+        - "Input latency < 16ms (60 FPS target)"
+        - "No forced reflows in input handler"
+        - "Performance.mark measurements show improvement"
+        - "Keystroke registration feels instant"
+    
+    - id: "4.7"
+      name: "Visual smoothness testing"
+      status: "not_started"
+      depends_on: ["4.2", "4.5", "4.6"]
+      implements:
+        - "Create test terminal session with rapid cursor movement"
+        - "Test scenarios:"
+        - "  1. Rapid typing (sustained 100+ WPM)"
+        - "  2. Vim navigation (hjkl rapid movement)"
+        - "  3. Tab completion with long paths"
+        - "  4. Syntax highlighting heavy files (large JSON/logs)"
+        - "  5. Scrollback with active cursor"
+        - "Record performance metrics"
+        - "Visual comparison: smooth cursor ON vs OFF"
+      validation:
+        - "Smooth cursor maintains 60 FPS during all test scenarios"
+        - "Visual inspection confirms fluid motion"
+        - "No cursor stuttering or jank"
+        - "Perceived latency matches Hyprland feel"
+    
+    - id: "4.8"
+      name: "Documentation and configuration guide"
+      status: "not_started"
+      depends_on: ["4.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+      implements:
+        - "Technical documentation for SmoothCursorAddon"
+        - "User guide for terminal velocity settings"
+        - "Performance tuning guide"
+        - "Comparison: standard vs smooth cursor"
+        - "Troubleshooting: GPU acceleration issues"
+      validation:
+        - "Documentation explains smooth cursor concept clearly"
+        - "Settings examples are accurate"
+        - "Performance expectations documented"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+      - "Modified xtermTerminal.ts (smooth cursor integration)"
+      - "Terminal velocity settings in contribution"
+    
+    verification:
+      - "Smooth cursor renders at 60+ FPS"
+      - "Input latency < 16ms"
+      - "GPU acceleration active (verify in DevTools)"
+      - "Cursor interpolation visibly smooth"
+      - "All 4 terminal settings functional"
+      - "No performance regression in terminal"
+  
+  performance_targets:
+    cursor_interpolation_fps: 60
+    input_latency_ms: 16
+    frame_overhead_ms: 1
+    gpu_acceleration: "mandatory"
+    visual_smoothness: "Hyprland-equivalent"
+  
+  technical_implementation:
+    smooth_cursor_algorithm: |
+      class SmoothCursorAddon {
+        private currentPos: {x: number, y: number} = {x: 0, y: 0};
+        private targetPos: {x: number, y: number} = {x: 0, y: 0};
+        private cursorElement: HTMLElement;
+        
+        activate(terminal: Terminal) {
+          // Create overlay cursor
+          this.cursorElement = document.createElement('div');
+          this.cursorElement.className = 'smooth-cursor';
+          this.cursorElement.style.cssText = `
+            position: absolute;
+            pointer-events: none;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+          `;
+          
+          // Monitor cursor moves
+          terminal.onCursorMove(() => {
+            this.targetPos = this.getTerminalCursorPosition();
+          });
+          
+          // Interpolation loop
+          this.animationLoop();
+        }
+        
+        private animationLoop() {
+          requestAnimationFrame(() => {
+            // Lerp towards target
+            const alpha = this.physics.duration / 1000 * 60; // Frame-independent
+            this.currentPos.x += (this.targetPos.x - this.currentPos.x) * alpha;
+            this.currentPos.y += (this.targetPos.y - this.currentPos.y) * alpha;
+            
+            // Update DOM (GPU accelerated)
+            this.cursorElement.style.transform = 
+              `translate3d(${this.currentPos.x}px, ${this.currentPos.y}px, 0)`;
+            
+            this.animationLoop();
+          });
+        }
+      }
+  
+  completion_criteria:
+    - "All 8 tasks completed"
+    - "Smooth cursor achieves 60+ FPS"
+    - "Input latency < 16ms measured"
+    - "GPU acceleration verified active"
+    - "Visual smoothness equivalent to Hyprland WM"
+    - "Settings allow customization of cursor physics"
+    - "No performance regression in standard terminal usage"
+    - "Documentation complete with performance tuning guide"
