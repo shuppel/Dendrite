@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer } from './index.js';
+import { BaseLanguageAnalyzer } from './baseAnalyzer.js';
 
 /**
  * C/C++ complexity analyzer
@@ -32,13 +32,13 @@ export class CppAnalyzer extends BaseLanguageAnalyzer {
 		/\bconfig\.\w+\.enabled\b/i
 	];
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		// Handle class methods: ClassName::MethodName
 		const methodMatch = match.match(/(\w+)\s*\(/);
 		return methodMatch ? methodMatch[1] : 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		const paramsMatch = match.match(/\(([^)]*)\)/);
 		if (!paramsMatch || !paramsMatch[1].trim()) return [];
 

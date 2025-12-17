@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer } from './index.js';
+import { BaseLanguageAnalyzer } from './baseAnalyzer.js';
 
 /**
  * Go complexity analyzer
@@ -30,7 +30,7 @@ export class GoAnalyzer extends BaseLanguageAnalyzer {
 		/\bflags?\.\w+/i
 	];
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		// Handle method receivers: func (r *Receiver) MethodName(...)
 		const methodMatch = match.match(/func\s+\([^)]*\)\s*(\w+)/);
 		if (methodMatch) return methodMatch[1];
@@ -40,7 +40,7 @@ export class GoAnalyzer extends BaseLanguageAnalyzer {
 		return funcMatch ? funcMatch[1] : 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		// Extract the last set of parentheses (parameters, not receiver)
 		const allParams = match.match(/\(([^)]*)\)/g);
 		if (!allParams || allParams.length === 0) return [];

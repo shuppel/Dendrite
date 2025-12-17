@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer } from './index.js';
+import { BaseLanguageAnalyzer } from './baseAnalyzer.js';
 
 /**
  * Java complexity analyzer
@@ -31,13 +31,13 @@ export class JavaAnalyzer extends BaseLanguageAnalyzer {
 		/\@FeatureToggle\b/
 	];
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		// Find method name by looking for identifier before (
 		const nameMatch = match.match(/(\w+)\s*\(/);
 		return nameMatch ? nameMatch[1] : 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		const paramsMatch = match.match(/\(([^)]*)\)/);
 		if (!paramsMatch || !paramsMatch[1].trim()) return [];
 

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer, ExtractedFunction } from './index.js';
+import { BaseLanguageAnalyzer, ExtractedFunction } from './baseAnalyzer.js';
 import { SyntaxTree } from '../treeSitterBridge.js';
 import { FunctionMetrics, calculateCyclomaticComplexity, calculateCognitiveComplexity, CodeMetrics } from '../metrics.js';
 
@@ -83,7 +83,7 @@ export class PythonAnalyzer extends BaseLanguageAnalyzer {
 		return functions;
 	}
 
-	calculateMetrics(fn: ExtractedFunction, source: string): FunctionMetrics {
+	override calculateMetrics(fn: ExtractedFunction, source: string): FunctionMetrics {
 		const body = fn.body;
 
 		// Count decision points
@@ -149,12 +149,12 @@ export class PythonAnalyzer extends BaseLanguageAnalyzer {
 		return maxDepth;
 	}
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		const nameMatch = match.match(/def\s+(\w+)/);
 		return nameMatch ? nameMatch[1] : 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		const paramsMatch = match.match(/\(([^)]*)\)/);
 		if (!paramsMatch || !paramsMatch[1].trim()) return [];
 

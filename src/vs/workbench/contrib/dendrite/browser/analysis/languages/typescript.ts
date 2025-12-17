@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer } from './index.js';
+import { BaseLanguageAnalyzer } from './baseAnalyzer.js';
 
 /**
  * TypeScript/JavaScript complexity analyzer
@@ -30,21 +30,21 @@ export class TypeScriptAnalyzer extends BaseLanguageAnalyzer {
 		/\bflags?\.\w+/i
 	];
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		// Try to extract function name from different patterns
 		const functionMatch = match.match(/function\s+(\w+)/);
-		if (functionMatch) return functionMatch[1];
+		if (functionMatch) { return functionMatch[1]; }
 
 		const methodMatch = match.match(/(?:public|private|protected|static|async\s+)*(\w+)\s*\(/);
-		if (methodMatch) return methodMatch[1];
+		if (methodMatch) { return methodMatch[1]; }
 
 		const arrowMatch = match.match(/(?:const|let|var)\s+(\w+)\s*=/);
-		if (arrowMatch) return arrowMatch[1];
+		if (arrowMatch) { return arrowMatch[1]; }
 
 		return 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		const paramsMatch = match.match(/\(([^)]*)\)/);
 		if (!paramsMatch || !paramsMatch[1].trim()) return [];
 

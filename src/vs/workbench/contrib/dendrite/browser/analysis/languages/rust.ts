@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 
-import { BaseLanguageAnalyzer } from './index.js';
+import { BaseLanguageAnalyzer } from './baseAnalyzer.js';
 
 /**
  * Rust complexity analyzer
@@ -30,12 +30,12 @@ export class RustAnalyzer extends BaseLanguageAnalyzer {
 		/\bconfig\.\w+\.enabled\b/i
 	];
 
-	protected extractFunctionName(match: string): string {
+	protected override extractFunctionName(match: string): string {
 		const nameMatch = match.match(/fn\s+(\w+)/);
 		return nameMatch ? nameMatch[1] : 'anonymous';
 	}
 
-	protected extractParameters(match: string): string[] {
+	protected override extractParameters(match: string): string[] {
 		const paramsMatch = match.match(/\(([^)]*)\)/);
 		if (!paramsMatch || !paramsMatch[1].trim()) return [];
 
