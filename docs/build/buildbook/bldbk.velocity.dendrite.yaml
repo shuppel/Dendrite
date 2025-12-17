@@ -1,0 +1,241 @@
+# ============================================
+# DENDRITE IDE - VELOCITY BUILD BOOK
+# ============================================
+# Reference: bldbk.velocity.dendrite
+# Era: 4
+# CATS: cats.velocity.dendrite
+
+meta:
+  id: "bldbk.velocity.dendrite"
+  name: "Dendrite Terminal Velocity"
+  cats_ref: "cats.velocity.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 4
+  total_tasks: 8
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_4: { status: "in_progress", tasks_done: 7, tasks_total: 8 }
+  overall_completion: 87.5
+  notes: "Implementation complete. Task 4.7 (manual testing) requires hands-on validation."
+
+# ============================================
+# ERA 4: Terminal Velocity
+# ============================================
+era_4:
+  name: "Terminal Velocity"
+  description: "Hyprland-inspired terminal fluidity with smooth cursor and GPU acceleration"
+  assignee: "@shupp"
+  status: "in_progress"
+  depends_on: ["bldbk.core.dendrite:era_3"]
+  
+  goals:
+    - "Implement smooth cursor with sub-frame interpolation"
+    - "Force GPU acceleration for terminal rendering"
+    - "Minimize input-to-render latency to <16ms"
+    - "Add cursor physics configuration"
+    - "Achieve 60+ FPS terminal rendering"
+  
+  performance_targets:
+    cursor_fps: 60
+    input_latency_ms: 16
+    frame_overhead_ms: 1
+    gpu_required: true
+  
+  tasks:
+    - id: "4.1"
+      name: "Scaffold terminal contribution structure"
+      status: "completed"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/"
+      implements:
+        - "Create terminal subdirectory under dendrite contrib"
+        - "Set up module structure for xterm.js integration"
+      validation:
+        - "Directory exists and is importable"
+        - "Module structure follows VS Code patterns"
+    
+    - id: "4.2"
+      name: "Implement SmoothCursorAddon"
+      status: "completed"
+      depends_on: ["4.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+      implements:
+        - "SmoothCursorAddon class implementing ITerminalAddon"
+        - "Monitor xterm.onCursorMove events"
+        - "Create high-performance floating DOM overlay"
+        - "Implement lerp for smooth movement"
+        - "Use CSS transform: translate3d for GPU acceleration"
+        - "Configurable physics: duration and easing"
+      validation:
+        - "Cursor interpolation runs at 60+ FPS"
+        - "No visual lag between keystroke and cursor movement"
+        - "Performance overhead < 1ms per frame"
+    
+    - id: "4.3"
+      name: "Integrate with XtermTerminal"
+      status: "completed"
+      depends_on: ["4.2"]
+      files:
+        - "src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts"
+      implements:
+        - "Import and load SmoothCursorAddon"
+        - "Attach addon when dendrite.terminal.smoothCursor enabled"
+        - "Configure WebGL renderer as default"
+        - "Disable native cursor when smooth cursor active"
+      validation:
+        - "Smooth cursor loads automatically when enabled"
+        - "Terminal uses WebGL renderer by default"
+        - "Configuration changes apply immediately"
+    
+    - id: "4.4"
+      name: "Add terminal velocity settings"
+      status: "completed"
+      depends_on: ["4.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Register dendrite.terminal.smoothCursor (boolean)"
+        - "Register dendrite.terminal.cursorPhysics (object)"
+        - "Register dendrite.terminal.forceGPU (boolean)"
+        - "Register dendrite.terminal.targetFPS (number)"
+      validation:
+        - "All 4 settings appear in Settings UI"
+        - "Defaults match specification"
+        - "Type validation works"
+    
+    - id: "4.5"
+      name: "Implement settings change listeners"
+      status: "completed"
+      depends_on: ["4.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+      implements:
+        - "TerminalVelocityService class"
+        - "Listen to configuration changes"
+        - "Update SmoothCursorAddon physics on change"
+        - "Toggle smooth cursor dynamically"
+      validation:
+        - "Changing smoothCursor toggles feature immediately"
+        - "Changing cursorPhysics updates interpolation feel"
+        - "No terminal flicker on config change"
+    
+    - id: "4.6"
+      name: "Input latency optimization audit"
+      status: "completed"
+      depends_on: ["4.3"]
+      implements:
+        - "Profile input-to-render pipeline"
+        - "Measure keystroke → terminal update → screen render latency"
+        - "Identify and remove unnecessary async boundaries"
+        - "Batch DOM updates where possible"
+      validation:
+        - "Input latency < 16ms"
+        - "No forced reflows in input handler"
+        - "Performance.mark measurements show improvement"
+    
+    - id: "4.7"
+      name: "Visual smoothness testing"
+      status: "not_started"
+      depends_on: ["4.2", "4.5", "4.6"]
+      cats_ref: "cats.velocity.dendrite:manual_testing"
+      description: |
+        Manual hands-on testing following the protocol defined in CATS.
+        Execute all config_checks and test_workflow steps.
+      
+      test_protocol:
+        source: "cats.velocity.dendrite:manual_testing"
+        
+        config_params_to_test:
+          - "dendrite.terminal.smoothCursor: [true, false]"
+          - "dendrite.terminal.cursorPhysics.duration: [20, 80, 200]"
+          - "dendrite.terminal.cursorPhysics.easing: [linear, ease-out, ease-in-out]"
+          - "dendrite.terminal.forceGPU: [true, false]"
+          - "dendrite.terminal.targetFPS: [30, 60, 120]"
+        
+        workflow_steps:
+          - "1. Baseline capture (smooth cursor OFF)"
+          - "2. Enable smooth cursor and verify"
+          - "3. Physics parameter sweep"
+          - "4. Stress test with large files"
+          - "5. GPU toggle test"
+        
+        pre_test:
+          - "Kill all existing terminals"
+          - "Open DevTools Performance tab"
+          - "Navigate to Settings > dendrite.terminal"
+          - "Prepare test files (large JSON, logs)"
+      
+      test_scenarios:
+        - "Rapid typing (100+ WPM)"
+        - "Vim navigation (hjkl rapid movement)"
+        - "Tab completion with long paths"
+        - "Syntax highlighting heavy files"
+        - "Scrollback with active cursor"
+      
+      validation:
+        performance:
+          - "Cursor animation >= 60 FPS in all scenarios"
+          - "Input latency < 16ms"
+          - "Frame overhead < 1ms"
+          - "No memory leaks over 5 min stress test"
+        
+        visual:
+          - "Cursor movement feels fluid and responsive"
+          - "No stuttering or jank during rapid navigation"
+          - "Cursor shape matches terminal style"
+        
+        config:
+          - "All settings apply immediately without restart"
+          - "Invalid values properly rejected"
+          - "Toggling smoothCursor ON/OFF works cleanly"
+      
+      deliverables:
+        - "Completed test checklist with pass/fail for each config param"
+        - "Performance measurements (FPS, latency, memory)"
+        - "Issue reports using CATS issue_template if any failures"
+    
+    - id: "4.8"
+      name: "Documentation and configuration guide"
+      status: "completed"
+      depends_on: ["4.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+      implements:
+        - "Technical documentation for SmoothCursorAddon"
+        - "User guide for terminal velocity settings"
+        - "Performance tuning guide"
+        - "Troubleshooting: GPU acceleration issues"
+      validation:
+        - "Documentation is clear and complete"
+        - "Settings examples are accurate"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+    
+    testing:
+      protocol: "cats.velocity.dendrite:manual_testing"
+      checklist: "Manual testing checklist completed"
+      reports: "Issue reports filed for any failures"
+    
+    verification:
+      - "Smooth cursor renders at 60+ FPS"
+      - "Input latency < 16ms"
+      - "GPU acceleration active"
+      - "All config_checks from CATS pass"
+      - "All test_workflow steps executed"
+  
+  completion_criteria:
+    - "All 8 tasks completed"
+    - "Smooth cursor achieves 60+ FPS"
+    - "Input latency < 16ms measured"
+    - "Visual smoothness equivalent to Hyprland"
+    - "Manual testing protocol (cats.velocity.dendrite:manual_testing) fully executed"
+    - "All config parameter checks pass"
+    - "No critical issues in test reports"

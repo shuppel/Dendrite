@@ -2,48 +2,45 @@
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { IViewDescriptorService } from '../../../common/views.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
-import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
 import { IContextMenuService } from '../../../../platform/contextview/browser/contextView.js';
-import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
-import { ILoggerService } from '../../../../platform/log/common/log.js';
-import { IOpenerService } from '../../../../platform/opener/common/opener.js';
+import { ILogService } from '../../../../platform/log/common/log.js';
 import { IStorageService } from '../../../../platform/storage/common/storage.js';
 import { ITelemetryService } from '../../../../platform/telemetry/common/telemetry.js';
 import { IThemeService } from '../../../../platform/theme/common/themeService.js';
+import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
 import { ViewPaneContainer } from '../../../browser/parts/views/viewPaneContainer.js';
 import { IExtensionService } from '../../../services/extensions/common/extensions.js';
+import { IWorkbenchLayoutService } from '../../../services/layout/browser/layoutService.js';
 import { DENDRITE_VIEW_CONTAINER_ID } from '../common/constants.js';
 
 export class GrowthViewPaneContainer extends ViewPaneContainer {
     constructor(
-        @IConfigurationService configurationService: IConfigurationService,
-        @IContextMenuService contextMenuService: IContextMenuService,
-        @IKeybindingService keybindingService: IKeybindingService,
         @IInstantiationService instantiationService: IInstantiationService,
-        @IThemeService themeService: IThemeService,
+        @IConfigurationService configurationService: IConfigurationService,
+        @IWorkbenchLayoutService layoutService: IWorkbenchLayoutService,
+        @IContextMenuService contextMenuService: IContextMenuService,
         @ITelemetryService telemetryService: ITelemetryService,
         @IExtensionService extensionService: IExtensionService,
+        @IThemeService themeService: IThemeService,
         @IStorageService storageService: IStorageService,
+        @IWorkspaceContextService contextService: IWorkspaceContextService,
         @IViewDescriptorService viewDescriptorService: IViewDescriptorService,
-        @ILoggerService loggerService: ILoggerService,
-        @IOpenerService openerService: IOpenerService,
-        @IContextKeyService contextKeyService: IContextKeyService,
+        @ILogService logService: ILogService,
     ) {
         super(
             DENDRITE_VIEW_CONTAINER_ID,
             { mergeViewWithContainerWhenSingleView: true },
             instantiationService,
             configurationService,
-            themeService,
+            layoutService,
             contextMenuService,
             telemetryService,
             extensionService,
+            themeService,
             storageService,
-            contextKeyService,
+            contextService,
             viewDescriptorService,
-            keybindingService,
-            openerService,
-            loggerService
+            logService
         );
     }
 }

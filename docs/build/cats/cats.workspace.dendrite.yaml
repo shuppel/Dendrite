@@ -1,0 +1,564 @@
+# ============================================
+# DENDRITE IDE - UNIFIED WORKSPACE
+# ============================================
+# Reference: cats.workspace.dendrite
+# Era: 7
+# BuildBook: bldbk.workspace.dendrite
+
+cats:
+  meta:
+    id: "cats.workspace.dendrite"
+    name: "Dendrite Unified Workspace"
+    version: "0.1.0"
+    domain: "productivity"
+    era: 7
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.workspace.dendrite"
+    depends_on: ["cats.terminalux.dendrite"]
+    description: |
+      Unified workspace integrating external tools:
+      - TLDraw for visual thinking and architecture diagrams
+      - Linear for issue tracking and project management
+      - GitHub for PR review and repository management
+      - Shared AI context across all panels
+      - Consolidated workspace without browser tab switching
+
+  # ============================================
+  # DESIGN PHILOSOPHY
+  # ============================================
+  philosophy:
+    core_principle: "One workspace, all your tools"
+    
+    problems_solved:
+      - "Constant browser tab switching"
+      - "Context loss between tools"
+      - "AI doesn't know about your Linear issues"
+      - "Diagrams disconnected from code"
+      - "Multiple windows for single workflow"
+      
+    solution:
+      integration_model: "Embedded webviews with message passing"
+      ai_context: "Shared context feeds all panels"
+      workspace_state: "Persisted panel layouts and tool state"
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Embed TLDraw for visual architecture"
+      - "Embed Linear for issue/project management"
+      - "Embed GitHub for PR and repo operations"
+      - "Sync AI context across all integrated tools"
+      - "Enable quick panel switching and layouts"
+      - "Persist workspace state across sessions"
+    
+    ux_targets:
+      panel_switch_latency: "< 50ms"
+      tool_load_time: "< 2s first load, < 500ms cached"
+      context_sync_latency: "< 100ms"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/"
+        type: directory
+        description: "Unified workspace module"
+        task: "7.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/workspaceService.ts"
+        type: file
+        description: "Core workspace management service"
+        task: "7.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/panelRegistry.ts"
+        type: file
+        description: "Registry for integrated tool panels"
+        task: "7.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/contextBridge.ts"
+        type: file
+        description: "AI context sharing between panels"
+        task: "7.4"
+        
+      # TLDraw integration
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/"
+        type: directory
+        description: "TLDraw integration"
+        task: "7.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/tldrawPanel.ts"
+        type: file
+        description: "TLDraw webview panel"
+        task: "7.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/tldrawBridge.ts"
+        type: file
+        description: "TLDraw <-> Dendrite message passing"
+        task: "7.7"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/diagramSync.ts"
+        type: file
+        description: "Sync diagrams with codebase"
+        task: "7.8"
+        
+      # Linear integration
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/linear/"
+        type: directory
+        description: "Linear integration"
+        task: "7.9"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/linear/linearPanel.ts"
+        type: file
+        description: "Linear webview panel"
+        task: "7.10"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/linear/linearApi.ts"
+        type: file
+        description: "Linear API client"
+        task: "7.11"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/linear/issueLinker.ts"
+        type: file
+        description: "Link commits/branches to Linear issues"
+        task: "7.12"
+        
+      # GitHub integration
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/github/"
+        type: directory
+        description: "GitHub integration"
+        task: "7.13"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/github/githubPanel.ts"
+        type: file
+        description: "GitHub webview panel"
+        task: "7.14"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/github/prReviewService.ts"
+        type: file
+        description: "PR review within Dendrite"
+        task: "7.15"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/workspace/github/actionsStatus.ts"
+        type: file
+        description: "GitHub Actions status integration"
+        task: "7.16"
+
+  # ============================================
+  # INTEGRATED TOOLS
+  # ============================================
+  integrations:
+    tldraw:
+      description: "Visual thinking and architecture diagrams"
+      implementation: "Embedded webview with TLDraw React component"
+      
+      features:
+        core:
+          - "Full TLDraw drawing capabilities"
+          - "Architecture diagram templates"
+          - "Flowchart and sequence diagram support"
+          - "Export to PNG/SVG"
+          
+        dendrite_specific:
+          - "Auto-generate diagrams from codebase structure"
+          - "Link diagram elements to files/functions"
+          - "AI-assisted diagram generation"
+          - "Diagram versioning with commits"
+          
+        ai_integration:
+          - "Describe architecture in natural language -> diagram"
+          - "AI can reference diagrams when explaining code"
+          - "Update diagrams based on code changes"
+          
+      storage:
+        location: ".dendrite/diagrams/"
+        format: "TLDraw JSON"
+        
+    linear:
+      description: "Issue tracking and project management"
+      implementation: "OAuth + Linear API + Embedded webview"
+      
+      features:
+        read:
+          - "View assigned issues"
+          - "Browse project/team issues"
+          - "Search issues"
+          - "View issue details and comments"
+          
+        write:
+          - "Create issues from Dendrite"
+          - "Update issue status"
+          - "Add comments"
+          - "Link commits to issues"
+          
+        automation:
+          - "Auto-link branches to issues (branch naming)"
+          - "Auto-update issue status on PR merge"
+          - "AI suggests issues for current work context"
+          
+        ai_integration:
+          - "AI knows current active issue context"
+          - "Reference issue requirements when coding"
+          - "Generate commit messages from issue context"
+          
+      auth:
+        type: "OAuth 2.0"
+        scopes: ["read", "write", "issues:create"]
+        
+    github:
+      description: "Repository and PR management"
+      implementation: "GitHub OAuth + GraphQL API + Embedded webview"
+      
+      features:
+        repository:
+          - "View repository info"
+          - "Browse file tree (remote)"
+          - "View commit history"
+          - "Clone/fork repositories"
+          
+        pull_requests:
+          - "Create PRs from Dendrite"
+          - "Review PRs inline (comments, approve, request changes)"
+          - "View PR diff"
+          - "Merge PRs"
+          - "Resolve conflicts"
+          
+        issues:
+          - "View and create issues"
+          - "Link to Linear issues"
+          - "Assign and label"
+          
+        actions:
+          - "View workflow runs"
+          - "Re-run failed jobs"
+          - "View logs inline"
+          - "CI status in status bar"
+          
+        ai_integration:
+          - "AI-assisted PR descriptions"
+          - "AI code review suggestions"
+          - "Summarize PR changes"
+          
+      auth:
+        type: "GitHub OAuth App or PAT"
+        scopes: ["repo", "workflow", "read:org"]
+
+  # ============================================
+  # AI CONTEXT BRIDGE
+  # ============================================
+  context_bridge:
+    description: "Shared AI context across all integrated tools"
+    
+    context_sources:
+      code:
+        - "Current file and selection"
+        - "Open files"
+        - "Recent edits"
+        - "Git diff/status"
+        
+      tldraw:
+        - "Active diagram"
+        - "Selected elements"
+        - "Diagram metadata (linked files)"
+        
+      linear:
+        - "Active issue"
+        - "Issue description and comments"
+        - "Related issues"
+        - "Project context"
+        
+      github:
+        - "Current PR context"
+        - "PR description and comments"
+        - "CI status"
+        - "Repository README"
+        
+    context_consumers:
+      ai_assistant:
+        - "Full context for natural language queries"
+        - "Can reference any panel's data"
+        - "Suggests cross-tool actions"
+        
+      auto_linking:
+        - "Suggest Linear issue links"
+        - "Suggest PR associations"
+        - "Suggest diagram updates"
+        
+    sync_protocol:
+      event_types:
+        - "context_update"
+        - "tool_focus_change"
+        - "data_refresh"
+        - "action_request"
+      
+      message_format:
+        type: "dendrite_context_message"
+        fields:
+          - { name: "source", type: "string", description: "Panel ID" }
+          - { name: "event", type: "string", description: "Event type" }
+          - { name: "context", type: "object", description: "Context data" }
+          - { name: "timestamp", type: "number" }
+
+  # ============================================
+  # PANEL LAYOUTS
+  # ============================================
+  layouts:
+    predefined:
+      - id: "terminal-focus"
+        description: "Terminal-first with collapsible panels"
+        layout:
+          main: "terminal"
+          sidebar: "collapsed"
+          bottom: "none"
+          
+      - id: "code-and-diagram"
+        description: "Editor with TLDraw side-by-side"
+        layout:
+          left: "editor"
+          right: "tldraw"
+          ratio: "60:40"
+          
+      - id: "issue-driven"
+        description: "Linear issue with editor"
+        layout:
+          left: "linear"
+          center: "editor"
+          right: "terminal"
+          ratio: "25:50:25"
+          
+      - id: "pr-review"
+        description: "GitHub PR review layout"
+        layout:
+          left: "github-diff"
+          right: "github-comments"
+          bottom: "terminal"
+          
+      - id: "full-workspace"
+        description: "All panels visible"
+        layout:
+          left-top: "linear"
+          left-bottom: "github"
+          center: "editor"
+          right: "tldraw"
+          bottom: "terminal"
+          
+    custom:
+      description: "User-defined layouts"
+      storage: ".dendrite/layouts.json"
+      
+  # ============================================
+  # COMMANDS
+  # ============================================
+  commands:
+    prefix: "dendrite.workspace"
+    
+    items:
+      # General
+      - id: "dendrite.workspace.togglePanel"
+        title: "Dendrite: Toggle Workspace Panel"
+        description: "Quick switch between workspace panels"
+        keybinding: "ctrl+shift+p"
+        task: "7.17"
+        
+      - id: "dendrite.workspace.switchLayout"
+        title: "Dendrite: Switch Layout"
+        description: "Choose workspace layout"
+        task: "7.18"
+        
+      - id: "dendrite.workspace.saveLayout"
+        title: "Dendrite: Save Current Layout"
+        description: "Save current panel arrangement"
+        task: "7.19"
+        
+      # TLDraw
+      - id: "dendrite.workspace.openTldraw"
+        title: "Dendrite: Open TLDraw"
+        description: "Open TLDraw panel"
+        keybinding: "ctrl+shift+d"
+        task: "7.20"
+        
+      - id: "dendrite.workspace.generateDiagram"
+        title: "Dendrite: Generate Diagram from Code"
+        description: "AI generates architecture diagram"
+        task: "7.21"
+        
+      - id: "dendrite.workspace.linkDiagramElement"
+        title: "Dendrite: Link to Code"
+        description: "Link selected diagram element to code"
+        task: "7.22"
+        
+      # Linear
+      - id: "dendrite.workspace.openLinear"
+        title: "Dendrite: Open Linear"
+        description: "Open Linear panel"
+        keybinding: "ctrl+shift+l"
+        task: "7.23"
+        
+      - id: "dendrite.workspace.createIssue"
+        title: "Dendrite: Create Linear Issue"
+        description: "Create new issue from current context"
+        task: "7.24"
+        
+      - id: "dendrite.workspace.linkCommitToIssue"
+        title: "Dendrite: Link Commit to Issue"
+        description: "Associate current branch/commit with issue"
+        task: "7.25"
+        
+      # GitHub
+      - id: "dendrite.workspace.openGithub"
+        title: "Dendrite: Open GitHub"
+        description: "Open GitHub panel"
+        keybinding: "ctrl+shift+h"
+        task: "7.26"
+        
+      - id: "dendrite.workspace.createPR"
+        title: "Dendrite: Create Pull Request"
+        description: "Create PR from current branch"
+        task: "7.27"
+        
+      - id: "dendrite.workspace.reviewPR"
+        title: "Dendrite: Review Pull Request"
+        description: "Open PR review panel"
+        task: "7.28"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.workspace"
+    
+    items:
+      - id: "dendrite.workspace.defaultLayout"
+        type: "string"
+        default: "terminal-focus"
+        enum: ["terminal-focus", "code-and-diagram", "issue-driven", "pr-review", "full-workspace"]
+        description: "Default workspace layout"
+        task: "7.29"
+        
+      - id: "dendrite.workspace.syncContext"
+        type: "boolean"
+        default: true
+        description: "Sync AI context across panels"
+        task: "7.29"
+        
+      - id: "dendrite.workspace.autoLinkIssues"
+        type: "boolean"
+        default: true
+        description: "Auto-link branches to Linear issues"
+        task: "7.29"
+        
+      - id: "dendrite.workspace.showCIStatus"
+        type: "boolean"
+        default: true
+        description: "Show GitHub Actions status in status bar"
+        task: "7.29"
+        
+      # TLDraw
+      - id: "dendrite.workspace.tldraw.autoSave"
+        type: "boolean"
+        default: true
+        description: "Auto-save TLDraw diagrams"
+        task: "7.30"
+        
+      - id: "dendrite.workspace.tldraw.defaultTemplate"
+        type: "string"
+        default: "blank"
+        enum: ["blank", "architecture", "flowchart", "sequence"]
+        description: "Default diagram template"
+        task: "7.30"
+        
+      # Linear
+      - id: "dendrite.workspace.linear.defaultView"
+        type: "string"
+        default: "my-issues"
+        enum: ["my-issues", "team", "project", "cycle"]
+        description: "Default Linear view"
+        task: "7.31"
+        
+      - id: "dendrite.workspace.linear.branchFormat"
+        type: "string"
+        default: "{issueId}-{slug}"
+        description: "Branch naming format for issue linking"
+        task: "7.31"
+        
+      # GitHub
+      - id: "dendrite.workspace.github.defaultTab"
+        type: "string"
+        default: "prs"
+        enum: ["prs", "issues", "actions", "repo"]
+        description: "Default GitHub panel tab"
+        task: "7.32"
+
+  # ============================================
+  # UI COMPONENTS
+  # ============================================
+  ui:
+    view_containers:
+      - id: "dendrite-tools"
+        name: "Dendrite Tools"
+        location: "activitybar"
+        icon: "layout"
+        order: 101
+        description: "Access to integrated workspace tools"
+        
+    views:
+      - id: "dendrite.workspace.tldraw"
+        name: "TLDraw"
+        container: "dendrite-tools"
+        type: "webview"
+        task: "7.6"
+        
+      - id: "dendrite.workspace.linear"
+        name: "Linear"
+        container: "dendrite-tools"
+        type: "webview"
+        task: "7.10"
+        
+      - id: "dendrite.workspace.github"
+        name: "GitHub"
+        container: "dendrite-tools"
+        type: "webview"
+        task: "7.14"
+        
+    status_bar:
+      - id: "dendrite.workspace.ciStatus"
+        alignment: "left"
+        priority: 50
+        tooltip: "GitHub Actions Status"
+        command: "dendrite.workspace.openGithub"
+        
+      - id: "dendrite.workspace.activeIssue"
+        alignment: "left"
+        priority: 49
+        tooltip: "Current Linear Issue"
+        command: "dendrite.workspace.openLinear"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    internal:
+      - "cats.terminalux.dendrite (Era 5)"
+      
+    external:
+      - name: "tldraw"
+        version: "^2.0.0"
+        description: "TLDraw React component"
+        
+    apis:
+      - name: "Linear API"
+        version: "v3"
+        auth: "OAuth 2.0"
+        
+      - name: "GitHub GraphQL API"
+        version: "v4"
+        auth: "OAuth or PAT"
+        
+    vscode_apis:
+      - "IWebviewViewProvider"
+      - "IAuthenticationService"
+      - "IStorageService"
+      - "ILayoutService"

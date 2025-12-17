@@ -1,0 +1,388 @@
+# ============================================
+# DENDRITE IDE - TERMINAL-FIRST UX
+# ============================================
+# Reference: cats.terminalux.dendrite
+# Era: 5
+# BuildBook: bldbk.terminalux.dendrite
+
+cats:
+  meta:
+    id: "cats.terminalux.dendrite"
+    name: "Dendrite Terminal-First UX"
+    version: "0.1.0"
+    domain: "user-experience"
+    era: 5
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.terminalux.dendrite"
+    depends_on: ["cats.velocity.dendrite"]
+    description: |
+      Terminal-first workflow paradigm:
+      - Fullscreen terminal as default workspace
+      - Quick swap to editor mode for larger edits
+      - Diff-focus workflow: auto-show diffs after AI edits
+      - Agent checkpoint system: pause for human review
+      - OpenCode-like interface within VS Code
+
+  # ============================================
+  # DESIGN PHILOSOPHY
+  # ============================================
+  philosophy:
+    core_principle: "Terminal is home, editor is a tool"
+    
+    workflow:
+      default_state: "Fullscreen terminal (OpenCode-like)"
+      edit_mode: "Quick swap to editor for multi-file changes"
+      review_mode: "Diff panel with accept/reject controls"
+      
+    human_in_the_loop:
+      description: "AI assists, human approves every change"
+      checkpoint_trigger: "After any AI-generated edit"
+      review_requirement: "Explicit accept/reject before continuing"
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Make terminal the primary workspace"
+      - "Enable instant mode switching (terminal <-> editor)"
+      - "Auto-focus diffs after AI edits"
+      - "Implement agent checkpoint system"
+      - "Create OpenCode-like command interface"
+    
+    ux_targets:
+      mode_switch_latency: "< 100ms"
+      diff_focus_delay: "< 50ms after edit"
+      checkpoint_visibility: "Clear UI indication of paused state"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/"
+        type: directory
+        description: "Terminal-first UX module"
+        task: "5.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/fullscreenTerminalService.ts"
+        type: file
+        description: "Fullscreen terminal mode management"
+        task: "5.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/modeSwitchService.ts"
+        type: file
+        description: "Terminal <-> Editor mode switching"
+        task: "5.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/diffFocusService.ts"
+        type: file
+        description: "Auto-focus diffs after edits"
+        task: "5.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/agentCheckpointService.ts"
+        type: file
+        description: "Agent pause/resume checkpoint system"
+        task: "5.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/checkpointPanel.ts"
+        type: file
+        description: "UI panel for checkpoint review"
+        task: "5.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminalux/commandPalette.ts"
+        type: file
+        description: "OpenCode-like command interface"
+        task: "5.7"
+
+  # ============================================
+  # MODE SYSTEM
+  # ============================================
+  modes:
+    terminal_mode:
+      name: "Terminal Mode"
+      description: "Fullscreen terminal, OpenCode-like experience"
+      layout:
+        terminal: "100% viewport"
+        sidebar: "hidden"
+        editor: "hidden"
+        status_bar: "visible (minimal)"
+      features:
+        - "AI chat integrated in terminal"
+        - "File operations via CLI"
+        - "Git operations via CLI"
+        - "Quick preview of files (less-style)"
+        
+    editor_mode:
+      name: "Editor Mode"
+      description: "Traditional VS Code layout for larger edits"
+      layout:
+        terminal: "bottom panel or hidden"
+        sidebar: "visible"
+        editor: "primary viewport"
+        status_bar: "visible (full)"
+      features:
+        - "Multi-file editing"
+        - "IntelliSense"
+        - "Debugging"
+        - "Extensions panel"
+        
+    diff_mode:
+      name: "Diff Review Mode"
+      description: "Focused diff review after AI edits"
+      layout:
+        diff_panel: "primary viewport"
+        file_list: "sidebar with changed files"
+        controls: "accept/reject toolbar"
+        terminal: "minimized or hidden"
+      features:
+        - "Side-by-side diff view"
+        - "Per-file or per-hunk accept/reject"
+        - "Batch approve/reject all"
+        - "Comment/request changes"
+
+  # ============================================
+  # KEYBINDINGS
+  # ============================================
+  keybindings:
+    mode_switching:
+      - id: "dendrite.toggleTerminalFullscreen"
+        key: "ctrl+`"
+        description: "Toggle between terminal and editor mode"
+        task: "5.8"
+        
+      - id: "dendrite.enterTerminalMode"
+        key: "ctrl+shift+`"
+        description: "Force enter terminal mode"
+        task: "5.8"
+        
+      - id: "dendrite.enterEditorMode"
+        key: "ctrl+shift+e"
+        description: "Force enter editor mode"
+        task: "5.8"
+        
+    checkpoint:
+      - id: "dendrite.acceptChanges"
+        key: "ctrl+enter"
+        description: "Accept all pending changes"
+        context: "when dendrite.checkpointActive"
+        task: "5.9"
+        
+      - id: "dendrite.rejectChanges"
+        key: "ctrl+backspace"
+        description: "Reject all pending changes"
+        context: "when dendrite.checkpointActive"
+        task: "5.9"
+        
+      - id: "dendrite.acceptHunk"
+        key: "ctrl+shift+a"
+        description: "Accept current hunk"
+        context: "when dendrite.diffFocused"
+        task: "5.9"
+        
+      - id: "dendrite.rejectHunk"
+        key: "ctrl+shift+r"
+        description: "Reject current hunk"
+        context: "when dendrite.diffFocused"
+        task: "5.9"
+        
+    navigation:
+      - id: "dendrite.nextChange"
+        key: "ctrl+]"
+        description: "Navigate to next change"
+        context: "when dendrite.diffFocused"
+        task: "5.10"
+        
+      - id: "dendrite.prevChange"
+        key: "ctrl+["
+        description: "Navigate to previous change"
+        context: "when dendrite.diffFocused"
+        task: "5.10"
+
+  # ============================================
+  # COMMANDS
+  # ============================================
+  commands:
+    prefix: "dendrite.terminalux"
+    
+    items:
+      - id: "dendrite.terminalux.toggleMode"
+        title: "Dendrite: Toggle Terminal/Editor Mode"
+        description: "Switch between terminal-first and editor modes"
+        task: "5.8"
+        
+      - id: "dendrite.terminalux.enterTerminalMode"
+        title: "Dendrite: Enter Terminal Mode"
+        description: "Switch to fullscreen terminal"
+        task: "5.8"
+        
+      - id: "dendrite.terminalux.enterEditorMode"
+        title: "Dendrite: Enter Editor Mode"
+        description: "Switch to traditional editor layout"
+        task: "5.8"
+        
+      - id: "dendrite.terminalux.showDiff"
+        title: "Dendrite: Show Pending Changes"
+        description: "Open diff review panel"
+        task: "5.11"
+        
+      - id: "dendrite.terminalux.acceptAll"
+        title: "Dendrite: Accept All Changes"
+        description: "Accept all pending AI changes"
+        task: "5.9"
+        
+      - id: "dendrite.terminalux.rejectAll"
+        title: "Dendrite: Reject All Changes"
+        description: "Reject all pending AI changes"
+        task: "5.9"
+        
+      - id: "dendrite.terminalux.pauseAgent"
+        title: "Dendrite: Pause Agent"
+        description: "Manually trigger checkpoint"
+        task: "5.12"
+        
+      - id: "dendrite.terminalux.resumeAgent"
+        title: "Dendrite: Resume Agent"
+        description: "Continue after checkpoint review"
+        task: "5.12"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.terminalux"
+    
+    items:
+      - id: "dendrite.terminalux.defaultMode"
+        type: "string"
+        default: "terminal"
+        enum: ["terminal", "editor"]
+        description: "Default mode on startup"
+        task: "5.13"
+        
+      - id: "dendrite.terminalux.autoCheckpoint"
+        type: "boolean"
+        default: true
+        description: "Automatically pause agent after edits for review"
+        task: "5.13"
+        
+      - id: "dendrite.terminalux.checkpointThreshold"
+        type: "number"
+        default: 1
+        description: "Number of file edits before auto-checkpoint (0 = every edit)"
+        task: "5.13"
+        
+      - id: "dendrite.terminalux.autoDiffFocus"
+        type: "boolean"
+        default: true
+        description: "Auto-focus diff panel after AI edits"
+        task: "5.13"
+        
+      - id: "dendrite.terminalux.diffViewStyle"
+        type: "string"
+        default: "side-by-side"
+        enum: ["side-by-side", "inline", "unified"]
+        description: "Preferred diff view style"
+        task: "5.13"
+        
+      - id: "dendrite.terminalux.showModeIndicator"
+        type: "boolean"
+        default: true
+        description: "Show current mode in status bar"
+        task: "5.13"
+
+  # ============================================
+  # AGENT CHECKPOINT SYSTEM
+  # ============================================
+  checkpoint_system:
+    description: "Human-in-the-loop review system for AI edits"
+    
+    triggers:
+      - "After any file edit by AI agent"
+      - "After batch of edits (configurable threshold)"
+      - "Manual trigger via command/keybinding"
+      - "Before destructive operations (delete, overwrite)"
+      
+    states:
+      active:
+        description: "Agent is running, processing user request"
+        indicator: "Spinning icon in status bar"
+        
+      paused:
+        description: "Agent paused, waiting for human review"
+        indicator: "Pause icon with 'Review Required' badge"
+        
+      reviewing:
+        description: "Human is actively reviewing diffs"
+        indicator: "Eye icon with change count"
+        
+      approved:
+        description: "Changes accepted, agent may continue"
+        transition: "Back to active or idle"
+        
+      rejected:
+        description: "Changes rejected, agent rolls back"
+        transition: "Revert changes, back to active"
+        
+    ui_components:
+      checkpoint_banner:
+        location: "Top of editor/terminal area"
+        content: "AI made changes to N files. Review required."
+        actions: ["View Changes", "Accept All", "Reject All"]
+        
+      change_summary:
+        location: "Sidebar panel"
+        content: "List of changed files with +/- line counts"
+        interactions: ["Click to view diff", "Per-file accept/reject"]
+        
+      diff_overlay:
+        location: "Main editor area"
+        content: "Side-by-side or inline diff"
+        interactions: ["Per-hunk accept/reject", "Navigate hunks"]
+
+  # ============================================
+  # OPENCODE-LIKE INTERFACE
+  # ============================================
+  opencode_interface:
+    description: "Terminal-native AI interaction"
+    
+    features:
+      command_input:
+        location: "Bottom of terminal or floating input"
+        trigger: "Ctrl+K or / prefix"
+        capabilities:
+          - "Natural language commands"
+          - "File path autocomplete"
+          - "Command history"
+          - "Context awareness (current file, selection)"
+          
+      response_display:
+        location: "Inline in terminal or overlay panel"
+        formatting:
+          - "Syntax-highlighted code blocks"
+          - "Collapsible explanations"
+          - "Inline diff previews"
+          - "Action buttons (Apply, Copy, Explain)"
+          
+      context_indicators:
+        - "Current working directory"
+        - "Active file (if any)"
+        - "Git branch and status"
+        - "Session stats from Growth"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    internal:
+      - "cats.velocity.dendrite (Era 4)"
+      - "cats.core.dendrite (Era 1-3)"
+      
+    vscode_apis:
+      - "ITerminalService"
+      - "IEditorService"
+      - "IDiffEditorService"
+      - "ILayoutService"
+      - "IStatusbarService"
+      - "IQuickInputService"

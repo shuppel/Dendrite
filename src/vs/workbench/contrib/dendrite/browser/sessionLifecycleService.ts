@@ -128,7 +128,8 @@ export class DendriteSessionLifecycleService extends Disposable {
         if (this._handle === undefined) return;
 
         const wasm = WasmBridge.instance;
-        const sessionStats = wasm.endSession(this._handle);
+        // End session and get stats (stats will be used for notifications in future)
+        wasm.endSession(this._handle);
         
         const sessionJson = wasm.serializeSession(this._handle);
         let profileJson = this.storageService.getProfileJson();

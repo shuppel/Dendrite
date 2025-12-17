@@ -1,0 +1,446 @@
+# ============================================
+# DENDRITE IDE - UNIFIED WORKSPACE BUILD BOOK
+# ============================================
+# Reference: bldbk.workspace.dendrite
+# Era: 7
+# CATS: cats.workspace.dendrite
+
+meta:
+  id: "bldbk.workspace.dendrite"
+  name: "Dendrite Unified Workspace"
+  cats_ref: "cats.workspace.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 7
+  total_tasks: 35
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_7: { status: "not_started", tasks_done: 0, tasks_total: 35 }
+  overall_completion: 0
+
+# ============================================
+# ERA 7: Unified Workspace
+# ============================================
+era_7:
+  name: "Unified Workspace"
+  description: "TLDraw, Linear, GitHub integration in consolidated panels"
+  assignee: "TBD"
+  status: "not_started"
+  depends_on: ["bldbk.terminalux.dendrite:era_5"]
+  
+  goals:
+    - "Embed TLDraw for visual architecture"
+    - "Embed Linear for issue/project management"
+    - "Embed GitHub for PR and repo operations"
+    - "Sync AI context across all integrated tools"
+    - "Enable quick panel switching and layouts"
+  
+  ux_targets:
+    panel_switch_latency: "< 50ms"
+    tool_load_time: "< 2s first load, < 500ms cached"
+    context_sync_latency: "< 100ms"
+  
+  phases:
+    - { name: "Phase 1: Core Infrastructure", tasks: ["7.1", "7.2", "7.3", "7.4"] }
+    - { name: "Phase 2: TLDraw Integration", tasks: ["7.5", "7.6", "7.7", "7.8"] }
+    - { name: "Phase 3: Linear Integration", tasks: ["7.9", "7.10", "7.11", "7.12"] }
+    - { name: "Phase 4: GitHub Integration", tasks: ["7.13", "7.14", "7.15", "7.16"] }
+    - { name: "Phase 5: Commands", tasks: ["7.17", "7.18", "7.19", "7.20", "7.21", "7.22", "7.23", "7.24", "7.25", "7.26", "7.27", "7.28"] }
+    - { name: "Phase 6: Settings", tasks: ["7.29", "7.30", "7.31", "7.32"] }
+    - { name: "Phase 7: Testing & Docs", tasks: ["7.33", "7.34", "7.35"] }
+  
+  tasks:
+    # Phase 1: Core Infrastructure
+    - id: "7.1"
+      name: "Create workspace module structure"
+      status: "not_started"
+      phase: 1
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "7.2"
+      name: "Implement workspace service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/workspaceService.ts"
+      implements:
+        - "WorkspaceService class"
+        - "Manage integrated tool panels"
+        - "Handle layout persistence"
+        - "Coordinate panel visibility"
+      validation:
+        - "Panel management works"
+        - "Layout persists"
+    
+    - id: "7.3"
+      name: "Implement panel registry"
+      status: "not_started"
+      phase: 1
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/panelRegistry.ts"
+      implements:
+        - "PanelRegistry class"
+        - "Register tool panels (TLDraw, Linear, GitHub)"
+        - "Panel lifecycle management"
+        - "Panel state persistence"
+      validation:
+        - "Panels register correctly"
+        - "Lifecycle events fire"
+    
+    - id: "7.4"
+      name: "Implement context bridge"
+      status: "not_started"
+      phase: 1
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/contextBridge.ts"
+      implements:
+        - "ContextBridge class"
+        - "Collect context from all panels"
+        - "Share context with AI assistant"
+        - "Event-driven context updates"
+        - "Context source priorities"
+      validation:
+        - "Context aggregates correctly"
+        - "AI receives unified context"
+    
+    # Phase 2: TLDraw Integration
+    - id: "7.5"
+      name: "Create TLDraw module structure"
+      status: "not_started"
+      phase: 2
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/"
+      validation:
+        - "Directory exists"
+    
+    - id: "7.6"
+      name: "Implement TLDraw panel"
+      status: "not_started"
+      phase: 2
+      depends_on: ["7.3", "7.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/tldrawPanel.ts"
+      implements:
+        - "TldrawPanel webview"
+        - "Embed TLDraw React component"
+        - "Handle webview lifecycle"
+        - "Theme integration"
+      validation:
+        - "TLDraw renders in webview"
+        - "Theme matches Dendrite"
+    
+    - id: "7.7"
+      name: "Implement TLDraw bridge"
+      status: "not_started"
+      phase: 2
+      depends_on: ["7.4", "7.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/tldrawBridge.ts"
+      implements:
+        - "TldrawBridge class"
+        - "VS Code <-> TLDraw message passing"
+        - "Export diagrams"
+        - "Import diagrams"
+        - "Context provider for AI"
+      validation:
+        - "Messages pass correctly"
+        - "Export/import work"
+    
+    - id: "7.8"
+      name: "Implement diagram sync"
+      status: "not_started"
+      phase: 2
+      depends_on: ["7.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/tldraw/diagramSync.ts"
+      implements:
+        - "DiagramSync class"
+        - "Auto-save diagrams to .dendrite/diagrams/"
+        - "Link diagram elements to code"
+        - "Versioning with commits"
+      validation:
+        - "Diagrams persist"
+        - "Links work"
+    
+    # Phase 3: Linear Integration
+    - id: "7.9"
+      name: "Create Linear module structure"
+      status: "not_started"
+      phase: 3
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/linear/"
+      validation:
+        - "Directory exists"
+    
+    - id: "7.10"
+      name: "Implement Linear panel"
+      status: "not_started"
+      phase: 3
+      depends_on: ["7.3", "7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/linear/linearPanel.ts"
+      implements:
+        - "LinearPanel webview"
+        - "OAuth login flow"
+        - "Issue list view"
+        - "Issue detail view"
+      validation:
+        - "OAuth works"
+        - "Issues display"
+    
+    - id: "7.11"
+      name: "Implement Linear API client"
+      status: "not_started"
+      phase: 3
+      depends_on: ["7.10"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/linear/linearApi.ts"
+      implements:
+        - "LinearApi class"
+        - "Issue CRUD operations"
+        - "Project/team queries"
+        - "Comment operations"
+        - "Status updates"
+      validation:
+        - "All operations work"
+        - "Error handling correct"
+    
+    - id: "7.12"
+      name: "Implement issue linker"
+      status: "not_started"
+      phase: 3
+      depends_on: ["7.4", "7.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/linear/issueLinker.ts"
+      implements:
+        - "IssueLinker class"
+        - "Link branches to issues"
+        - "Link commits to issues"
+        - "Auto-update issue status on merge"
+        - "Context provider for AI"
+      validation:
+        - "Links work"
+        - "Status updates trigger"
+    
+    # Phase 4: GitHub Integration
+    - id: "7.13"
+      name: "Create GitHub module structure"
+      status: "not_started"
+      phase: 4
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/github/"
+      validation:
+        - "Directory exists"
+    
+    - id: "7.14"
+      name: "Implement GitHub panel"
+      status: "not_started"
+      phase: 4
+      depends_on: ["7.3", "7.13"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/github/githubPanel.ts"
+      implements:
+        - "GithubPanel webview"
+        - "OAuth/PAT login"
+        - "PR list view"
+        - "PR detail view"
+        - "Issue list view"
+      validation:
+        - "Auth works"
+        - "PRs/issues display"
+    
+    - id: "7.15"
+      name: "Implement PR review service"
+      status: "not_started"
+      phase: 4
+      depends_on: ["7.14"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/github/prReviewService.ts"
+      implements:
+        - "PrReviewService class"
+        - "View PR diff"
+        - "Add comments"
+        - "Approve/request changes"
+        - "Merge PRs"
+      validation:
+        - "Review actions work"
+        - "Comments post correctly"
+    
+    - id: "7.16"
+      name: "Implement Actions status"
+      status: "not_started"
+      phase: 4
+      depends_on: ["7.14"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/github/actionsStatus.ts"
+      implements:
+        - "ActionsStatus class"
+        - "Monitor workflow runs"
+        - "Show status in status bar"
+        - "Re-run failed jobs"
+        - "View logs inline"
+      validation:
+        - "Status displays correctly"
+        - "Actions work"
+    
+    # Phase 5: Commands (abbreviated for brevity)
+    - id: "7.17"
+      name: "Implement togglePanel command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.togglePanel"]
+    
+    - id: "7.18"
+      name: "Implement switchLayout command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.switchLayout"]
+    
+    - id: "7.19"
+      name: "Implement saveLayout command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.saveLayout"]
+    
+    - id: "7.20"
+      name: "Implement openTldraw command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.openTldraw"]
+    
+    - id: "7.21"
+      name: "Implement generateDiagram command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.generateDiagram"]
+    
+    - id: "7.22"
+      name: "Implement linkDiagramElement command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.linkDiagramElement"]
+    
+    - id: "7.23"
+      name: "Implement openLinear command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.openLinear"]
+    
+    - id: "7.24"
+      name: "Implement createIssue command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.createIssue"]
+    
+    - id: "7.25"
+      name: "Implement linkCommitToIssue command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.linkCommitToIssue"]
+    
+    - id: "7.26"
+      name: "Implement openGithub command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.openGithub"]
+    
+    - id: "7.27"
+      name: "Implement createPR command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.createPR"]
+    
+    - id: "7.28"
+      name: "Implement reviewPR command"
+      status: "not_started"
+      phase: 5
+      implements: ["dendrite.workspace.reviewPR"]
+    
+    # Phase 6: Settings
+    - id: "7.29"
+      name: "Register workspace settings"
+      status: "not_started"
+      phase: 6
+      implements:
+        - "dendrite.workspace.defaultLayout"
+        - "dendrite.workspace.syncContext"
+        - "dendrite.workspace.autoLinkIssues"
+        - "dendrite.workspace.showCIStatus"
+    
+    - id: "7.30"
+      name: "Register TLDraw settings"
+      status: "not_started"
+      phase: 6
+      implements:
+        - "dendrite.workspace.tldraw.autoSave"
+        - "dendrite.workspace.tldraw.defaultTemplate"
+    
+    - id: "7.31"
+      name: "Register Linear settings"
+      status: "not_started"
+      phase: 6
+      implements:
+        - "dendrite.workspace.linear.defaultView"
+        - "dendrite.workspace.linear.branchFormat"
+    
+    - id: "7.32"
+      name: "Register GitHub settings"
+      status: "not_started"
+      phase: 6
+      implements:
+        - "dendrite.workspace.github.defaultTab"
+    
+    # Phase 7: Testing & Docs
+    - id: "7.33"
+      name: "End-to-end testing"
+      status: "not_started"
+      phase: 7
+      test_scenarios:
+        - "Open TLDraw, create diagram"
+        - "Link diagram to code"
+        - "Open Linear, view issues"
+        - "Create issue from Dendrite"
+        - "Link commit to issue"
+        - "Open GitHub, create PR"
+        - "Review PR inline"
+        - "View CI status"
+        - "Switch layouts"
+    
+    - id: "7.34"
+      name: "AI context integration testing"
+      status: "not_started"
+      phase: 7
+      test_scenarios:
+        - "AI references Linear issue in code help"
+        - "AI suggests diagram updates based on code"
+        - "AI references PR context"
+    
+    - id: "7.35"
+      name: "Documentation"
+      status: "not_started"
+      phase: 7
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/workspace/README.md"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/workspace/**/*.ts"
+    
+    verification:
+      - "All 3 integrations functional"
+      - "Context sharing works"
+      - "Layouts persist"
+  
+  completion_criteria:
+    - "All 35 tasks completed"
+    - "TLDraw, Linear, GitHub integrated"
+    - "AI context synced across panels"
+    - "All commands registered"

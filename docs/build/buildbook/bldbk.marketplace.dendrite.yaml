@@ -1,0 +1,368 @@
+# ============================================
+# DENDRITE IDE - OPINIONATED MARKETPLACE BUILD BOOK
+# ============================================
+# Reference: bldbk.marketplace.dendrite
+# Era: 8
+# CATS: cats.marketplace.dendrite
+
+meta:
+  id: "bldbk.marketplace.dendrite"
+  name: "Dendrite Opinionated Marketplace"
+  cats_ref: "cats.marketplace.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 8
+  total_tasks: 20
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_8: { status: "not_started", tasks_done: 0, tasks_total: 20 }
+  overall_completion: 0
+
+# ============================================
+# ERA 8: Opinionated Marketplace
+# ============================================
+era_8:
+  name: "Opinionated Marketplace"
+  description: "Curated extensions, AI workflow sync hooks"
+  assignee: "TBD"
+  status: "not_started"
+  depends_on: ["bldbk.workspace.dendrite:era_7"]
+  
+  goals:
+    - "Create curated extension marketplace"
+    - "Enable AI workflow hooks for extensions"
+    - "Sync extension state with workspace tools"
+    - "Block telemetry and low-quality extensions"
+    - "Provide Dendrite-verified extension tier"
+  
+  quality_metrics:
+    verified_extensions: "100% reviewed by Dendrite team"
+    community_threshold: "4.5+ rating, 10k+ downloads, no telemetry"
+    ai_hook_coverage: "All verified extensions have AI context"
+  
+  phases:
+    - { name: "Phase 1: Infrastructure", tasks: ["8.1", "8.2", "8.3"] }
+    - { name: "Phase 2: AI Hooks", tasks: ["8.4"] }
+    - { name: "Phase 3: Analysis", tasks: ["8.5"] }
+    - { name: "Phase 4: UI", tasks: ["8.6"] }
+    - { name: "Phase 5: Sync", tasks: ["8.7"] }
+    - { name: "Phase 6: Commands", tasks: ["8.8", "8.9", "8.10", "8.11", "8.12", "8.13"] }
+    - { name: "Phase 7: Settings", tasks: ["8.14"] }
+    - { name: "Phase 8: Mutations", tasks: ["8.15", "8.16"] }
+    - { name: "Phase 9: Testing & Docs", tasks: ["8.17", "8.18", "8.19", "8.20"] }
+  
+  tasks:
+    # Phase 1: Infrastructure
+    - id: "8.1"
+      name: "Create marketplace module structure"
+      status: "not_started"
+      phase: 1
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "8.2"
+      name: "Implement marketplace service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/marketplaceService.ts"
+      implements:
+        - "MarketplaceService class"
+        - "Replace VS Code gallery service"
+        - "Query Dendrite Marketplace API"
+        - "Handle extension downloads"
+        - "Manage installed extensions"
+        - "Tier filtering (verified/community/external)"
+      validation:
+        - "API queries work"
+        - "Downloads succeed"
+        - "Filtering works"
+    
+    - id: "8.3"
+      name: "Implement curation service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["8.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/curationService.ts"
+      implements:
+        - "CurationService class"
+        - "Verify extension tier status"
+        - "Fetch curation metadata"
+        - "Blocklist checking"
+        - "Quality threshold enforcement"
+      validation:
+        - "Tier verification works"
+        - "Blocklist blocks correctly"
+    
+    # Phase 2: AI Hooks
+    - id: "8.4"
+      name: "Implement AI hooks service"
+      status: "not_started"
+      phase: 2
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/aiHooksService.ts"
+      implements:
+        - "AiHooksService class"
+        - "Register context providers from extensions"
+        - "Register action handlers from extensions"
+        - "Register suggestion providers"
+        - "Aggregate extension AI context"
+        - "Route AI requests to extensions"
+      validation:
+        - "Extensions can register hooks"
+        - "AI receives extension context"
+        - "Actions execute correctly"
+    
+    # Phase 3: Analysis
+    - id: "8.5"
+      name: "Implement extension analyzer"
+      status: "not_started"
+      phase: 3
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/extensionAnalyzer.ts"
+      implements:
+        - "ExtensionAnalyzer class"
+        - "Detect telemetry code patterns"
+        - "Analyze network requests"
+        - "Check for known bad patterns"
+        - "Generate safety report"
+      validation:
+        - "Detects telemetry correctly"
+        - "Reports are accurate"
+    
+    # Phase 4: UI
+    - id: "8.6"
+      name: "Implement marketplace panel"
+      status: "not_started"
+      phase: 4
+      depends_on: ["8.2", "8.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/marketplacePanel.ts"
+      implements:
+        - "MarketplacePanel webview"
+        - "Featured section"
+        - "Dendrite Verified section"
+        - "Community Curated section"
+        - "Categories navigation"
+        - "Search functionality"
+        - "Extension detail view"
+        - "Install/uninstall buttons"
+      validation:
+        - "All sections render"
+        - "Search works"
+        - "Install/uninstall work"
+    
+    # Phase 5: Sync
+    - id: "8.7"
+      name: "Implement extension sync"
+      status: "not_started"
+      phase: 5
+      depends_on: ["8.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/extensionSync.ts"
+      implements:
+        - "ExtensionSync class"
+        - "Sync extensions with workspace config"
+        - "Read .dendrite/extensions.json"
+        - "Auto-install recommended extensions"
+        - "Per-project extension settings"
+      validation:
+        - "Sync works"
+        - "Auto-install triggers"
+    
+    # Phase 6: Commands
+    - id: "8.8"
+      name: "Implement open marketplace command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.6"]
+      implements:
+        - "dendrite.marketplace.open"
+      validation:
+        - "Opens marketplace panel"
+    
+    - id: "8.9"
+      name: "Implement search command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.6"]
+      implements:
+        - "dendrite.marketplace.search"
+      validation:
+        - "Opens search with input"
+    
+    - id: "8.10"
+      name: "Implement show installed command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.6"]
+      implements:
+        - "dendrite.marketplace.showInstalled"
+      validation:
+        - "Shows installed extensions"
+    
+    - id: "8.11"
+      name: "Implement install from VSIX command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.2"]
+      implements:
+        - "dendrite.marketplace.installFromVsix"
+      validation:
+        - "Shows warning for external"
+        - "Installs VSIX"
+    
+    - id: "8.12"
+      name: "Implement sync extensions command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.7"]
+      implements:
+        - "dendrite.marketplace.syncExtensions"
+      validation:
+        - "Syncs with workspace config"
+    
+    - id: "8.13"
+      name: "Implement view AI hooks command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["8.4"]
+      implements:
+        - "dendrite.marketplace.viewAIHooks"
+      validation:
+        - "Shows extension AI integrations"
+    
+    # Phase 7: Settings
+    - id: "8.14"
+      name: "Register marketplace settings"
+      status: "not_started"
+      phase: 7
+      implements:
+        - "dendrite.marketplace.enabled (boolean)"
+        - "dendrite.marketplace.defaultTier (verified/community/all)"
+        - "dendrite.marketplace.showExternal (boolean)"
+        - "dendrite.marketplace.autoUpdate (boolean)"
+        - "dendrite.marketplace.blockTelemetry (boolean)"
+        - "dendrite.marketplace.syncWithWorkspace (boolean)"
+        - "dendrite.marketplace.aiHooksEnabled (boolean)"
+      validation:
+        - "All 7 settings appear in UI"
+        - "Defaults match CATS spec"
+    
+    # Phase 8: Mutations
+    - id: "8.15"
+      name: "Replace extensionsGallery in product.json"
+      status: "not_started"
+      phase: 8
+      files:
+        - "product.json"
+      implements:
+        - "Point extensionsGallery to Dendrite Marketplace API"
+      validation:
+        - "API endpoint updated"
+        - "VS Code uses Dendrite marketplace"
+    
+    - id: "8.16"
+      name: "Replace Extensions view registration"
+      status: "not_started"
+      phase: 8
+      files:
+        - "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts"
+      implements:
+        - "Replace with Dendrite Marketplace view"
+      validation:
+        - "Marketplace view appears"
+        - "No runtime errors"
+    
+    # Phase 9: Testing & Docs
+    - id: "8.17"
+      name: "End-to-end testing"
+      status: "not_started"
+      phase: 9
+      test_scenarios:
+        - "Open marketplace, browse extensions"
+        - "Search for extension"
+        - "Install Dendrite Verified extension"
+        - "Install Community Curated extension"
+        - "Try to install external (should warn)"
+        - "View AI hooks for extension"
+        - "Sync extensions with workspace"
+    
+    - id: "8.18"
+      name: "AI integration testing"
+      status: "not_started"
+      phase: 9
+      test_scenarios:
+        - "Extension provides context to AI"
+        - "AI requests action from extension"
+        - "AI receives suggestions from extension"
+    
+    - id: "8.19"
+      name: "Telemetry blocking testing"
+      status: "not_started"
+      phase: 9
+      test_scenarios:
+        - "Extension with telemetry is blocked"
+        - "Clean extension installs fine"
+        - "Blocklist updates apply"
+    
+    - id: "8.20"
+      name: "Documentation"
+      status: "not_started"
+      phase: 9
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/marketplace/README.md"
+      implements:
+        - "User guide for marketplace"
+        - "Extension tiers explanation"
+        - "AI hooks developer guide"
+        - "How to submit extension"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/marketplace/*.ts"
+    
+    verification:
+      - "Marketplace functional"
+      - "Tier filtering works"
+      - "AI hooks work"
+      - "Telemetry blocked"
+  
+  completion_criteria:
+    - "All 20 tasks completed"
+    - "Marketplace replaces VS Code gallery"
+    - "AI hooks functional"
+    - "Telemetry blocking works"
+    - "Documentation complete"
+
+# ============================================
+# INFRASTRUCTURE REQUIREMENTS
+# ============================================
+infrastructure:
+  note: "Era 8 requires backend infrastructure"
+  
+  required_services:
+    - name: "Dendrite Marketplace API"
+      description: "Backend for extension hosting and metadata"
+      endpoints:
+        - "/api/v1/extensions/search"
+        - "/api/v1/extensions/{id}"
+        - "/api/v1/extensions/{id}/download"
+        - "/api/v1/extensions/submit"
+      status: "not_started"
+      
+    - name: "Extension CDN"
+      description: "Host VSIX packages"
+      status: "not_started"
+      
+    - name: "Curation Backend"
+      description: "Manage verified/community tiers"
+      status: "not_started"

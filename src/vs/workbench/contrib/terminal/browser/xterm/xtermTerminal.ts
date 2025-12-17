@@ -47,6 +47,8 @@ import type { IProgressState } from '@xterm/addon-progress';
 import type { CommandDetectionCapability } from '../../../../../platform/terminal/common/capabilities/commandDetectionCapability.js';
 import { URI } from '../../../../../base/common/uri.js';
 import { assert } from '../../../../../base/common/assert.js';
+import { SmoothCursorAddon } from '../../../dendrite/browser/terminal/smoothCursorAddon.js';
+import { ConfigKeys } from '../../../dendrite/common/constants.js';
 
 const enum RenderConstants {
 	SmoothScrollDuration = 125
@@ -124,6 +126,9 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 	private _imageAddon?: ImageAddonType;
 	private readonly _ligaturesAddon: MutableDisposable<LigaturesAddonType> = this._register(new MutableDisposable());
 	private readonly _ligaturesAddonConfig?: ILigatureOptions;
+
+	// Dendrite Terminal Velocity addon
+	private _smoothCursorAddon?: SmoothCursorAddon;
 
 	private readonly _attachedDisposables = this._register(new DisposableStore());
 	private readonly _anyTerminalFocusContextKey: IContextKey<boolean>;
@@ -263,6 +268,10 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 			}
 			if (e.affectsConfiguration(TerminalSettingId.ShellIntegrationDecorationsEnabled)) {
 				this._updateTheme();
+			}
+			// Dendrite Terminal Velocity: Handle smooth cursor settings changes
+			if (e.affectsConfiguration('dendrite.terminal')) {
+				this._refreshSmoothCursorAddon();
 			}
 		}));
 
@@ -491,6 +500,9 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 
 		this._refreshLigaturesAddon();
 
+		// Dendrite Terminal Velocity: Load smooth cursor addon if enabled
+		this._refreshSmoothCursorAddon();
+
 		this._attached = { container, options };
 		// Screen must be created at this point as xterm.open is called
 		// eslint-disable-next-line no-restricted-syntax
@@ -545,6 +557,8 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 				}
 			}
 			this._refreshLigaturesAddon();
+			// Refresh smooth cursor to pick up cursor style changes
+			this._smoothCursorAddon?.refreshStyle();
 		}
 	}
 
@@ -889,6 +903,60 @@ export class XtermTerminal extends Disposable implements IXtermTerminal, IDetach
 		// WebGL renderer cell dimensions differ from the DOM renderer, make sure the terminal
 		// gets resized after the webgl addon is disposed
 		this._onDidRequestRefreshDimensions.fire();
+	}
+
+	/**
+	 * Dendrite Terminal Velocity: Refresh smooth cursor addon based on settings
+	 */
+	private _refreshSmoothCursorAddon(): void {
+		if (!this.raw.element) {
+			return;
+		}
+
+		const smoothCursorEnabled = this._configurationService.getValue<boolean>(ConfigKeys.TERMINAL_SMOOTH_CURSOR) ?? true;
+		const cursorPhysics = this._configurationService.getValue<{ duration: number; easing: string }>(ConfigKeys.TERMINAL_CURSOR_PHYSICS) ?? { duration: 80, easing: 'ease-out' };
+		const targetFPS = this._configurationService.getValue<number>(ConfigKeys.TERMINAL_TARGET_FPS) ?? 60;
+
+		if (smoothCursorEnabled) {
+			if (!this._smoothCursorAddon) {
+				// Create and load the smooth cursor addon
+				this._smoothCursorAddon = new SmoothCursorAddon({
+					enabled: true,
+					physics: {
+						duration: Math.max(20, Math.min(200, cursorPhysics.duration ?? 80)),
+						easing: this._validateCursorEasing(cursorPhysics.easing)
+					},
+					targetFPS: Math.max(30, Math.min(120, targetFPS))
+				});
+				this.raw.loadAddon(this._smoothCursorAddon);
+				this._logService.trace('Dendrite smooth cursor addon loaded');
+			} else {
+				// Update existing addon with new settings
+				this._smoothCursorAddon.setEnabled(true);
+				this._smoothCursorAddon.updatePhysics({
+					duration: Math.max(20, Math.min(200, cursorPhysics.duration ?? 80)),
+					easing: this._validateCursorEasing(cursorPhysics.easing)
+				});
+				this._smoothCursorAddon.updateTargetFPS(Math.max(30, Math.min(120, targetFPS)));
+				this._smoothCursorAddon.refreshStyle();
+			}
+		} else {
+			// Disable smooth cursor if addon exists
+			if (this._smoothCursorAddon) {
+				this._smoothCursorAddon.setEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * Validate cursor easing function
+	 */
+	private _validateCursorEasing(easing: string | undefined): 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' {
+		const validEasings = ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'] as const;
+		if (easing && validEasings.includes(easing as any)) {
+			return easing as 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out';
+		}
+		return 'ease-out';
 	}
 
 	async getRangeAsVT(startMarker: IXtermMarker, endMarker?: IXtermMarker, skipLastLine?: boolean): Promise<string> {

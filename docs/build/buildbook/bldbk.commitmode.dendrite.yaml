@@ -1,0 +1,359 @@
+# ============================================
+# DENDRITE IDE - CODE COMMIT MODE BUILD BOOK
+# ============================================
+# Reference: bldbk.commitmode.dendrite
+# Era: 6
+# CATS: cats.commitmode.dendrite
+
+meta:
+  id: "bldbk.commitmode.dendrite"
+  name: "Dendrite Code Commit Mode"
+  cats_ref: "cats.commitmode.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 6
+  total_tasks: 18
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_6: { status: "not_started", tasks_done: 0, tasks_total: 18 }
+  overall_completion: 0
+
+# ============================================
+# ERA 6: Code Commit Mode
+# ============================================
+era_6:
+  name: "Code Commit Mode"
+  description: "AI explains user commits for learning, human-in-the-loop review"
+  assignee: "TBD"
+  status: "not_started"
+  depends_on: ["bldbk.core.dendrite:era_3"]
+  parallel_with: ["bldbk.velocity.dendrite", "bldbk.terminalux.dendrite"]
+  
+  goals:
+    - "Auto-explain commits for learning reinforcement"
+    - "Build searchable knowledge base from commits"
+    - "Track concepts learned over time"
+    - "Provide spaced repetition review"
+    - "Connect commits to learning resources"
+  
+  metrics:
+    explanation_latency: "< 5s after commit"
+    knowledge_retention: "Spaced repetition intervals"
+    concept_extraction: "Identify patterns, APIs, techniques"
+  
+  phases:
+    - { name: "Phase 1: Infrastructure", tasks: ["6.1", "6.2"] }
+    - { name: "Phase 2: Knowledge Base", tasks: ["6.3", "6.4"] }
+    - { name: "Phase 3: Spaced Repetition", tasks: ["6.5"] }
+    - { name: "Phase 4: UI", tasks: ["6.6", "6.7"] }
+    - { name: "Phase 5: Rust Extensions", tasks: ["6.8", "6.9"] }
+    - { name: "Phase 6: Commands", tasks: ["6.10", "6.11", "6.12", "6.13", "6.14"] }
+    - { name: "Phase 7: Settings & Polish", tasks: ["6.15", "6.16", "6.17", "6.18"] }
+  
+  tasks:
+    # Phase 1: Infrastructure
+    - id: "6.1"
+      name: "Create commitmode module structure"
+      status: "not_started"
+      phase: 1
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/"
+      implements:
+        - "Create commitmode subdirectory"
+        - "Set up module exports"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "6.2"
+      name: "Implement commit explainer service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["6.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/commitExplainerService.ts"
+      implements:
+        - "CommitExplainerService class"
+        - "Watch for new commits (git hook or polling)"
+        - "Extract commit diff"
+        - "Send to AI for explanation"
+        - "Parse and store explanation"
+        - "Trigger notification"
+      validation:
+        - "Detects new commits"
+        - "Generates explanation < 5s"
+        - "Stores explanation correctly"
+    
+    # Phase 2: Knowledge Base
+    - id: "6.3"
+      name: "Implement knowledge base service"
+      status: "not_started"
+      phase: 2
+      depends_on: ["6.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/knowledgeBaseService.ts"
+      implements:
+        - "KnowledgeBaseService class"
+        - "Store KnowledgeEntry records"
+        - "Full-text search across entries"
+        - "Filter by concept category"
+        - "Link entries to commits"
+        - "Track mastery levels"
+      validation:
+        - "Entries persist across sessions"
+        - "Search returns relevant results"
+        - "Mastery tracking works"
+    
+    - id: "6.4"
+      name: "Implement concept extractor"
+      status: "not_started"
+      phase: 2
+      depends_on: ["6.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/conceptExtractor.ts"
+      implements:
+        - "ConceptExtractor class"
+        - "Analyze code diffs for patterns"
+        - "Identify design patterns"
+        - "Detect API usage"
+        - "Categorize concepts"
+        - "Link to related resources"
+      validation:
+        - "Extracts meaningful concepts"
+        - "Categories are accurate"
+        - "Resources are relevant"
+    
+    # Phase 3: Spaced Repetition
+    - id: "6.5"
+      name: "Implement spaced repetition service"
+      status: "not_started"
+      phase: 3
+      depends_on: ["6.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/spacedRepetitionService.ts"
+      implements:
+        - "SpacedRepetitionService class"
+        - "Generate review cards from explanations"
+        - "SM-2 algorithm for scheduling"
+        - "Track review history"
+        - "Calculate next review date"
+        - "Reminder notifications"
+      validation:
+        - "Cards generated correctly"
+        - "Scheduling follows SM-2"
+        - "Reminders trigger at right time"
+    
+    # Phase 4: UI
+    - id: "6.6"
+      name: "Implement commit explanation panel"
+      status: "not_started"
+      phase: 4
+      depends_on: ["6.2", "6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/commitModePanel.ts"
+      implements:
+        - "CommitModePanel class (webview)"
+        - "Show commit hash and summary"
+        - "Display markdown explanation"
+        - "Show extracted concepts with tags"
+        - "Rate explanation quality"
+        - "Add personal notes"
+      validation:
+        - "Panel renders correctly"
+        - "Markdown formats properly"
+        - "Actions work (rate, note)"
+    
+    - id: "6.7"
+      name: "Implement learning view"
+      status: "not_started"
+      phase: 4
+      depends_on: ["6.3", "6.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/learningView.ts"
+      implements:
+        - "LearningView class (treeview)"
+        - "Browse concepts by category"
+        - "View mastery progress"
+        - "Quick access to related commits"
+        - "Start review session"
+      validation:
+        - "Tree renders correctly"
+        - "Categories expand/collapse"
+        - "Navigation works"
+    
+    # Phase 5: Rust Extensions
+    - id: "6.8"
+      name: "Implement knowledge data structures in Rust"
+      status: "not_started"
+      phase: 5
+      files:
+        - "crates/dendrite_core/src/knowledge.rs"
+      implements:
+        - "CommitExplanation struct"
+        - "ConceptRef struct"
+        - "KnowledgeEntry struct"
+        - "ReviewCard struct"
+        - "Serialization"
+      validation:
+        - "All structs compile"
+        - "Serde works correctly"
+    
+    - id: "6.9"
+      name: "Implement concept extraction in Rust"
+      status: "not_started"
+      phase: 5
+      depends_on: ["6.8"]
+      files:
+        - "crates/dendrite_core/src/concepts.rs"
+      implements:
+        - "ConceptCategory enum"
+        - "Difficulty enum"
+        - "ResourceType enum"
+        - "Concept matching logic"
+        - "WASM exports for concept operations"
+      validation:
+        - "All enums compile"
+        - "WASM exports work"
+    
+    # Phase 6: Commands
+    - id: "6.10"
+      name: "Implement explain commit commands"
+      status: "not_started"
+      phase: 6
+      depends_on: ["6.2"]
+      implements:
+        - "dendrite.commitmode.explainLastCommit"
+        - "dendrite.commitmode.explainCommit (with picker)"
+      validation:
+        - "Commands trigger explanation"
+        - "Picker shows commit history"
+    
+    - id: "6.11"
+      name: "Implement knowledge browse commands"
+      status: "not_started"
+      phase: 6
+      depends_on: ["6.3"]
+      implements:
+        - "dendrite.commitmode.showKnowledge"
+        - "dendrite.commitmode.searchConcepts"
+      validation:
+        - "Commands open correct views"
+        - "Search works"
+    
+    - id: "6.12"
+      name: "Implement review commands"
+      status: "not_started"
+      phase: 6
+      depends_on: ["6.5"]
+      implements:
+        - "dendrite.commitmode.startReview"
+      validation:
+        - "Starts review session"
+        - "Cards presented correctly"
+    
+    - id: "6.13"
+      name: "Implement note command"
+      status: "not_started"
+      phase: 6
+      depends_on: ["6.6"]
+      implements:
+        - "dendrite.commitmode.addNote"
+      validation:
+        - "Note saves to commit explanation"
+    
+    - id: "6.14"
+      name: "Implement toggle auto-explain"
+      status: "not_started"
+      phase: 6
+      depends_on: ["6.2"]
+      implements:
+        - "dendrite.commitmode.toggleAutoExplain"
+      validation:
+        - "Toggles setting correctly"
+    
+    # Phase 7: Settings & Polish
+    - id: "6.15"
+      name: "Register all commitmode settings"
+      status: "not_started"
+      phase: 7
+      implements:
+        - "dendrite.commitmode.enabled (boolean)"
+        - "dendrite.commitmode.autoExplain (boolean)"
+        - "dendrite.commitmode.explanationDepth (brief/standard/detailed)"
+        - "dendrite.commitmode.showNotification (boolean)"
+        - "dendrite.commitmode.reviewReminder (boolean)"
+        - "dendrite.commitmode.reviewReminderInterval (number)"
+        - "dendrite.commitmode.extractConcepts (boolean)"
+        - "dendrite.commitmode.linkResources (boolean)"
+      validation:
+        - "All 8 settings appear in UI"
+        - "Defaults match CATS spec"
+    
+    - id: "6.16"
+      name: "Implement review cards UI"
+      status: "not_started"
+      phase: 7
+      depends_on: ["6.5", "6.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/reviewCardsView.ts"
+      implements:
+        - "ReviewCardsView webview"
+        - "Flashcard-style interface"
+        - "Show question, reveal answer"
+        - "Rate recall (1-5)"
+        - "Progress indicator"
+      validation:
+        - "Cards display correctly"
+        - "Rating updates schedule"
+    
+    - id: "6.17"
+      name: "End-to-end testing"
+      status: "not_started"
+      phase: 7
+      depends_on: ["6.15", "6.16"]
+      test_scenarios:
+        - "Make commit, auto-explanation triggers"
+        - "View explanation panel"
+        - "Browse knowledge base"
+        - "Search for concept"
+        - "Start review session"
+        - "Complete review cards"
+        - "Check mastery progress"
+      validation:
+        - "All scenarios pass"
+        - "No console errors"
+    
+    - id: "6.18"
+      name: "Documentation"
+      status: "not_started"
+      phase: 7
+      depends_on: ["6.17"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/commitmode/README.md"
+      implements:
+        - "User guide for commit mode"
+        - "Configuration reference"
+        - "Spaced repetition explanation"
+        - "Tips for effective learning"
+      validation:
+        - "Documentation is clear"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/commitmode/*.ts"
+      - "crates/dendrite_core/src/knowledge.rs"
+      - "crates/dendrite_core/src/concepts.rs"
+    
+    verification:
+      - "Commit explanations generated"
+      - "Knowledge base searchable"
+      - "Spaced repetition functional"
+      - "All commands registered"
+  
+  completion_criteria:
+    - "All 18 tasks completed"
+    - "Auto-explain commits working"
+    - "Knowledge base searchable"
+    - "Spaced repetition functional"
+    - "Documentation complete"

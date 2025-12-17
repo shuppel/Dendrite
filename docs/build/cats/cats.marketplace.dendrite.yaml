@@ -1,0 +1,537 @@
+# ============================================
+# DENDRITE IDE - OPINIONATED MARKETPLACE
+# ============================================
+# Reference: cats.marketplace.dendrite
+# Era: 8
+# BuildBook: bldbk.marketplace.dendrite
+
+cats:
+  meta:
+    id: "cats.marketplace.dendrite"
+    name: "Dendrite Opinionated Marketplace"
+    version: "0.1.0"
+    domain: "extensions"
+    era: 8
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.marketplace.dendrite"
+    depends_on: ["cats.workspace.dendrite"]
+    description: |
+      Opinionated, curated extension marketplace:
+      - Curated extensions with quality standards
+      - AI workflow hooks for extensions
+      - Cross-tool sync (extension state syncs with workspace)
+      - Dendrite-verified vs community tiers
+      - No bloatware, no telemetry extensions
+
+  # ============================================
+  # DESIGN PHILOSOPHY
+  # ============================================
+  philosophy:
+    core_principle: "Quality over quantity"
+    
+    problems_solved:
+      - "Extension overload in VS Code marketplace"
+      - "Telemetry-heavy extensions tracking users"
+      - "Extensions that break each other"
+      - "No AI integration in extensions"
+      - "Extensions don't know about your workflow"
+      
+    curation_model:
+      approach: "Opinionated by default, escape hatch available"
+      verification: "Dendrite team reviews for quality and privacy"
+      tiers:
+        - "Dendrite Verified: Fully vetted, AI-integrated"
+        - "Community Curated: Quality reviewed, no AI hooks"
+        - "External: Install at your own risk (hidden by default)"
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Create curated extension marketplace"
+      - "Enable AI workflow hooks for extensions"
+      - "Sync extension state with workspace tools"
+      - "Block telemetry and low-quality extensions"
+      - "Provide Dendrite-verified extension tier"
+    
+    quality_metrics:
+      verified_extensions: "100% reviewed by Dendrite team"
+      community_threshold: "4.5+ rating, 10k+ downloads, no telemetry"
+      ai_hook_coverage: "All verified extensions have AI context"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/"
+        type: directory
+        description: "Marketplace module"
+        task: "8.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/marketplaceService.ts"
+        type: file
+        description: "Marketplace service replacing VS Code gallery"
+        task: "8.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/curationService.ts"
+        type: file
+        description: "Extension curation and verification"
+        task: "8.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/aiHooksService.ts"
+        type: file
+        description: "AI integration hooks for extensions"
+        task: "8.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/extensionAnalyzer.ts"
+        type: file
+        description: "Analyze extensions for telemetry/quality"
+        task: "8.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/marketplacePanel.ts"
+        type: file
+        description: "Custom marketplace UI"
+        task: "8.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/marketplace/extensionSync.ts"
+        type: file
+        description: "Sync extension state with workspace"
+        task: "8.7"
+
+  # ============================================
+  # EXTENSION TIERS
+  # ============================================
+  tiers:
+    dendrite_verified:
+      name: "Dendrite Verified"
+      icon: "verified"
+      color: "#4CAF50"
+      description: "Fully vetted, AI-integrated, privacy-respecting"
+      
+      requirements:
+        quality:
+          - "Code review by Dendrite team"
+          - "No telemetry or tracking"
+          - "No network calls except declared APIs"
+          - "Performance benchmarked"
+          - "Memory usage within limits"
+          
+        ai_integration:
+          - "Implements Dendrite AI hooks"
+          - "Provides context to AI assistant"
+          - "Supports AI-driven automation"
+          
+        maintenance:
+          - "Active maintainer response (<7 days)"
+          - "Regular updates for compatibility"
+          - "Security vulnerability response SLA"
+          
+      benefits:
+        - "Featured in marketplace"
+        - "AI context integration"
+        - "Priority support"
+        - "Dendrite badge"
+        
+    community_curated:
+      name: "Community Curated"
+      icon: "star"
+      color: "#2196F3"
+      description: "Quality reviewed, community maintained"
+      
+      requirements:
+        automated:
+          - "Rating >= 4.5 stars"
+          - "Downloads >= 10,000"
+          - "No detected telemetry"
+          - "Passes automated security scan"
+          - "Compatible with Dendrite"
+          
+        manual:
+          - "Brief review by curator"
+          - "No obvious privacy issues"
+          
+      limitations:
+        - "No AI hook integration"
+        - "Community support only"
+        
+    external:
+      name: "External"
+      icon: "warning"
+      color: "#FF9800"
+      description: "Unvetted, install at your own risk"
+      
+      access:
+        visibility: "Hidden by default"
+        enable_setting: "dendrite.marketplace.showExternal"
+        warning: "This extension has not been reviewed by Dendrite"
+        
+      requirements:
+        - "Must not be on blocklist"
+        - "Must install via VSIX or external URL"
+        
+      risks_displayed:
+        - "May contain telemetry"
+        - "May conflict with Dendrite features"
+        - "No AI integration"
+
+  # ============================================
+  # AI WORKFLOW HOOKS
+  # ============================================
+  ai_hooks:
+    description: "Extensions can integrate with Dendrite AI"
+    
+    hook_types:
+      context_provider:
+        description: "Extension provides context to AI"
+        interface: |
+          interface DendriteContextProvider {
+            id: string;
+            name: string;
+            getContext(): Promise<ContextData>;
+            onContextChange(callback: (ctx: ContextData) => void): Disposable;
+          }
+        examples:
+          - "ESLint: Current lint errors and warnings"
+          - "Docker: Running containers and images"
+          - "Database: Schema and recent queries"
+          
+      action_handler:
+        description: "Extension can execute AI-requested actions"
+        interface: |
+          interface DendriteActionHandler {
+            id: string;
+            actions: ActionDefinition[];
+            execute(action: string, params: any): Promise<ActionResult>;
+          }
+        examples:
+          - "ESLint: Apply suggested fix"
+          - "Docker: Start/stop container"
+          - "Database: Run query"
+          
+      suggestion_provider:
+        description: "Extension provides AI suggestions"
+        interface: |
+          interface DendriteSuggestionProvider {
+            id: string;
+            getSuggestions(context: AIContext): Promise<Suggestion[]>;
+          }
+        examples:
+          - "Testing: Suggest test cases"
+          - "Docs: Suggest documentation"
+          - "Refactor: Suggest improvements"
+          
+    registration:
+      api: "dendrite.ai.registerHook()"
+      discovery: "Extension manifest: contributes.dendriteAI"
+      
+    manifest_example: |
+      {
+        "contributes": {
+          "dendriteAI": {
+            "contextProviders": [
+              {
+                "id": "eslint.errors",
+                "name": "ESLint Errors",
+                "icon": "warning"
+              }
+            ],
+            "actionHandlers": [
+              {
+                "id": "eslint.fix",
+                "name": "Apply ESLint Fix",
+                "description": "Automatically fix linting issues"
+              }
+            ]
+          }
+        }
+      }
+
+  # ============================================
+  # EXTENSION STATE SYNC
+  # ============================================
+  extension_sync:
+    description: "Sync extension state with workspace tools"
+    
+    sync_targets:
+      linear:
+        - "Extension settings per project"
+        - "Enable/disable extensions per issue type"
+        
+      github:
+        - "Recommended extensions in .dendrite/extensions.json"
+        - "Auto-install on clone"
+        
+      tldraw:
+        - "Extension-generated diagrams"
+        - "Plugin UIs in diagram panels"
+        
+    state_storage:
+      local: ".dendrite/extensions/"
+      cloud: "Optional Dendrite Cloud sync"
+      format: "JSON with versioning"
+
+  # ============================================
+  # BLOCKLIST
+  # ============================================
+  blocklist:
+    description: "Extensions blocked from installation"
+    
+    criteria:
+      automatic:
+        - "Known telemetry senders"
+        - "Cryptocurrency miners"
+        - "Data harvesting"
+        - "Malware signatures"
+        
+      manual:
+        - "Extensions that conflict with Dendrite"
+        - "Deprecated extensions with security issues"
+        - "Extensions with predatory monetization"
+        
+    management:
+      location: "Dendrite-managed list + user additions"
+      updates: "Auto-update from Dendrite servers"
+      user_override: "Can unblock with explicit confirmation"
+
+  # ============================================
+  # MARKETPLACE API
+  # ============================================
+  marketplace_api:
+    description: "Dendrite Marketplace backend API"
+    
+    endpoints:
+      search:
+        path: "/api/v1/extensions/search"
+        params: ["query", "tier", "category", "sort"]
+        
+      details:
+        path: "/api/v1/extensions/{id}"
+        returns: ["metadata", "reviews", "ai_hooks", "changelog"]
+        
+      download:
+        path: "/api/v1/extensions/{id}/download"
+        returns: "VSIX package"
+        
+      submit:
+        path: "/api/v1/extensions/submit"
+        auth: "Dendrite Developer Account"
+        
+      review:
+        path: "/api/v1/extensions/{id}/review"
+        auth: "Dendrite Curator"
+        
+    hosting:
+      primary: "Dendrite Cloud"
+      mirror: "GitHub Releases (verified extensions)"
+
+  # ============================================
+  # COMMANDS
+  # ============================================
+  commands:
+    prefix: "dendrite.marketplace"
+    
+    items:
+      - id: "dendrite.marketplace.open"
+        title: "Dendrite: Open Marketplace"
+        description: "Browse curated extensions"
+        keybinding: "ctrl+shift+x"
+        task: "8.8"
+        
+      - id: "dendrite.marketplace.search"
+        title: "Dendrite: Search Extensions"
+        description: "Search marketplace"
+        task: "8.9"
+        
+      - id: "dendrite.marketplace.showInstalled"
+        title: "Dendrite: Show Installed Extensions"
+        description: "View and manage installed extensions"
+        task: "8.10"
+        
+      - id: "dendrite.marketplace.installFromVsix"
+        title: "Dendrite: Install from VSIX"
+        description: "Install external extension (with warning)"
+        task: "8.11"
+        
+      - id: "dendrite.marketplace.syncExtensions"
+        title: "Dendrite: Sync Extensions"
+        description: "Sync extensions with workspace config"
+        task: "8.12"
+        
+      - id: "dendrite.marketplace.viewAIHooks"
+        title: "Dendrite: View Extension AI Hooks"
+        description: "See AI integrations for extension"
+        task: "8.13"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.marketplace"
+    
+    items:
+      - id: "dendrite.marketplace.enabled"
+        type: "boolean"
+        default: true
+        description: "Use Dendrite Marketplace instead of VS Code"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.defaultTier"
+        type: "string"
+        default: "verified"
+        enum: ["verified", "community", "all"]
+        description: "Default extension tier to show"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.showExternal"
+        type: "boolean"
+        default: false
+        description: "Show external/unvetted extensions"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.autoUpdate"
+        type: "boolean"
+        default: true
+        description: "Auto-update extensions"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.blockTelemetry"
+        type: "boolean"
+        default: true
+        description: "Block extensions with known telemetry"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.syncWithWorkspace"
+        type: "boolean"
+        default: true
+        description: "Sync extension recommendations with workspace"
+        task: "8.14"
+        
+      - id: "dendrite.marketplace.aiHooksEnabled"
+        type: "boolean"
+        default: true
+        description: "Enable AI hooks for extensions"
+        task: "8.14"
+
+  # ============================================
+  # UI COMPONENTS
+  # ============================================
+  ui:
+    views:
+      - id: "dendrite.marketplace"
+        name: "Marketplace"
+        container: "dendrite-tools"
+        type: "webview"
+        description: "Curated extension marketplace"
+        task: "8.6"
+        
+    marketplace_layout:
+      sections:
+        - id: "featured"
+          title: "Featured"
+          description: "Dendrite team picks"
+          
+        - id: "verified"
+          title: "Dendrite Verified"
+          description: "Fully vetted extensions"
+          
+        - id: "community"
+          title: "Community Curated"
+          description: "Quality community extensions"
+          
+        - id: "categories"
+          title: "Categories"
+          categories:
+            - "Languages"
+            - "Themes"
+            - "Testing"
+            - "Debugging"
+            - "Git"
+            - "AI & ML"
+            - "Cloud"
+            - "Database"
+            
+        - id: "installed"
+          title: "Installed"
+          description: "Manage your extensions"
+          
+    extension_card:
+      elements:
+        - "Icon"
+        - "Name"
+        - "Publisher"
+        - "Tier badge (Verified/Community)"
+        - "AI hooks indicator"
+        - "Rating"
+        - "Install count"
+        - "Description preview"
+        - "Install/Uninstall button"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "product.json"
+        task: "8.15"
+        changes:
+          - action: "replace"
+            key: "extensionsGallery"
+            value:
+              serviceUrl: "https://marketplace.dendrite.dev/api/v1"
+              itemUrl: "https://marketplace.dendrite.dev/extensions/{id}"
+              
+      - path: "src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts"
+        task: "8.16"
+        changes:
+          - action: "replace"
+            target: "Extensions view registration"
+            with: "Dendrite Marketplace view"
+
+  # ============================================
+  # INITIAL CURATED LIST
+  # ============================================
+  initial_verified_extensions:
+    languages:
+      - "rust-analyzer"
+      - "ms-python.python"
+      - "golang.go"
+      - "esbenp.prettier-vscode"
+      - "dbaeumer.vscode-eslint"
+      
+    git:
+      - "eamodio.gitlens"
+      - "mhutchie.git-graph"
+      
+    testing:
+      - "hbenl.vscode-test-explorer"
+      
+    debugging:
+      - "vadimcn.vscode-lldb"
+      
+    themes:
+      - "dracula-theme.theme-dracula"
+      - "GitHub.github-vscode-theme"
+      
+    productivity:
+      - "usernamehw.errorlens"
+      - "streetsidesoftware.code-spell-checker"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    internal:
+      - "cats.workspace.dendrite (Era 7)"
+      
+    infrastructure:
+      - "Dendrite Marketplace API server"
+      - "Extension hosting (CDN)"
+      - "Review/curation backend"
+      
+    vscode_apis:
+      - "IExtensionManagementService"
+      - "IExtensionGalleryService"
+      - "IWebviewViewProvider"

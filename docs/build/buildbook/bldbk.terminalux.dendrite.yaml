@@ -1,0 +1,320 @@
+# ============================================
+# DENDRITE IDE - TERMINAL-FIRST UX BUILD BOOK
+# ============================================
+# Reference: bldbk.terminalux.dendrite
+# Era: 5
+# CATS: cats.terminalux.dendrite
+
+meta:
+  id: "bldbk.terminalux.dendrite"
+  name: "Dendrite Terminal-First UX"
+  cats_ref: "cats.terminalux.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 5
+  total_tasks: 15
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_5: { status: "not_started", tasks_done: 0, tasks_total: 15 }
+  overall_completion: 0
+
+# ============================================
+# ERA 5: Terminal-First UX
+# ============================================
+era_5:
+  name: "Terminal-First UX"
+  description: "Fullscreen terminal mode, quick editor swap, diff-focus workflow, agent checkpoints"
+  assignee: "TBD"
+  status: "not_started"
+  depends_on: ["bldbk.velocity.dendrite:era_4"]
+  
+  goals:
+    - "Make terminal the primary workspace"
+    - "Enable instant mode switching (terminal <-> editor)"
+    - "Auto-focus diffs after AI edits"
+    - "Implement agent checkpoint system"
+    - "Create OpenCode-like command interface"
+  
+  ux_targets:
+    mode_switch_latency: "< 100ms"
+    diff_focus_delay: "< 50ms after edit"
+    checkpoint_visibility: "Clear UI indication of paused state"
+  
+  phases:
+    - { name: "Phase 1: Infrastructure", tasks: ["5.1", "5.2", "5.3"] }
+    - { name: "Phase 2: Diff Focus", tasks: ["5.4"] }
+    - { name: "Phase 3: Checkpoints", tasks: ["5.5", "5.6"] }
+    - { name: "Phase 4: Command Interface", tasks: ["5.7"] }
+    - { name: "Phase 5: Keybindings", tasks: ["5.8", "5.9", "5.10"] }
+    - { name: "Phase 6: Commands & Settings", tasks: ["5.11", "5.12", "5.13"] }
+    - { name: "Phase 7: Testing", tasks: ["5.14", "5.15"] }
+  
+  tasks:
+    # Phase 1: Infrastructure
+    - id: "5.1"
+      name: "Create terminalux module structure"
+      status: "not_started"
+      phase: 1
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/"
+      implements:
+        - "Create terminalux subdirectory"
+        - "Set up module exports"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "5.2"
+      name: "Implement fullscreen terminal service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["5.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/fullscreenTerminalService.ts"
+      implements:
+        - "FullscreenTerminalService class"
+        - "Maximize terminal to full viewport"
+        - "Hide sidebar and editor"
+        - "Preserve minimal status bar"
+        - "State persistence across sessions"
+      validation:
+        - "Terminal fills entire viewport"
+        - "Sidebar/editor hidden completely"
+        - "Status bar visible with minimal info"
+    
+    - id: "5.3"
+      name: "Implement mode switch service"
+      status: "not_started"
+      phase: 1
+      depends_on: ["5.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/modeSwitchService.ts"
+      implements:
+        - "ModeSwitchService class"
+        - "Terminal mode: fullscreen terminal"
+        - "Editor mode: traditional VS Code layout"
+        - "Diff mode: focused diff review"
+        - "Smooth transitions between modes"
+        - "Mode state persistence"
+      validation:
+        - "Mode switch < 100ms"
+        - "Transitions are smooth (no flicker)"
+        - "State persists correctly"
+    
+    # Phase 2: Diff Focus
+    - id: "5.4"
+      name: "Implement diff focus service"
+      status: "not_started"
+      phase: 2
+      depends_on: ["5.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/diffFocusService.ts"
+      implements:
+        - "DiffFocusService class"
+        - "Watch for file changes from AI edits"
+        - "Auto-switch to diff mode when edits detected"
+        - "Show changed files in sidebar"
+        - "Focus diff view on most recent change"
+        - "Per-hunk navigation"
+      validation:
+        - "Diff appears < 50ms after edit"
+        - "Changed files listed correctly"
+        - "Navigation between hunks works"
+    
+    # Phase 3: Checkpoints
+    - id: "5.5"
+      name: "Implement agent checkpoint service"
+      status: "not_started"
+      phase: 3
+      depends_on: ["5.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/agentCheckpointService.ts"
+      implements:
+        - "AgentCheckpointService class"
+        - "Checkpoint states: active, paused, reviewing, approved, rejected"
+        - "Trigger checkpoint after AI edits"
+        - "Configurable threshold (edits before checkpoint)"
+        - "Store pending changes for review"
+        - "Rollback on rejection"
+      validation:
+        - "Checkpoint triggers correctly"
+        - "State transitions work"
+        - "Rollback restores previous state"
+    
+    - id: "5.6"
+      name: "Implement checkpoint UI panel"
+      status: "not_started"
+      phase: 3
+      depends_on: ["5.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/checkpointPanel.ts"
+      implements:
+        - "CheckpointPanel class"
+        - "Banner: 'AI made changes to N files. Review required.'"
+        - "Action buttons: View Changes, Accept All, Reject All"
+        - "Change summary sidebar"
+        - "Per-file accept/reject"
+      validation:
+        - "Banner appears on checkpoint"
+        - "Actions trigger correct behavior"
+        - "UI updates on state change"
+    
+    # Phase 4: Command Interface
+    - id: "5.7"
+      name: "Implement OpenCode-like command palette"
+      status: "not_started"
+      phase: 4
+      depends_on: ["5.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/commandPalette.ts"
+      implements:
+        - "DendriteCommandPalette class"
+        - "Floating input at bottom of terminal"
+        - "Trigger with Ctrl+K or / prefix"
+        - "Natural language commands"
+        - "File path autocomplete"
+        - "Command history"
+        - "Context awareness"
+      validation:
+        - "Palette appears on trigger"
+        - "Autocomplete works"
+        - "History navigable"
+    
+    # Phase 5: Keybindings
+    - id: "5.8"
+      name: "Implement mode switching keybindings"
+      status: "not_started"
+      phase: 5
+      depends_on: ["5.3"]
+      implements:
+        - "Ctrl+` - Toggle terminal/editor mode"
+        - "Ctrl+Shift+` - Force terminal mode"
+        - "Ctrl+Shift+E - Force editor mode"
+      validation:
+        - "All keybindings work"
+        - "No conflicts with existing bindings"
+    
+    - id: "5.9"
+      name: "Implement checkpoint keybindings"
+      status: "not_started"
+      phase: 5
+      depends_on: ["5.5"]
+      implements:
+        - "Ctrl+Enter - Accept all changes"
+        - "Ctrl+Backspace - Reject all changes"
+        - "Ctrl+Shift+A - Accept current hunk"
+        - "Ctrl+Shift+R - Reject current hunk"
+      validation:
+        - "All keybindings work in checkpoint context"
+        - "Context-aware (only when checkpoint active)"
+    
+    - id: "5.10"
+      name: "Implement navigation keybindings"
+      status: "not_started"
+      phase: 5
+      depends_on: ["5.4"]
+      implements:
+        - "Ctrl+] - Next change"
+        - "Ctrl+[ - Previous change"
+      validation:
+        - "Navigation works in diff view"
+    
+    # Phase 6: Commands & Settings
+    - id: "5.11"
+      name: "Register all terminalux commands"
+      status: "not_started"
+      phase: 6
+      depends_on: ["5.3", "5.5", "5.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.terminalux.toggleMode"
+        - "dendrite.terminalux.enterTerminalMode"
+        - "dendrite.terminalux.enterEditorMode"
+        - "dendrite.terminalux.showDiff"
+        - "dendrite.terminalux.acceptAll"
+        - "dendrite.terminalux.rejectAll"
+        - "dendrite.terminalux.pauseAgent"
+        - "dendrite.terminalux.resumeAgent"
+      validation:
+        - "All 8 commands appear in palette"
+        - "Commands work correctly"
+    
+    - id: "5.12"
+      name: "Implement manual agent controls"
+      status: "not_started"
+      phase: 6
+      depends_on: ["5.5"]
+      implements:
+        - "pauseAgent command"
+        - "resumeAgent command"
+        - "Manual checkpoint trigger"
+      validation:
+        - "Manual pause/resume works"
+    
+    - id: "5.13"
+      name: "Register terminalux settings"
+      status: "not_started"
+      phase: 6
+      implements:
+        - "dendrite.terminalux.defaultMode (terminal/editor)"
+        - "dendrite.terminalux.autoCheckpoint (boolean)"
+        - "dendrite.terminalux.checkpointThreshold (number)"
+        - "dendrite.terminalux.autoDiffFocus (boolean)"
+        - "dendrite.terminalux.diffViewStyle (side-by-side/inline/unified)"
+        - "dendrite.terminalux.showModeIndicator (boolean)"
+      validation:
+        - "All 6 settings appear in UI"
+        - "Defaults match CATS spec"
+    
+    # Phase 7: Testing
+    - id: "5.14"
+      name: "End-to-end workflow testing"
+      status: "not_started"
+      phase: 7
+      depends_on: ["5.11", "5.12", "5.13"]
+      test_scenarios:
+        - "Start in terminal mode, ask AI to edit file"
+        - "Checkpoint triggers, review diff"
+        - "Accept changes, continue in terminal"
+        - "Switch to editor mode for multi-file edit"
+        - "Return to terminal mode"
+        - "Reject AI changes, verify rollback"
+      validation:
+        - "All scenarios work correctly"
+        - "No errors in console"
+    
+    - id: "5.15"
+      name: "Documentation"
+      status: "not_started"
+      phase: 7
+      depends_on: ["5.14"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/terminalux/README.md"
+      implements:
+        - "User guide for terminal-first workflow"
+        - "Keybinding reference"
+        - "Checkpoint system explanation"
+        - "Configuration guide"
+      validation:
+        - "Documentation is clear"
+        - "Examples are accurate"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/terminalux/*.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/terminalux/README.md"
+    
+    verification:
+      - "Mode switching < 100ms"
+      - "Diff focus < 50ms"
+      - "Checkpoint system functional"
+      - "All keybindings work"
+  
+  completion_criteria:
+    - "All 15 tasks completed"
+    - "Terminal-first workflow functional"
+    - "Agent checkpoint system working"
+    - "All keybindings registered"
+    - "Documentation complete"

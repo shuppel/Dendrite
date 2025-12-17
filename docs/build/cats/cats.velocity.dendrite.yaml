@@ -1,0 +1,371 @@
+# ============================================
+# DENDRITE IDE - TERMINAL VELOCITY
+# ============================================
+# Reference: cats.velocity.dendrite
+# Era: 4
+# BuildBook: bldbk.velocity.dendrite
+
+cats:
+  meta:
+    id: "cats.velocity.dendrite"
+    name: "Dendrite Terminal Velocity"
+    version: "0.1.0"
+    domain: "terminal-performance"
+    era: 4
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.velocity.dendrite"
+    depends_on: ["cats.core.dendrite"]
+    description: |
+      Hyprland-inspired terminal fluidity with:
+      - Sub-frame cursor latency with smooth interpolation
+      - GPU-accelerated rendering (WebGL)
+      - 60+ FPS cursor movement
+      - < 16ms input-to-render latency
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Achieve Hyprland-equivalent cursor smoothness"
+      - "Force GPU acceleration for terminal rendering"
+      - "Minimize input-to-render latency to <16ms"
+      - "Configurable cursor physics (duration, easing)"
+    
+    metrics:
+      cursor_fps: 60
+      input_latency_ms: 16
+      frame_overhead_ms: 1
+      gpu_required: true
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/"
+        type: directory
+        description: "Terminal velocity enhancements"
+        task: "4.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/smoothCursorAddon.ts"
+        type: file
+        description: "Smooth cursor interpolation addon for xterm.js"
+        task: "4.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/terminalVelocityService.ts"
+        type: file
+        description: "Settings listener for terminal velocity features"
+        task: "4.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/terminal/README.md"
+        type: file
+        description: "Terminal velocity documentation"
+        task: "4.8"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/contrib/terminal/browser/xterm/xtermTerminal.ts"
+        task: "4.3"
+        changes:
+          - action: "import"
+            value: "SmoothCursorAddon"
+          - action: "add"
+            description: "Load SmoothCursorAddon when dendrite.terminal.smoothCursor enabled"
+          - action: "configure"
+            description: "Set WebGL renderer as default when dendrite.terminal.forceGPU enabled"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "4.4"
+        changes:
+          - action: "add"
+            description: "Register terminal velocity settings schema"
+
+  # ============================================
+  # SMOOTH CURSOR SPECIFICATION
+  # ============================================
+  smooth_cursor:
+    description: "Ghost cursor overlay with lerp interpolation"
+    
+    architecture:
+      type: "xterm.js addon"
+      class: "SmoothCursorAddon"
+      implements: "ITerminalAddon"
+      
+    rendering:
+      method: "DOM overlay with requestAnimationFrame loop"
+      element: "div with position:absolute, pointer-events:none"
+      gpu_hint: "will-change: transform; transform: translate3d()"
+      
+    interpolation:
+      algorithm: "Linear Interpolation (Lerp)"
+      formula: "current += (target - current) * alpha"
+      frame_rate: "requestAnimationFrame (~60fps)"
+      
+    cursor_sync:
+      source: "xterm.onCursorMove event"
+      target_extraction: "getTerminalCursorPosition()"
+      shape_matching: "Mirror terminal cursor style (block/underline/bar)"
+      
+    performance:
+      overhead: "< 1ms per frame"
+      independence: "Runs independently of terminal grid refresh"
+      
+    pseudo_code: |
+      class SmoothCursorAddon implements ITerminalAddon {
+        private currentPos = {x: 0, y: 0};
+        private targetPos = {x: 0, y: 0};
+        private overlay: HTMLElement;
+        private physics: CursorPhysics;
+        
+        activate(terminal: Terminal) {
+          this.overlay = this.createOverlay();
+          terminal.element.appendChild(this.overlay);
+          
+          terminal.onCursorMove(() => {
+            this.targetPos = this.getCursorPosition(terminal);
+          });
+          
+          this.animationLoop();
+        }
+        
+        private animationLoop() {
+          const alpha = this.physics.duration / 1000 * 60;
+          this.currentPos.x += (this.targetPos.x - this.currentPos.x) * alpha;
+          this.currentPos.y += (this.targetPos.y - this.currentPos.y) * alpha;
+          
+          this.overlay.style.transform = 
+            `translate3d(${this.currentPos.x}px, ${this.currentPos.y}px, 0)`;
+          
+          requestAnimationFrame(() => this.animationLoop());
+        }
+      }
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.terminal"
+    
+    items:
+      - id: "dendrite.terminal.smoothCursor"
+        type: "boolean"
+        default: true
+        description: "Enable smooth cursor interpolation"
+        task: "4.4"
+        
+      - id: "dendrite.terminal.cursorPhysics"
+        type: "object"
+        default:
+          duration: 80
+          easing: "ease-out"
+        description: "Cursor interpolation physics"
+        task: "4.4"
+        properties:
+          duration:
+            type: "number"
+            description: "Interpolation duration in milliseconds"
+            default: 80
+            range: [20, 200]
+          easing:
+            type: "string"
+            description: "CSS easing function"
+            default: "ease-out"
+            enum: ["linear", "ease", "ease-in", "ease-out", "ease-in-out"]
+        
+      - id: "dendrite.terminal.forceGPU"
+        type: "boolean"
+        default: true
+        description: "Force WebGL renderer for terminal"
+        task: "4.4"
+        
+      - id: "dendrite.terminal.targetFPS"
+        type: "number"
+        default: 60
+        description: "Target frame rate for cursor animation"
+        range: [30, 120]
+        task: "4.4"
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "Rapid typing"
+        description: "Sustained 100+ WPM typing"
+        expected: "Cursor maintains 60 FPS, no stutter"
+        
+      - name: "Vim navigation"
+        description: "hjkl rapid movement in vim/neovim"
+        expected: "Smooth cursor trails motion"
+        
+      - name: "Tab completion"
+        description: "Long paths with many completions"
+        expected: "No lag during completion popup"
+        
+      - name: "Heavy syntax highlighting"
+        description: "Large JSON/logs with color output"
+        expected: "Cursor remains smooth during heavy render"
+        
+      - name: "Scrollback with cursor"
+        description: "Scrolling while cursor active"
+        expected: "Cursor position correctly tracked"
+
+  # ============================================
+  # MANUAL TESTING PROTOCOL
+  # ============================================
+  manual_testing:
+    description: |
+      Hands-on testing protocol to validate terminal velocity features.
+      All tests require visual inspection and real user interaction.
+    
+    # Config parameters to check during testing
+    config_checks:
+      - setting: "dendrite.terminal.smoothCursor"
+        test_values: [true, false]
+        verify:
+          - "Toggle ON: smooth cursor overlay appears and animates"
+          - "Toggle OFF: native cursor behavior restored immediately"
+          - "No terminal flicker on toggle"
+        
+      - setting: "dendrite.terminal.cursorPhysics.duration"
+        test_values: [20, 80, 200]
+        verify:
+          - "20ms: cursor feels snappy, minimal trail"
+          - "80ms: balanced smoothness (default feel)"
+          - "200ms: cursor has noticeable lag/float effect"
+          - "Changes apply without terminal restart"
+        
+      - setting: "dendrite.terminal.cursorPhysics.easing"
+        test_values: ["linear", "ease-out", "ease-in-out"]
+        verify:
+          - "linear: constant interpolation speed"
+          - "ease-out: fast start, slow finish (recommended)"
+          - "ease-in-out: smooth acceleration and deceleration"
+          - "Visual difference noticeable at slower durations"
+        
+      - setting: "dendrite.terminal.forceGPU"
+        test_values: [true, false]
+        verify:
+          - "ON: WebGL renderer active (check via DevTools Layers panel)"
+          - "OFF: DOM renderer used, may have reduced performance"
+          - "GPU memory usage visible in task manager when ON"
+        
+      - setting: "dendrite.terminal.targetFPS"
+        test_values: [30, 60, 120]
+        verify:
+          - "30fps: visibly choppier animation"
+          - "60fps: smooth standard animation"
+          - "120fps: smoother on high refresh displays"
+          - "Use DevTools Performance panel to verify frame timing"
+    
+    # Pre-test checklist
+    pre_test_checklist:
+      - "Fresh terminal instance (kill existing terminals)"
+      - "DevTools open with Performance tab ready"
+      - "Settings UI open to dendrite.terminal section"
+      - "Test file ready: large JSON or log with color output"
+      - "Vim/neovim available for navigation tests"
+    
+    # Test execution workflow
+    test_workflow:
+      - step: 1
+        action: "Baseline capture"
+        details: |
+          1. Open terminal with smooth cursor DISABLED
+          2. Type rapidly for 10 seconds
+          3. Record FPS from Performance panel
+          4. Note any visual issues
+        
+      - step: 2
+        action: "Enable smooth cursor"
+        details: |
+          1. Set dendrite.terminal.smoothCursor = true
+          2. Observe cursor overlay appears
+          3. Verify native cursor is hidden
+          4. Repeat rapid typing test
+          5. Compare FPS (should maintain 60+)
+        
+      - step: 3
+        action: "Physics parameter sweep"
+        details: |
+          1. Test each cursorPhysics.duration value: 20, 80, 200
+          2. For each, perform hjkl navigation in vim
+          3. Observe interpolation feel
+          4. Verify changes apply without restart
+        
+      - step: 4
+        action: "Stress test"
+        details: |
+          1. Open large file with heavy syntax highlighting
+          2. Scroll rapidly while cursor active
+          3. Run cat on large log file
+          4. Monitor FPS and memory usage
+          5. Verify no memory leaks (heap stays stable)
+        
+      - step: 5
+        action: "GPU toggle test"
+        details: |
+          1. Toggle dendrite.terminal.forceGPU off
+          2. Verify terminal still renders (DOM fallback)
+          3. Toggle back on
+          4. Verify WebGL reactivates
+          5. Check Layers panel shows GPU compositing
+    
+    # Pass/fail criteria
+    pass_criteria:
+      performance:
+        - "Cursor animation >= 60 FPS in all scenarios"
+        - "Input latency < 16ms (use Performance.mark measurements)"
+        - "Frame overhead < 1ms per animation frame"
+        - "No memory leaks over 5 minute stress test"
+      
+      visual:
+        - "Cursor movement feels fluid and responsive"
+        - "No stuttering or jank during rapid navigation"
+        - "Cursor shape matches terminal cursor style"
+        - "Overlay properly positioned at all times"
+      
+      config:
+        - "All 4 settings appear in Settings UI"
+        - "Settings changes apply immediately"
+        - "Invalid values rejected with proper error"
+        - "Defaults restore expected behavior"
+    
+    # Issue reporting template
+    issue_template: |
+      ## Terminal Velocity Issue Report
+      
+      **Setting tested:** [setting name]
+      **Value:** [value tested]
+      **Expected:** [expected behavior]
+      **Actual:** [observed behavior]
+      
+      **Reproduction steps:**
+      1. 
+      2. 
+      3. 
+      
+      **Performance data:**
+      - FPS: 
+      - Input latency: 
+      - Memory: 
+      
+      **Screenshots/recordings:** [attach]
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "ITerminalService"
+      - "IConfigurationService"
+      - "Terminal (xterm.js)"
+      
+    xterm_addons:
+      - "WebglAddon"
+      - "Custom SmoothCursorAddon"

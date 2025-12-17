@@ -1,0 +1,234 @@
+# ============================================
+# DENDRITE IDE - MASTER ROADMAP
+# ============================================
+# Reference: rdmp.dendrite
+# This file tracks overall project status and links all feature specs
+
+roadmap:
+  meta:
+    id: "rdmp.dendrite"
+    name: "Dendrite IDE Roadmap"
+    version: "0.2.0"
+    description: "Master roadmap tracking all Dendrite features and eras"
+    owners: ["@shupp"]
+    last_updated: "2025-12-16"
+
+  # ============================================
+  # NAMING CONVENTION
+  # ============================================
+  conventions:
+    cats_pattern: "cats.<feature>.dendrite.yaml"
+    buildbook_pattern: "bldbk.<feature>.dendrite.yaml"
+    reference_format:
+      cats: "cats.<feature>.dendrite"
+      buildbook: "bldbk.<feature>.dendrite"
+    examples:
+      - "cats.core.dendrite -> docs/build/cats/cats.core.dendrite.yaml"
+      - "bldbk.terminalux.dendrite -> docs/build/buildbook/bldbk.terminalux.dendrite.yaml"
+
+  # ============================================
+  # VISION
+  # ============================================
+  vision:
+    tagline: "Where learning takes root"
+    core_principles:
+      - "Terminal-first: The terminal is the primary workspace"
+      - "Human at the helm: AI assists, human approves"
+      - "Learning through doing: Commits become lessons"
+      - "Unified workflow: One workspace for all tools"
+      - "Opinionated by default: Curated, not chaotic"
+    
+    target_workflow: |
+      1. User works primarily in fullscreen terminal (OpenCode-like)
+      2. Quick swap to editor for larger edits (Ctrl+`)
+      3. After AI edits: diff panel auto-focuses, agent pauses
+      4. Human reviews, accepts/rejects changes
+      5. On commit: AI explains what was learned
+      6. All tools (TLDraw, Linear, GitHub) accessible in same workspace
+      7. AI context syncs across all panels
+
+  # ============================================
+  # ERA DEFINITIONS
+  # ============================================
+  eras:
+    - id: "core"
+      number: [1, 2, 3]
+      name: "Learning Metrics Foundation"
+      description: "WASM engine, session tracking, VS Code integration, Growth dashboard"
+      cats_ref: "cats.core.dendrite"
+      buildbook_ref: "bldbk.core.dendrite"
+      status: "completed"
+      completed_date: "2025-12-16"
+      completion: 100  # All eras complete
+      dependencies: []
+      
+    - id: "velocity"
+      number: 4
+      name: "Terminal Velocity"
+      description: "Hyprland-inspired terminal fluidity with smooth cursor and GPU acceleration"
+      cats_ref: "cats.velocity.dendrite"
+      buildbook_ref: "bldbk.velocity.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["core"]
+      
+    - id: "terminalux"
+      number: 5
+      name: "Terminal-First UX"
+      description: "Fullscreen terminal mode, quick editor swap, diff-focus workflow, agent checkpoints"
+      cats_ref: "cats.terminalux.dendrite"
+      buildbook_ref: "bldbk.terminalux.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["velocity"]
+      
+    - id: "commitmode"
+      number: 6
+      name: "Code Commit Mode"
+      description: "AI explains user commits for learning, human-in-the-loop review"
+      cats_ref: "cats.commitmode.dendrite"
+      buildbook_ref: "bldbk.commitmode.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["core"]  # Can run parallel to velocity/terminalux
+      
+    - id: "workspace"
+      number: 7
+      name: "Unified Workspace"
+      description: "TLDraw, Linear, GitHub integration in consolidated panels"
+      cats_ref: "cats.workspace.dendrite"
+      buildbook_ref: "bldbk.workspace.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["terminalux"]
+      
+    - id: "marketplace"
+      number: 8
+      name: "Opinionated Marketplace"
+      description: "Curated extensions, AI workflow sync hooks"
+      cats_ref: "cats.marketplace.dendrite"
+      buildbook_ref: "bldbk.marketplace.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["workspace"]
+
+  # ============================================
+  # STATUS DASHBOARD
+  # ============================================
+  status:
+    overall_completion: 31  # 42 done / 136 total tasks
+    total_tasks: 136
+    tasks_done: 42
+    
+    by_era:
+      core:
+        era_1: { status: "completed", tasks_total: 8, tasks_done: 8 }
+        era_2: { status: "completed", tasks_total: 7, tasks_done: 7 }
+        era_3: { status: "completed", tasks_total: 27, tasks_done: 27 }
+      velocity:
+        era_4: { status: "not_started", tasks_total: 8, tasks_done: 0 }
+      terminalux:
+        era_5: { status: "not_started", tasks_total: 15, tasks_done: 0 }
+      commitmode:
+        era_6: { status: "not_started", tasks_total: 18, tasks_done: 0 }
+      workspace:
+        era_7: { status: "not_started", tasks_total: 35, tasks_done: 0 }
+      marketplace:
+        era_8: { status: "not_started", tasks_total: 20, tasks_done: 0 }
+    
+    milestones:
+      - name: "MVP: Learning Metrics"
+        target_date: "2025-Q1"
+        eras: ["core"]
+        status: "in_progress"
+        
+      - name: "Terminal Excellence"
+        target_date: "2025-Q2"
+        eras: ["velocity", "terminalux"]
+        status: "not_started"
+        
+      - name: "AI-Assisted Learning"
+        target_date: "2025-Q2"
+        eras: ["commitmode"]
+        status: "not_started"
+        
+      - name: "Unified Developer Experience"
+        target_date: "2025-Q3"
+        eras: ["workspace", "marketplace"]
+        status: "not_started"
+
+  # ============================================
+  # DEPENDENCY GRAPH
+  # ============================================
+  dependency_graph: |
+    core (1-3) ─────┬──────────────────> velocity (4) ──> terminalux (5) ──> workspace (7) ──> marketplace (8)
+                    │
+                    └──────────────────> commitmode (6) ─────────────────────────────────────────────┘
+    
+    Legend:
+    - core is prerequisite for everything
+    - commitmode can develop in parallel with velocity/terminalux
+    - workspace requires terminalux (terminal-first is base UX)
+    - marketplace requires workspace (extensions integrate with unified panels)
+
+  # ============================================
+  # FILE MANIFEST
+  # ============================================
+  files:
+    roadmap:
+      - path: "docs/build/rdmp.dendrite.yaml"
+        description: "This file - master roadmap"
+    
+    cats:
+      - path: "docs/build/cats/cats.core.dendrite.yaml"
+        ref: "cats.core.dendrite"
+        eras: [1, 2, 3]
+      - path: "docs/build/cats/cats.velocity.dendrite.yaml"
+        ref: "cats.velocity.dendrite"
+        eras: [4]
+      - path: "docs/build/cats/cats.terminalux.dendrite.yaml"
+        ref: "cats.terminalux.dendrite"
+        eras: [5]
+      - path: "docs/build/cats/cats.commitmode.dendrite.yaml"
+        ref: "cats.commitmode.dendrite"
+        eras: [6]
+      - path: "docs/build/cats/cats.workspace.dendrite.yaml"
+        ref: "cats.workspace.dendrite"
+        eras: [7]
+      - path: "docs/build/cats/cats.marketplace.dendrite.yaml"
+        ref: "cats.marketplace.dendrite"
+        eras: [8]
+    
+    buildbooks:
+      - path: "docs/build/buildbook/bldbk.core.dendrite.yaml"
+        ref: "bldbk.core.dendrite"
+        eras: [1, 2, 3]
+      - path: "docs/build/buildbook/bldbk.velocity.dendrite.yaml"
+        ref: "bldbk.velocity.dendrite"
+        eras: [4]
+      - path: "docs/build/buildbook/bldbk.terminalux.dendrite.yaml"
+        ref: "bldbk.terminalux.dendrite"
+        eras: [5]
+      - path: "docs/build/buildbook/bldbk.commitmode.dendrite.yaml"
+        ref: "bldbk.commitmode.dendrite"
+        eras: [6]
+      - path: "docs/build/buildbook/bldbk.workspace.dendrite.yaml"
+        ref: "bldbk.workspace.dendrite"
+        eras: [7]
+      - path: "docs/build/buildbook/bldbk.marketplace.dendrite.yaml"
+        ref: "bldbk.marketplace.dendrite"
+        eras: [8]
+
+  # ============================================
+  # LEGACY FILE MIGRATION
+  # ============================================
+  migration:
+    note: "Migration completed 2025-12-16"
+    status: "completed"
+    old_files:
+      - path: "docs/build/cats/dendrite-core.cats.yaml"
+        migrated_to: "docs/build/cats/cats.core.dendrite.yaml"
+        status: "deleted"
+      - path: "docs/build/buildbook/dendrite-core.buildbook.yaml"
+        migrated_to: "docs/build/buildbook/bldbk.core.dendrite.yaml"
+        status: "deleted"

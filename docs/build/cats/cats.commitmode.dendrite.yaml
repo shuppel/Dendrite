@@ -1,0 +1,443 @@
+# ============================================
+# DENDRITE IDE - CODE COMMIT MODE
+# ============================================
+# Reference: cats.commitmode.dendrite
+# Era: 6
+# BuildBook: bldbk.commitmode.dendrite
+
+cats:
+  meta:
+    id: "cats.commitmode.dendrite"
+    name: "Dendrite Code Commit Mode"
+    version: "0.1.0"
+    domain: "learning"
+    era: 6
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.commitmode.dendrite"
+    depends_on: ["cats.core.dendrite"]
+    parallel_with: ["cats.velocity.dendrite", "cats.terminalux.dendrite"]
+    description: |
+      Learning-focused commit workflow:
+      - AI explains code the user committed
+      - Transform commits into learning moments
+      - Build personal knowledge base from coding activity
+      - Human at the helm: user drives, AI explains
+
+  # ============================================
+  # DESIGN PHILOSOPHY
+  # ============================================
+  philosophy:
+    core_principle: "Every commit is a lesson"
+    
+    learning_model:
+      approach: "Learning by doing, reinforced by reflection"
+      trigger: "User commits code they wrote or modified"
+      output: "AI-generated explanation of what was learned"
+      storage: "Persisted with GrowthProfile for review"
+      
+    user_modes:
+      learner:
+        description: "Default mode - AI explains patterns and concepts"
+        focus: "What did I learn? Why does this work?"
+        
+      reviewer:
+        description: "AI helps review and improve code quality"
+        focus: "What could be better? Any issues?"
+        
+      teacher:
+        description: "User explains to AI (rubber duck debugging)"
+        focus: "Let me explain what I did..."
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Auto-explain commits for learning reinforcement"
+      - "Build searchable knowledge base from commits"
+      - "Track concepts learned over time"
+      - "Provide spaced repetition review of past learnings"
+      - "Connect commits to learning resources"
+    
+    metrics:
+      explanation_latency: "< 5s after commit"
+      knowledge_retention: "Spaced repetition intervals"
+      concept_extraction: "Identify patterns, APIs, techniques"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/"
+        type: directory
+        description: "Code Commit Mode module"
+        task: "6.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/commitExplainerService.ts"
+        type: file
+        description: "AI commit explanation service"
+        task: "6.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/knowledgeBaseService.ts"
+        type: file
+        description: "Personal knowledge storage and search"
+        task: "6.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/conceptExtractor.ts"
+        type: file
+        description: "Extract concepts/patterns from code"
+        task: "6.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/spacedRepetitionService.ts"
+        type: file
+        description: "Spaced repetition for learning review"
+        task: "6.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/commitModePanel.ts"
+        type: file
+        description: "UI panel for commit explanations"
+        task: "6.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/commitmode/learningView.ts"
+        type: file
+        description: "View for browsing learned concepts"
+        task: "6.7"
+
+      # Rust extensions for knowledge storage
+      - path: "crates/dendrite_core/src/knowledge.rs"
+        type: file
+        description: "Knowledge base data structures"
+        task: "6.8"
+        
+      - path: "crates/dendrite_core/src/concepts.rs"
+        type: file
+        description: "Concept extraction and tagging"
+        task: "6.9"
+
+  # ============================================
+  # DATA MODEL EXTENSIONS
+  # ============================================
+  data_model:
+    entities:
+      - name: "CommitExplanation"
+        description: "AI-generated explanation of a commit"
+        fields:
+          - { name: "commit_hash", type: "String", description: "SHA of explained commit" }
+          - { name: "summary", type: "String", description: "One-line summary" }
+          - { name: "explanation", type: "String", description: "Detailed explanation (markdown)" }
+          - { name: "concepts", type: "Vec<ConceptRef>", description: "Concepts used/learned" }
+          - { name: "patterns", type: "Vec<String>", description: "Design patterns identified" }
+          - { name: "apis_used", type: "Vec<ApiRef>", description: "APIs/libraries used" }
+          - { name: "difficulty", type: "Difficulty", description: "Estimated complexity" }
+          - { name: "generated_at", type: "DateTime<Utc>" }
+          - { name: "user_notes", type: "Option<String>", description: "User annotations" }
+          - { name: "rating", type: "Option<u8>", description: "User rating 1-5" }
+          
+      - name: "ConceptRef"
+        description: "Reference to a programming concept"
+        fields:
+          - { name: "id", type: "String", description: "Unique concept ID" }
+          - { name: "name", type: "String", description: "Human-readable name" }
+          - { name: "category", type: "ConceptCategory" }
+          - { name: "first_seen", type: "DateTime<Utc>" }
+          - { name: "times_used", type: "u32" }
+          - { name: "last_reviewed", type: "Option<DateTime<Utc>>" }
+          - { name: "mastery_level", type: "f32", description: "0.0-1.0 confidence" }
+          
+      - name: "ApiRef"
+        description: "Reference to an API or library"
+        fields:
+          - { name: "name", type: "String", description: "API/library name" }
+          - { name: "version", type: "Option<String>" }
+          - { name: "docs_url", type: "Option<String>" }
+          - { name: "functions_used", type: "Vec<String>" }
+          
+      - name: "KnowledgeEntry"
+        description: "Entry in personal knowledge base"
+        fields:
+          - { name: "id", type: "String" }
+          - { name: "concept", type: "ConceptRef" }
+          - { name: "related_commits", type: "Vec<String>", description: "Commit hashes" }
+          - { name: "notes", type: "String" }
+          - { name: "examples", type: "Vec<CodeExample>" }
+          - { name: "resources", type: "Vec<ResourceLink>" }
+          - { name: "created_at", type: "DateTime<Utc>" }
+          - { name: "updated_at", type: "DateTime<Utc>" }
+          
+      - name: "CodeExample"
+        description: "Code snippet example"
+        fields:
+          - { name: "code", type: "String" }
+          - { name: "language", type: "String" }
+          - { name: "source_file", type: "Option<String>" }
+          - { name: "line_range", type: "Option<(u32, u32)>" }
+          - { name: "explanation", type: "String" }
+          
+      - name: "ResourceLink"
+        description: "Link to learning resource"
+        fields:
+          - { name: "title", type: "String" }
+          - { name: "url", type: "String" }
+          - { name: "type", type: "ResourceType" }
+          - { name: "recommended", type: "bool" }
+          
+      - name: "ReviewCard"
+        description: "Spaced repetition review card"
+        fields:
+          - { name: "id", type: "String" }
+          - { name: "concept_id", type: "String" }
+          - { name: "question", type: "String" }
+          - { name: "answer", type: "String" }
+          - { name: "code_context", type: "Option<String>" }
+          - { name: "interval_days", type: "u32" }
+          - { name: "ease_factor", type: "f32" }
+          - { name: "next_review", type: "DateTime<Utc>" }
+          - { name: "review_count", type: "u32" }
+
+    enums:
+      - name: "Difficulty"
+        values:
+          - { key: "TRIVIAL", value: "trivial", description: "Basic syntax or simple operation" }
+          - { key: "EASY", value: "easy", description: "Common pattern, well understood" }
+          - { key: "MEDIUM", value: "medium", description: "Requires some thought" }
+          - { key: "HARD", value: "hard", description: "Complex logic or advanced pattern" }
+          - { key: "EXPERT", value: "expert", description: "Cutting-edge or very complex" }
+          
+      - name: "ConceptCategory"
+        values:
+          - { key: "LANGUAGE_FEATURE", value: "language_feature" }
+          - { key: "DESIGN_PATTERN", value: "design_pattern" }
+          - { key: "ALGORITHM", value: "algorithm" }
+          - { key: "DATA_STRUCTURE", value: "data_structure" }
+          - { key: "API_USAGE", value: "api_usage" }
+          - { key: "BEST_PRACTICE", value: "best_practice" }
+          - { key: "DEBUGGING", value: "debugging" }
+          - { key: "TESTING", value: "testing" }
+          - { key: "ARCHITECTURE", value: "architecture" }
+          - { key: "DEVOPS", value: "devops" }
+          
+      - name: "ResourceType"
+        values:
+          - { key: "DOCUMENTATION", value: "documentation" }
+          - { key: "TUTORIAL", value: "tutorial" }
+          - { key: "VIDEO", value: "video" }
+          - { key: "BOOK", value: "book" }
+          - { key: "STACKOVERFLOW", value: "stackoverflow" }
+          - { key: "BLOG", value: "blog" }
+
+  # ============================================
+  # WASM INTERFACE EXTENSIONS
+  # ============================================
+  wasm_interface:
+    exports:
+      # Knowledge base
+      - { name: "save_commit_explanation", signature: "(profile_json: string, explanation_json: string) -> string" }
+      - { name: "get_commit_explanations", signature: "(profile_json: string, limit: u32) -> string" }
+      - { name: "search_knowledge", signature: "(profile_json: string, query: string) -> string" }
+      - { name: "get_concept_by_id", signature: "(profile_json: string, concept_id: string) -> string" }
+      
+      # Spaced repetition
+      - { name: "get_due_reviews", signature: "(profile_json: string) -> string" }
+      - { name: "record_review", signature: "(profile_json: string, card_id: string, rating: u8) -> string" }
+      - { name: "generate_review_cards", signature: "(explanation_json: string) -> string" }
+      
+      # Concept extraction
+      - { name: "extract_concepts", signature: "(diff_json: string, language: string) -> string" }
+      - { name: "get_concept_stats", signature: "(profile_json: string) -> string" }
+      - { name: "get_mastery_progress", signature: "(profile_json: string) -> string" }
+
+  # ============================================
+  # COMMANDS
+  # ============================================
+  commands:
+    prefix: "dendrite.commitmode"
+    
+    items:
+      - id: "dendrite.commitmode.explainLastCommit"
+        title: "Dendrite: Explain Last Commit"
+        description: "Get AI explanation of most recent commit"
+        keybinding: "ctrl+shift+x"
+        task: "6.10"
+        
+      - id: "dendrite.commitmode.explainCommit"
+        title: "Dendrite: Explain Commit..."
+        description: "Select and explain a specific commit"
+        task: "6.10"
+        
+      - id: "dendrite.commitmode.showKnowledge"
+        title: "Dendrite: Browse Knowledge Base"
+        description: "Open knowledge browser panel"
+        task: "6.11"
+        
+      - id: "dendrite.commitmode.searchConcepts"
+        title: "Dendrite: Search Concepts"
+        description: "Search learned concepts"
+        keybinding: "ctrl+shift+k"
+        task: "6.11"
+        
+      - id: "dendrite.commitmode.startReview"
+        title: "Dendrite: Start Review Session"
+        description: "Begin spaced repetition review"
+        task: "6.12"
+        
+      - id: "dendrite.commitmode.addNote"
+        title: "Dendrite: Add Note to Commit"
+        description: "Annotate commit with personal notes"
+        task: "6.13"
+        
+      - id: "dendrite.commitmode.toggleAutoExplain"
+        title: "Dendrite: Toggle Auto-Explain"
+        description: "Enable/disable automatic commit explanations"
+        task: "6.14"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.commitmode"
+    
+    items:
+      - id: "dendrite.commitmode.enabled"
+        type: "boolean"
+        default: true
+        description: "Enable Code Commit Mode"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.autoExplain"
+        type: "boolean"
+        default: true
+        description: "Automatically explain commits after creation"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.explanationDepth"
+        type: "string"
+        default: "standard"
+        enum: ["brief", "standard", "detailed"]
+        description: "Level of detail in explanations"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.showNotification"
+        type: "boolean"
+        default: true
+        description: "Show notification when explanation ready"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.reviewReminder"
+        type: "boolean"
+        default: true
+        description: "Remind about due review cards"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.reviewReminderInterval"
+        type: "number"
+        default: 60
+        description: "Minutes between review reminders"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.extractConcepts"
+        type: "boolean"
+        default: true
+        description: "Automatically extract and track concepts"
+        task: "6.15"
+        
+      - id: "dendrite.commitmode.linkResources"
+        type: "boolean"
+        default: true
+        description: "Suggest learning resources for concepts"
+        task: "6.15"
+
+  # ============================================
+  # UI COMPONENTS
+  # ============================================
+  ui:
+    views:
+      - id: "dendrite.commitExplanation"
+        name: "Commit Explanation"
+        container: "growth"
+        type: "webview"
+        description: "Shows AI explanation of commits"
+        task: "6.6"
+        
+      - id: "dendrite.knowledgeBase"
+        name: "Knowledge Base"
+        container: "growth"
+        type: "treeview"
+        description: "Browse learned concepts"
+        task: "6.7"
+        
+      - id: "dendrite.reviewCards"
+        name: "Review"
+        container: "growth"
+        type: "webview"
+        description: "Spaced repetition review interface"
+        task: "6.16"
+        
+    commit_explanation_panel:
+      sections:
+        - id: "summary"
+          components: ["commit_hash", "one_line_summary", "difficulty_badge"]
+        - id: "explanation"
+          components: ["markdown_content", "code_highlights"]
+        - id: "concepts"
+          components: ["concept_tags", "mastery_indicators"]
+        - id: "actions"
+          components: ["add_note_button", "rate_button", "review_later_button"]
+          
+    knowledge_browser:
+      sections:
+        - id: "search"
+          components: ["search_input", "filter_chips"]
+        - id: "concepts_tree"
+          components: ["category_groups", "concept_items"]
+        - id: "detail"
+          components: ["concept_detail", "related_commits", "examples"]
+
+  # ============================================
+  # AI EXPLANATION PROMPTS
+  # ============================================
+  ai_prompts:
+    commit_explanation:
+      context:
+        - "Commit diff (full)"
+        - "Commit message"
+        - "File types and languages"
+        - "User's current knowledge level (from profile)"
+      
+      output_format:
+        summary: "One sentence, what was accomplished"
+        explanation: |
+          Markdown with:
+          - What changed and why
+          - Key concepts or patterns used
+          - Any best practices demonstrated
+          - Potential improvements (if any)
+        concepts: "List of identifiable concepts"
+        difficulty: "Estimated difficulty level"
+        
+    concept_extraction:
+      patterns_to_identify:
+        - "Design patterns (singleton, factory, observer, etc.)"
+        - "Language idioms (async/await, generators, decorators)"
+        - "API usage patterns"
+        - "Error handling strategies"
+        - "Performance optimizations"
+        - "Testing patterns"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    internal:
+      - "cats.core.dendrite (GrowthProfile, Git tracking)"
+      
+    vscode_apis:
+      - "IGitService"
+      - "INotificationService"
+      - "IQuickInputService"
+      - "IWebviewViewProvider"
+      
+    ai_services:
+      - "LLM for commit explanation"
+      - "Embedding model for concept search"
