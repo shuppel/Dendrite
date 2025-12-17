@@ -1,0 +1,468 @@
+# ============================================
+# DENDRITE IDE - PRODUCT MODE BUILD BOOK
+# ============================================
+# Reference: bldbk.product.dendrite
+# Era: 8
+# CATS: cats.product.dendrite
+
+meta:
+  id: "bldbk.product.dendrite"
+  name: "Dendrite PRODUCT Mode (Project Management)"
+  cats_ref: "cats.product.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 8
+  total_tasks: 28
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_8: { status: "not_started", tasks_done: 0, tasks_total: 28 }
+  overall_completion: 0
+  notes: "PRODUCT mode - Kanban board with CATS/BuildBook YAML integration"
+
+# ============================================
+# ERA 8: PRODUCT Mode
+# ============================================
+era_8:
+  name: "PRODUCT Mode (Project Management)"
+  description: "Fullscreen Kanban board with YAML integration"
+  assignee: "@shupp"
+  status: "not_started"
+  depends_on: ["bldbk.modesystem.dendrite:era_5"]
+  
+  goals:
+    - "Implement fullscreen Kanban board GUI"
+    - "Parse and display CATS/BuildBook YAML files"
+    - "Drag-drop updates YAML files"
+    - "Click card → jump to PRECISION mode"
+    - "Roadmap and milestone tracking"
+  
+  performance_targets:
+    board_render_ms: 500
+    card_drag_fps: 60
+    yaml_write_ms: 100
+  
+  tasks:
+    - id: "8.1"
+      name: "Scaffold PRODUCT mode structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/"
+      implements:
+        - "Create product subdirectory"
+      validation:
+        - "Directory exists"
+    
+    - id: "8.2"
+      name: "Implement ProductModeView controller"
+      status: "not_started"
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/productMode.ts"
+      implements:
+        - "ProductModeView class implementing IModeView"
+        - "show() method (load YAML, render board)"
+        - "hide() method (save state)"
+        - "toggleRoadmap() method (Cmd+R handler)"
+      validation:
+        - "Mode activates correctly"
+    
+    - id: "8.3"
+      name: "Scaffold Kanban components"
+      status: "not_started"
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/"
+      implements:
+        - "Create kanban subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "8.4"
+      name: "Implement KanbanBoard component"
+      status: "not_started"
+      depends_on: ["8.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+      implements:
+        - "KanbanBoard class (main board container)"
+        - "Render columns (To Do, In Progress, Done)"
+        - "Horizontal scroll for many columns"
+        - "Virtual scrolling for large task lists"
+      validation:
+        - "Board renders correctly"
+        - "Columns displayed"
+    
+    - id: "8.5"
+      name: "Implement KanbanColumn component"
+      status: "not_started"
+      depends_on: ["8.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanColumn.ts"
+      implements:
+        - "KanbanColumn class (single column)"
+        - "Column header (title, task count)"
+        - "Card container (vertical list)"
+        - "Drop zone highlighting"
+      validation:
+        - "Columns render correctly"
+        - "Drop zones work"
+    
+    - id: "8.6"
+      name: "Implement KanbanCard component"
+      status: "not_started"
+      depends_on: ["8.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+      implements:
+        - "KanbanCard class (draggable task card)"
+        - "Display task ID, name, status, file path"
+        - "Drag-and-drop handlers"
+        - "Click handler (jump to code)"
+        - "Context menu (Edit, Delete, etc.)"
+      validation:
+        - "Cards render correctly"
+        - "Drag-and-drop works"
+        - "Click opens file in PRECISION mode"
+    
+    - id: "8.7"
+      name: "Scaffold YAML services"
+      status: "not_started"
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/yaml/"
+      implements:
+        - "Create yaml subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "8.8"
+      name: "Implement YAMLService"
+      status: "not_started"
+      depends_on: ["8.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlService.ts"
+      implements:
+        - "YAMLService class (file I/O)"
+        - "readYAML() method (read CATS/BuildBook files)"
+        - "writeYAML() method (preserve formatting, create backups)"
+        - "watchFiles() method (file watcher)"
+        - "onFileChanged event (auto-refresh board)"
+      validation:
+        - "YAML files read correctly"
+        - "Write preserves formatting"
+        - "File watcher works"
+    
+    - id: "8.9"
+      name: "Implement YAMLParser"
+      status: "not_started"
+      depends_on: ["8.8"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlParser.ts"
+      implements:
+        - "YAMLParser class (parse YAML into task models)"
+        - "parseRoadmap() method"
+        - "parseCATS() method"
+        - "parseBuildBook() method"
+        - "Schema validation"
+      validation:
+        - "Parses roadmap correctly"
+        - "Parses CATS/BuildBook correctly"
+        - "Invalid YAML handled gracefully"
+    
+    - id: "8.10"
+      name: "Scaffold roadmap components"
+      status: "not_started"
+      depends_on: ["8.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/roadmap/"
+      implements:
+        - "Create roadmap subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "8.11"
+      name: "Implement RoadmapPanel component"
+      status: "not_started"
+      depends_on: ["8.10"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/roadmap/roadmapPanel.ts"
+      implements:
+        - "RoadmapPanel class (sidebar)"
+        - "Eras list (with completion %)"
+        - "Milestones timeline"
+        - "Dependency graph visualization"
+        - "Slide in/out animation (200ms)"
+      validation:
+        - "Panel renders correctly"
+        - "Eras and milestones displayed"
+    
+    - id: "8.12"
+      name: "Register PRODUCT mode in ModeRegistry"
+      status: "not_started"
+      depends_on: ["8.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      implements:
+        - "Register PRODUCT mode descriptor"
+        - "Set icon: ph-kanban (Phosphor)"
+        - "Set keybinding: Cmd+3"
+      validation:
+        - "PRODUCT appears in mode switcher"
+        - "Cmd+3 switches to PRODUCT mode"
+    
+    - id: "8.13"
+      name: "Add PRODUCT mode settings"
+      status: "not_started"
+      depends_on: ["8.2", "8.4", "8.8", "8.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.product.kanban.columns (array)"
+        - "dendrite.product.roadmap.visible (boolean)"
+        - "dendrite.product.yaml.autoRefresh (boolean)"
+        - "dendrite.product.yaml.backupBeforeWrite (boolean)"
+      validation:
+        - "All settings in Settings UI"
+    
+    - id: "8.14"
+      name: "Implement drag-and-drop logic"
+      status: "not_started"
+      depends_on: ["8.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+      implements:
+        - "Drag start handler"
+        - "Drag over handler (drop zone highlight)"
+        - "Drop handler (update task status, write YAML)"
+        - "60fps drag performance"
+      validation:
+        - "Drag smooth (60fps)"
+        - "Drop updates YAML correctly"
+    
+    - id: "8.15"
+      name: "Implement card-to-code jump"
+      status: "not_started"
+      depends_on: ["8.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+      implements:
+        - "Click handler extracts file path from task"
+        - "Call ModeService.switchMode('precision')"
+        - "Call EditorService.openEditor(uri, selection)"
+        - "Fallback: show task details if no file path"
+      validation:
+        - "Click switches to PRECISION mode"
+        - "File opens correctly"
+        - "Cursor positioned correctly"
+    
+    - id: "8.16"
+      name: "Implement YAML write on card move"
+      status: "not_started"
+      depends_on: ["8.8", "8.14"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlService.ts"
+      implements:
+        - "Update task status in YAML"
+        - "Preserve formatting and comments"
+        - "Create backup (.bak) if enabled"
+        - "Handle write conflicts"
+      validation:
+        - "YAML updates correctly"
+        - "Formatting preserved"
+        - "Backups created"
+    
+    - id: "8.17"
+      name: "Implement file watcher for auto-refresh"
+      status: "not_started"
+      depends_on: ["8.8"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlService.ts"
+      implements:
+        - "Watch CATS/BuildBook YAML files"
+        - "onFileChanged event → re-parse and refresh board"
+        - "Debounce (500ms)"
+      validation:
+        - "Board refreshes when YAML changes externally"
+        - "No excessive refreshes"
+    
+    - id: "8.18"
+      name: "Implement context menu for cards"
+      status: "not_started"
+      depends_on: ["8.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+      implements:
+        - "Right-click context menu"
+        - "Actions: Edit Task, View Dependencies, Mark Complete, Delete Task, Copy Task ID"
+      validation:
+        - "Context menu appears"
+        - "All actions functional"
+    
+    - id: "8.19"
+      name: "Implement task filtering and search"
+      status: "not_started"
+      depends_on: ["8.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+      implements:
+        - "Search box (filter cards by name/ID)"
+        - "Filter by era, status, assignee"
+        - "Real-time filtering (debounced)"
+      validation:
+        - "Search works correctly"
+        - "Filters apply correctly"
+    
+    - id: "8.20"
+      name: "Implement era grouping"
+      status: "not_started"
+      depends_on: ["8.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+      implements:
+        - "Group tasks by era (Era 5, Era 6, etc.)"
+        - "Collapsible era sections"
+        - "Era completion % indicator"
+      validation:
+        - "Eras grouped correctly"
+        - "Collapse/expand works"
+    
+    - id: "8.21"
+      name: "Implement roadmap keybinding"
+      status: "not_started"
+      depends_on: ["8.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Cmd+R → Toggle roadmap panel"
+      validation:
+        - "Keybinding works"
+    
+    - id: "8.22"
+      name: "Implement dependency visualization"
+      status: "not_started"
+      depends_on: ["8.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/roadmap/roadmapPanel.ts"
+      implements:
+        - "Parse dependency graph from roadmap YAML"
+        - "Render visual graph (D3.js or simple custom)"
+        - "Interactive nodes (click to jump to era)"
+      validation:
+        - "Graph renders correctly"
+        - "Dependencies displayed"
+    
+    - id: "8.23"
+      name: "Implement board state persistence"
+      status: "not_started"
+      depends_on: ["8.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/productMode.ts"
+      implements:
+        - "Save board state (scroll position, filters, roadmap visibility)"
+        - "Restore state on mode activate"
+      validation:
+        - "State persists across sessions"
+    
+    - id: "8.24"
+      name: "Implement virtual scrolling for large boards"
+      status: "not_started"
+      depends_on: ["8.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+      implements:
+        - "Virtual scrolling for 100+ cards"
+        - "Render visible cards + buffer"
+        - "Smooth scrolling (60fps)"
+      validation:
+        - "Large boards render quickly"
+        - "Scrolling smooth"
+    
+    - id: "8.25"
+      name: "Hide file tree and terminal in PRODUCT mode"
+      status: "not_started"
+      depends_on: ["8.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/productMode.ts"
+      implements:
+        - "On activate: hide file tree and terminal"
+        - "On deactivate: restore previous state"
+      validation:
+        - "UI clean in PRODUCT mode"
+    
+    - id: "8.26"
+      name: "Implement animations"
+      status: "not_started"
+      depends_on: ["8.4", "8.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+        - "src/vs/workbench/contrib/dendrite/browser/product/roadmap/roadmapPanel.ts"
+      implements:
+        - "Card drag animation (60fps)"
+        - "Column drop zone animation"
+        - "Roadmap slide in/out (200ms)"
+      validation:
+        - "Animations smooth"
+    
+    - id: "8.27"
+      name: "Performance optimization and testing"
+      status: "not_started"
+      depends_on: ["8.4", "8.8", "8.14"]
+      implements:
+        - "Measure board render latency (target < 500ms first load)"
+        - "Measure card drag performance (target 60fps)"
+        - "Test with large projects (10 eras, 200+ tasks)"
+        - "Profile YAML parsing and writing"
+      validation:
+        - "Board render < 500ms"
+        - "Drag at 60fps"
+        - "No memory leaks"
+    
+    - id: "8.28"
+      name: "Documentation"
+      status: "not_started"
+      depends_on: ["8.27"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/product/README.md"
+      implements:
+        - "PRODUCT mode architecture"
+        - "Kanban board usage guide"
+        - "YAML integration documentation"
+        - "Card-to-code jump guide"
+      validation:
+        - "Documentation complete"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/product/productMode.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanColumn.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlParser.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/roadmap/roadmapPanel.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/product/README.md"
+    
+    testing:
+      - "Board rendering performance tests"
+      - "Drag-and-drop tests"
+      - "YAML parsing and writing tests"
+      - "Card-to-code jump tests"
+      - "File watcher tests"
+    
+    verification:
+      - "All 28 tasks completed"
+      - "Board render < 500ms"
+      - "Card drag at 60fps"
+      - "YAML integration functional"
+      - "Card-to-code jump works"
+  
+  completion_criteria:
+    - "All 28 tasks completed"
+    - "PRODUCT mode registered and accessible via Cmd+3"
+    - "Kanban board renders CATS/BuildBook tasks"
+    - "Drag-drop updates YAML files correctly"
+    - "Card click jumps to PRECISION mode"
+    - "Roadmap panel functional"
+    - "Performance targets met"

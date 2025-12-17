@@ -1,0 +1,614 @@
+# ============================================
+# DENDRITE IDE - PROJECTS/WORKSPACES
+# ============================================
+# Reference: cats.projects.dendrite
+# Era: 11
+# BuildBook: bldbk.projects.dendrite
+
+cats:
+  meta:
+    id: "cats.projects.dendrite"
+    name: "Dendrite Projects/Workspaces"
+    version: "0.1.0"
+    domain: "multi-project-management"
+    era: 11
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.projects.dendrite"
+    depends_on: ["cats.modesystem.dendrite", "cats.precision.dendrite"]
+    description: |
+      Projects/Workspaces - Multi-project management:
+      - Left sidebar for project switching
+      - Project list with quick switcher
+      - Filesystem root per project
+      - AI-assisted multi-project workflows
+      - Recent projects with history
+      - Project-specific context (git, settings, etc.)
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Implement left sidebar for project management"
+      - "Project switcher with search/filter"
+      - "Display filesystem root for active project"
+      - "Recent projects list (last 10)"
+      - "Project-specific context and settings"
+      - "Quick switch between projects (Cmd+Shift+P)"
+      - "Integration with all 4 modes"
+    
+    metrics:
+      project_switch_latency_ms: 300
+      sidebar_toggle_latency_ms: 50
+      projects_supported: "unlimited"
+      recent_projects_count: 10
+      
+  use_case: |
+    AI-assisted development means building multiple projects rapidly.
+    Users need to switch between projects seamlessly without losing context.
+    Example: Building 5 micro-services simultaneously, each in its own workspace.
+
+  # ============================================
+  # PROJECTS SIDEBAR LAYOUT
+  # ============================================
+  sidebar_layout:
+    description: "Left sidebar showing projects and filesystem root"
+    
+    position: "Left side of window"
+    width_default: "250px"
+    width_min: "200px"
+    width_max: "400px"
+    toggle_key: "Cmd+0"
+    default_state: "visible"
+    
+    sections:
+      project_header:
+        position: "Top (60px)"
+        displays:
+          - "Current project name (large text)"
+          - "Project path (small, dimmed)"
+          - "Project switcher button (dropdown icon)"
+        click_action: "Opens project switcher dropdown"
+        
+      filesystem_root:
+        position: "Below header (fills remaining space)"
+        displays:
+          - "File tree for current project root"
+          - "Git branch indicator (top of tree)"
+          - "Folder/file icons (Phosphor)"
+          - "Expandable/collapsible folders"
+        features:
+          - "Same smart filtering as PRECISION mode"
+          - "Virtual scrolling for large directories"
+          - "Drag-and-drop files"
+          - "Context menu (New File, Rename, Delete, etc.)"
+          - "Reveal active file in tree"
+          
+      recent_projects_footer:
+        position: "Bottom (optional, collapsible)"
+        height: "150px"
+        displays: "Last 3 recent projects (quick access)"
+        click_action: "Switch to clicked project"
+
+  # ============================================
+  # PROJECT SWITCHER SPECIFICATION
+  # ============================================
+  project_switcher:
+    description: "Dropdown/modal for switching between projects"
+    
+    trigger:
+      - "Click project header in sidebar"
+      - "Keyboard: Cmd+Shift+P"
+      
+    ui_design:
+      type: "Dropdown overlay (anchored to project header)"
+      width: "400px"
+      max_height: "500px"
+      
+    sections:
+      search_box:
+        position: "Top"
+        placeholder: "Search projects..."
+        autofocus: true
+        debounce_ms: 100
+        
+      recent_projects:
+        position: "Below search"
+        label: "Recent Projects"
+        count: 10
+        displays:
+          - "Project name"
+          - "Project path"
+          - "Last opened timestamp"
+          - "Git branch (if available)"
+          
+      all_projects:
+        position: "Below recent"
+        label: "All Projects"
+        displays: "All known projects (alphabetically sorted)"
+        virtual_scroll: true
+        
+      actions:
+        position: "Bottom"
+        buttons:
+          - label: "Open Folder..."
+            action: "Opens OS folder picker to add new project"
+          - label: "Manage Projects..."
+            action: "Opens project management settings"
+            
+    interactions:
+      - key: "Arrow Up/Down"
+        action: "Navigate project list"
+      - key: "Enter"
+        action: "Switch to selected project"
+      - key: "Esc"
+        action: "Close switcher"
+      - key: "Cmd+Backspace"
+        action: "Remove project from recent list"
+
+  # ============================================
+  # PROJECT MODEL
+  # ============================================
+  project_model:
+    description: "Data structure representing a project/workspace"
+    
+    schema:
+      id:
+        type: "string"
+        description: "Unique project ID (UUID)"
+        
+      name:
+        type: "string"
+        description: "Project display name"
+        example: "dendrite-ide"
+        
+      path:
+        type: "string"
+        description: "Absolute filesystem path to project root"
+        example: "/Users/shupp/projects/dendrite"
+        
+      type:
+        type: "string"
+        enum: ["git", "folder"]
+        description: "Project type (git repo or plain folder)"
+        
+      git:
+        type: "object"
+        optional: true
+        properties:
+          branch: "string"
+          remote: "string"
+          status: "clean | dirty"
+          
+      settings:
+        type: "object"
+        description: "Project-specific settings override"
+        example:
+          editor.tabSize: 2
+          dendrite.precision.fileTree.hiddenPatterns: ["node_modules"]
+          
+      metadata:
+        type: "object"
+        properties:
+          lastOpened: "ISO timestamp"
+          openCount: "number"
+          tags: "string[]"
+          
+      context:
+        type: "object"
+        description: "AI context for this project"
+        properties:
+          language: "typescript | python | rust | etc."
+          framework: "react | django | etc."
+          description: "string (AI-generated project summary)"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/"
+        type: directory
+        description: "Projects/Workspaces implementation"
+        task: "11.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+        type: file
+        description: "Core projects management service"
+        task: "11.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/projectsSidebar.ts"
+        type: file
+        description: "Left sidebar component"
+        task: "11.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/projectSwitcher.ts"
+        type: file
+        description: "Project switcher dropdown/modal"
+        task: "11.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/projectFileTree.ts"
+        type: file
+        description: "File tree for project root (extends PRECISION file tree)"
+        task: "11.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/projectContext.ts"
+        type: file
+        description: "AI context service for projects"
+        task: "11.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/projects/README.md"
+        type: file
+        description: "Projects/Workspaces documentation"
+        task: "11.15"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/browser/workbench.contribution.ts"
+        task: "11.7"
+        changes:
+          - action: "add"
+            description: "Register projects sidebar in workbench layout"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "11.8"
+        changes:
+          - action: "add"
+            description: "Register projects settings"
+          - action: "add"
+            description: "Register Cmd+0 (toggle sidebar), Cmd+Shift+P (project switcher)"
+
+  # ============================================
+  # PROJECTS SERVICE SPECIFICATION
+  # ============================================
+  projects_service:
+    description: "Central service managing projects and workspaces"
+    
+    architecture:
+      class: "ProjectsService"
+      implements: "IProjectsService"
+      singleton: true
+      
+    state:
+      current_project:
+        type: "Project | null"
+        description: "Currently active project"
+        
+      recent_projects:
+        type: "Project[]"
+        max_size: 10
+        description: "Recently opened projects"
+        
+      all_projects:
+        type: "Map<ProjectId, Project>"
+        description: "All known projects"
+        persisted: true  # Stored in workspace storage
+        
+    methods:
+      getCurrentProject:
+        signature: "() => Project | null"
+        description: "Get current active project"
+        
+      switchProject:
+        signature: "(projectId: string) => Promise<void>"
+        description: "Switch to different project"
+        actions:
+          - "Close current project files"
+          - "Update workspace root"
+          - "Load project-specific settings"
+          - "Refresh file tree"
+          - "Emit onDidChangeProject event"
+        performance: "< 300ms"
+        
+      addProject:
+        signature: "(path: string) => Promise<Project>"
+        description: "Add new project to workspace"
+        
+      removeProject:
+        signature: "(projectId: string) => Promise<void>"
+        description: "Remove project from list"
+        
+      getRecentProjects:
+        signature: "() => Project[]"
+        description: "Get recent projects (max 10)"
+        
+      onDidChangeProject:
+        signature: "Event<ProjectChangeEvent>"
+        description: "Fired when active project changes"
+        
+    persistence:
+      storage_key: "dendrite.projects.all"
+      format: "JSON array of Project objects"
+      location: "Workspace storage (cross-session)"
+
+  # ============================================
+  # PROJECTS SIDEBAR SPECIFICATION
+  # ============================================
+  projects_sidebar:
+    description: "Left sidebar UI component"
+    
+    toggle_key: "Cmd+0"
+    
+    components:
+      project_header:
+        class: "ProjectHeader"
+        height: "60px"
+        elements:
+          project_name:
+            font_size: "16px"
+            font_weight: "bold"
+            
+          project_path:
+            font_size: "12px"
+            opacity: "0.6"
+            truncation: "middle ellipsis"
+            
+          switcher_button:
+            icon: "ph-caret-down"
+            hover_effect: "Background highlight"
+            
+      file_tree:
+        class: "ProjectFileTree"
+        extends: "SmartFileTree (from PRECISION mode)"
+        root: "currentProject.path"
+        features:
+          - "Same smart filtering as PRECISION"
+          - "Virtual scrolling"
+          - "Git status indicators (modified, added, deleted)"
+          - "Sync with active editor file"
+          
+      git_indicator:
+        position: "Top of file tree"
+        displays:
+          - "Current branch (ph-git-branch icon)"
+          - "Dirty/clean status"
+          - "Click to open git panel"
+          
+    animations:
+      toggle:
+        duration_ms: 100
+        easing: "ease-out"
+        
+      project_switch:
+        duration_ms: 200
+        effect: "Fade out old tree, fade in new tree"
+
+  # ============================================
+  # INTEGRATION WITH MODES
+  # ============================================
+  mode_integration:
+    description: "Projects sidebar visible in all modes"
+    
+    per_mode_behavior:
+      aggregator:
+        sidebar_visible: true
+        file_tree_visible: true
+        note: "Terminal on right, projects sidebar on left"
+        
+      precision:
+        sidebar_visible: true
+        file_tree_visible: true
+        note: "Projects sidebar replaces PRECISION's file tree sidebar"
+        conflict_resolution: "PRECISION file tree disabled, use projects sidebar instead"
+        
+      product:
+        sidebar_visible: true
+        file_tree_visible: false
+        note: "Kanban board uses full width, projects sidebar on left"
+        
+      growth:
+        sidebar_visible: true
+        file_tree_visible: false
+        note: "Dashboard uses full width, projects sidebar on left"
+
+  # ============================================
+  # PROJECT CONTEXT FOR AI
+  # ============================================
+  ai_project_context:
+    description: "AI context specific to each project"
+    
+    context_fields:
+      language:
+        detection: "Auto-detect from package.json, Cargo.toml, setup.py, etc."
+        examples: ["typescript", "python", "rust", "go", "java"]
+        
+      framework:
+        detection: "Auto-detect from dependencies"
+        examples: ["react", "vue", "django", "flask", "actix-web"]
+        
+      description:
+        generation: "AI-generated on project add (using LLM from Era 7)"
+        example: "Full-stack TypeScript IDE built on VS Code with learning metrics"
+        update: "User can edit manually"
+        
+      recent_files:
+        count: 10
+        description: "Most recently edited files (for AI context)"
+        
+      codebase_summary:
+        generation: "AI-generated (optional, cached)"
+        includes: "File structure, main modules, architecture overview"
+        
+    usage:
+      - "Passed to AI chat in AGGREGATOR mode"
+      - "Used for project-specific autocomplete in Era 9"
+      - "Helps AI understand project context across sessions"
+
+  # ============================================
+  # PROJECT-SPECIFIC SETTINGS
+  # ============================================
+  project_settings:
+    description: "Override global settings per project"
+    
+    storage:
+      location: "Project root: .dendrite/settings.json"
+      fallback: "Global settings if file not found"
+      
+    overridable_settings:
+      - "editor.tabSize"
+      - "editor.insertSpaces"
+      - "dendrite.precision.fileTree.hiddenPatterns"
+      - "dendrite.aggregator.llm.backend"
+      - "dendrite.aggregator.llm.ollama.model"
+      
+    ui:
+      location: "Settings UI > Project-specific tab"
+      indication: "Show icon if setting is overridden"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.projects"
+    
+    items:
+      - id: "dendrite.projects.sidebar.visible"
+        type: "boolean"
+        default: true
+        description: "Show projects sidebar"
+        task: "11.8"
+        
+      - id: "dendrite.projects.sidebar.width"
+        type: "number"
+        default: 250
+        range: [200, 400]
+        description: "Projects sidebar width (pixels)"
+        task: "11.8"
+        
+      - id: "dendrite.projects.recent.maxCount"
+        type: "number"
+        default: 10
+        range: [5, 20]
+        description: "Maximum recent projects to show"
+        task: "11.8"
+        
+      - id: "dendrite.projects.autoDetectGit"
+        type: "boolean"
+        default: true
+        description: "Auto-detect git repositories when adding projects"
+        task: "11.8"
+        
+      - id: "dendrite.projects.aiContext.enabled"
+        type: "boolean"
+        default: true
+        description: "Generate AI context for projects"
+        task: "11.8"
+        
+      - id: "dendrite.projects.fileTree.syncWithActive"
+        type: "boolean"
+        default: true
+        description: "Sync file tree with active editor file"
+        task: "11.8"
+
+  # ============================================
+  # PERFORMANCE REQUIREMENTS
+  # ============================================
+  performance:
+    project_switching:
+      target_latency_ms: 300
+      measurement: "Time from switchProject() call to UI updated"
+      
+    sidebar_toggle:
+      target_latency_ms: 50
+      animation_fps: 60
+      
+    file_tree:
+      render_latency_ms: 100  # Inherit from PRECISION mode
+      virtual_scroll_fps: 60
+      
+    project_list:
+      search_debounce_ms: 100
+      max_projects: "unlimited (virtual scroll)"
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "Project switching"
+        description: "Switch between 5 projects rapidly"
+        expected: "Each switch < 300ms, no memory leaks"
+        
+      - name: "Sidebar toggle"
+        description: "Press Cmd+0 repeatedly"
+        expected: "Smooth animation, < 50ms latency"
+        
+      - name: "Large project list"
+        description: "100+ projects in list"
+        expected: "Virtual scrolling, search responsive"
+        
+      - name: "Git detection"
+        description: "Add project with git repo"
+        expected: "Git branch detected, status shown"
+        
+      - name: "Project-specific settings"
+        description: "Override tabSize per project"
+        expected: "Settings apply when switching projects"
+        
+      - name: "AI context generation"
+        description: "Add new project, check AI context"
+        expected: "Language/framework detected, description generated"
+        
+      - name: "Mode integration"
+        description: "Switch between modes with projects sidebar"
+        expected: "Sidebar stays visible, file tree updates"
+
+  # ============================================
+  # INTEGRATION WITH PRECISION MODE
+  # ============================================
+  precision_integration:
+    conflict: "PRECISION mode has its own file tree sidebar"
+    
+    resolution:
+      approach: "Projects sidebar replaces PRECISION file tree"
+      rationale: "Avoid duplicate file trees, projects sidebar is global"
+      
+    changes_required:
+      - "Disable PRECISION mode's SmartFileTree when projects sidebar enabled"
+      - "Projects sidebar file tree uses same SmartFileTree component"
+      - "Settings from PRECISION mode apply to projects sidebar file tree"
+
+  # ============================================
+  # FUTURE ENHANCEMENTS
+  # ============================================
+  future_enhancements:
+    - feature: "Project templates"
+      description: "Create new projects from templates (React, Python, Rust, etc.)"
+      era: "Future"
+      
+    - feature: "Multi-root workspaces"
+      description: "Open multiple projects simultaneously (side-by-side)"
+      era: "Future"
+      
+    - feature: "Project analytics"
+      description: "Show coding time, file changes per project in GROWTH mode"
+      era: "Future"
+      
+    - feature: "Cloud sync"
+      description: "Sync project list and settings across devices"
+      era: "Future"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "IWorkspaceContextService"
+      - "IFileService"
+      - "IStorageService"
+      - "IConfigurationService"
+      
+    mode_system:
+      - "IModeService (from Era 5)"
+      - "PhosphorIcon (from Era 5)"
+      
+    precision_mode:
+      - "SmartFileTree component (from Era 6)"
+      - "FileTreeFilter logic (from Era 6)"
+      
+    aggregator_mode:
+      - "LLMService (from Era 7) - for AI context generation"

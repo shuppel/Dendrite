@@ -1,0 +1,364 @@
+# ============================================
+# DENDRITE IDE - PRECISION MODE BUILD BOOK
+# ============================================
+# Reference: bldbk.precision.dendrite
+# Era: 6
+# CATS: cats.precision.dendrite
+
+meta:
+  id: "bldbk.precision.dendrite"
+  name: "Dendrite PRECISION Mode (Code Editor)"
+  cats_ref: "cats.precision.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 6
+  total_tasks: 18
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_6: { status: "not_started", tasks_done: 0, tasks_total: 18 }
+  overall_completion: 0
+  notes: "PRECISION mode - fullscreen code editor with smart file tree"
+
+# ============================================
+# ERA 6: PRECISION Mode
+# ============================================
+era_6:
+  name: "PRECISION Mode (Code Editor)"
+  description: "Fullscreen Monaco editor with collapsible file tree"
+  assignee: "@shupp"
+  status: "not_started"
+  depends_on: ["bldbk.modesystem.dendrite:era_5"]
+  
+  goals:
+    - "Implement fullscreen Monaco editor layout"
+    - "Add collapsible file tree with smart filtering"
+    - "Implement virtual scrolling for large directories"
+    - "Enhanced Cmd+P fuzzy file finder"
+    - "Seamless mode switcher integration"
+  
+  performance_targets:
+    file_tree_toggle_ms: 50
+    fuzzy_finder_ms: 100
+    virtual_scroll_fps: 60
+  
+  tasks:
+    - id: "6.1"
+      name: "Scaffold PRECISION mode structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/"
+      implements:
+        - "Create precision subdirectory"
+        - "Set up module structure"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "6.2"
+      name: "Implement PrecisionModeView controller"
+      status: "not_started"
+      depends_on: ["6.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      implements:
+        - "PrecisionModeView class implementing IModeView"
+        - "show() method (activate mode, show file tree, focus editor)"
+        - "hide() method (save state, blur editor)"
+        - "toggleFileTree() method (Cmd+B handler)"
+        - "State persistence (file tree width, visibility)"
+      validation:
+        - "Mode activates correctly via mode switcher"
+        - "File tree shows/hides on activate/deactivate"
+        - "State persists across sessions"
+    
+    - id: "6.3"
+      name: "Scaffold file tree components"
+      status: "not_started"
+      depends_on: ["6.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/"
+      implements:
+        - "Create fileTree subdirectory"
+        - "Set up module structure for tree components"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "6.4"
+      name: "Implement SmartFileTree component"
+      status: "not_started"
+      depends_on: ["6.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/smartFileTree.ts"
+      implements:
+        - "SmartFileTree class (enhanced tree view)"
+        - "Integration with IFileService for file operations"
+        - "Render file/folder tree with icons"
+        - "Expand/collapse folder logic"
+        - "File selection and double-click to open"
+        - "Context menu (New File, New Folder, Rename, Delete, etc.)"
+      validation:
+        - "Tree renders correctly"
+        - "File operations work (create, rename, delete)"
+        - "Context menu appears and functions"
+    
+    - id: "6.5"
+      name: "Implement smart filtering"
+      status: "not_started"
+      depends_on: ["6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/fileTreeFilter.ts"
+      implements:
+        - "FileTreeFilter class"
+        - "Default hidden patterns (node_modules, .git, dist, build, etc.)"
+        - "Pattern matching logic (glob-style)"
+        - "Show/hide hidden files toggle (Cmd+Shift+H)"
+        - "User-configurable patterns from settings"
+      validation:
+        - "Default patterns hidden by default"
+        - "Toggle shows hidden files"
+        - "Custom patterns work"
+    
+    - id: "6.6"
+      name: "Implement virtual scrolling for file tree"
+      status: "not_started"
+      depends_on: ["6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/virtualScroll.ts"
+      implements:
+        - "VirtualScroll class for large directories"
+        - "Windowed rendering (visible items + buffer)"
+        - "Smooth scrolling at 60fps with 10k+ files"
+        - "Dynamic item height calculation"
+      validation:
+        - "Scrolling smooth with large directories (10k+ files)"
+        - "Performance: 60fps maintained"
+        - "No memory leaks with large trees"
+    
+    - id: "6.7"
+      name: "Implement enhanced fuzzy finder (Cmd+P)"
+      status: "not_started"
+      depends_on: ["6.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fuzzyFinder.ts"
+      implements:
+        - "FuzzyFinder class (modal overlay)"
+        - "Fuzzy matching algorithm (subsequence + scoring)"
+        - "Recent files list (top 10)"
+        - "Smart filtering (respect file tree filters)"
+        - "Keyboard navigation (arrows, Enter, Esc)"
+        - "Actions: Open in current group, Open in split (Cmd+Enter)"
+      validation:
+        - "Cmd+P opens finder"
+        - "Fuzzy matching works correctly"
+        - "Results appear within 100ms"
+        - "Keyboard navigation smooth"
+    
+    - id: "6.8"
+      name: "Register PRECISION mode in ModeRegistry"
+      status: "not_started"
+      depends_on: ["6.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      implements:
+        - "Register PRECISION mode descriptor"
+        - "Set icon: ph-code (Phosphor)"
+        - "Set keybinding: Cmd+2"
+        - "Set lifecycle: createView() → PrecisionModeView"
+      validation:
+        - "PRECISION appears in mode switcher"
+        - "Cmd+2 switches to PRECISION mode"
+        - "Icon renders correctly"
+    
+    - id: "6.9"
+      name: "Add PRECISION mode settings"
+      status: "not_started"
+      depends_on: ["6.2", "6.4", "6.7"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.precision.fileTree.visible (boolean)"
+        - "dendrite.precision.fileTree.width (number)"
+        - "dendrite.precision.fileTree.hiddenPatterns (array)"
+        - "dendrite.precision.fileTree.virtualScroll (boolean)"
+        - "dendrite.precision.fuzzyFinder.recentFilesCount (number)"
+        - "dendrite.precision.fuzzyFinder.maxResults (number)"
+        - "dendrite.precision.editor.minimap (boolean)"
+        - "dendrite.precision.editor.lineNumbers (string)"
+      validation:
+        - "All settings appear in Settings UI"
+        - "Defaults match specification"
+        - "Changes apply immediately"
+    
+    - id: "6.10"
+      name: "Implement file tree keybindings"
+      status: "not_started"
+      depends_on: ["6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Cmd+B → Toggle file tree"
+        - "Cmd+Shift+H → Show/hide hidden files"
+        - "Cmd+K Cmd+0 → Collapse all folders"
+        - "Cmd+K Cmd+J → Expand all folders"
+        - "Cmd+K R → Reveal active file in tree"
+        - "Cmd+K P → Copy file path"
+        - "Cmd+K Cmd+Shift+P → Copy relative path"
+      validation:
+        - "All keybindings work without conflicts"
+        - "Cross-platform compatibility"
+    
+    - id: "6.11"
+      name: "Implement drag-and-drop for file tree"
+      status: "not_started"
+      depends_on: ["6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/smartFileTree.ts"
+      implements:
+        - "Drag files/folders within tree (move/copy)"
+        - "Drop files from OS file explorer (copy)"
+        - "Visual feedback during drag (highlight drop target)"
+        - "Undo/redo support for file operations"
+      validation:
+        - "Drag-and-drop works within tree"
+        - "External file drop works"
+        - "Visual feedback clear"
+        - "Undo/redo functional"
+    
+    - id: "6.12"
+      name: "Implement file tree context menu"
+      status: "not_started"
+      depends_on: ["6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/smartFileTree.ts"
+      implements:
+        - "Context menu actions: New File, New Folder, Rename, Delete, Copy, Cut, Paste"
+        - "Copy Path, Copy Relative Path"
+        - "Reveal in Finder/Explorer"
+        - "Open in Terminal"
+      validation:
+        - "Right-click shows context menu"
+        - "All actions work correctly"
+        - "Platform-specific actions (Finder on Mac, Explorer on Windows)"
+    
+    - id: "6.13"
+      name: "Implement file tree animations"
+      status: "not_started"
+      depends_on: ["6.2", "6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      implements:
+        - "Slide in/out animation for file tree toggle (200ms)"
+        - "Smooth width resize on drag"
+        - "Expand/collapse folder animations"
+      validation:
+        - "Animations smooth (60fps)"
+        - "No jank or flicker"
+        - "Respects user motion preferences (prefers-reduced-motion)"
+    
+    - id: "6.14"
+      name: "Integrate with Monaco editor"
+      status: "not_started"
+      depends_on: ["6.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      implements:
+        - "openFile() method to open file in Monaco"
+        - "Sync active file with file tree highlight"
+        - "Handle editor group splits"
+        - "Restore editor state on mode switch"
+      validation:
+        - "Opening file from tree shows in Monaco"
+        - "Active file highlighted in tree"
+        - "Editor state persists across mode switches"
+    
+    - id: "6.15"
+      name: "Implement layout resizing"
+      status: "not_started"
+      depends_on: ["6.2", "6.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      implements:
+        - "Draggable splitter between file tree and editor"
+        - "Min/max width constraints (200px - 600px)"
+        - "Persist splitter position in settings"
+      validation:
+        - "Splitter draggable"
+        - "Width persists across sessions"
+        - "Constraints enforced"
+    
+    - id: "6.16"
+      name: "Hide terminal panel in PRECISION mode"
+      status: "not_started"
+      depends_on: ["6.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      implements:
+        - "On mode activate: hide terminal panel"
+        - "On mode deactivate: restore previous panel state"
+        - "Respect dendrite.modes.autoHidePanel setting"
+      validation:
+        - "Terminal hidden when entering PRECISION mode"
+        - "Terminal state restored when leaving PRECISION mode"
+    
+    - id: "6.17"
+      name: "Performance optimization and testing"
+      status: "not_started"
+      depends_on: ["6.2", "6.4", "6.6", "6.7"]
+      implements:
+        - "Measure file tree toggle latency (target < 50ms)"
+        - "Measure fuzzy finder latency (target < 100ms)"
+        - "Test virtual scrolling with 10k+ files (target 60fps)"
+        - "Optimize rendering pipeline"
+        - "Profile memory usage"
+      validation:
+        - "File tree toggle < 50ms"
+        - "Fuzzy finder results < 100ms"
+        - "Virtual scroll 60fps"
+        - "No memory leaks"
+    
+    - id: "6.18"
+      name: "Documentation"
+      status: "not_started"
+      depends_on: ["6.17"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/precision/README.md"
+      implements:
+        - "PRECISION mode architecture documentation"
+        - "User guide: File tree usage"
+        - "User guide: Fuzzy finder shortcuts"
+        - "Developer guide: Extending file tree"
+      validation:
+        - "Documentation complete and accurate"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/smartFileTree.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/fileTreeFilter.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/virtualScroll.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/precision/fuzzyFinder.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/precision/README.md"
+    
+    testing:
+      - "File tree toggle latency tests"
+      - "Fuzzy finder performance tests"
+      - "Virtual scrolling stress tests (10k+ files)"
+      - "Drag-and-drop tests"
+      - "Mode switching integration tests"
+    
+    verification:
+      - "All 18 tasks completed"
+      - "File tree toggle < 50ms"
+      - "Fuzzy finder < 100ms"
+      - "Virtual scroll 60fps with large directories"
+      - "No performance regressions"
+  
+  completion_criteria:
+    - "All 18 tasks completed"
+    - "PRECISION mode registered and accessible via Cmd+2"
+    - "File tree with smart filtering works"
+    - "Virtual scrolling handles 10k+ files at 60fps"
+    - "Fuzzy finder (Cmd+P) functional and fast (<100ms)"
+    - "All keybindings work without conflicts"
+    - "Performance targets met"

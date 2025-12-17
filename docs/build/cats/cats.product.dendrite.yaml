@@ -1,0 +1,451 @@
+# ============================================
+# DENDRITE IDE - PRODUCT MODE (PROJECT MANAGEMENT)
+# ============================================
+# Reference: cats.product.dendrite
+# Era: 8
+# BuildBook: bldbk.product.dendrite
+
+cats:
+  meta:
+    id: "cats.product.dendrite"
+    name: "Dendrite PRODUCT Mode"
+    version: "0.1.0"
+    domain: "project-management-mode"
+    era: 8
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.product.dendrite"
+    depends_on: ["cats.modesystem.dendrite"]
+    description: |
+      PRODUCT mode - Fullscreen project management:
+      - Kanban board (GUI, not TUI)
+      - CATS/BuildBook YAML integration (read/write)
+      - Drag-drop cards updates YAML files
+      - Click card → jump to PRECISION mode at code
+      - Roadmap and milestone tracking
+      - Fullscreen, visual project overview
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Implement fullscreen Kanban board GUI"
+      - "Parse and display CATS/BuildBook YAML files"
+      - "Drag-drop cards updates YAML files (single source of truth)"
+      - "Click card → jump to PRECISION mode at relevant code"
+      - "Display eras, tasks, status, completion %"
+      - "Visual roadmap and milestone tracking"
+    
+    metrics:
+      board_render_latency_ms: 500  # First load
+      card_drag_latency_ms: 16  # 60fps drag
+      yaml_write_latency_ms: 100
+      mode_jump_latency_ms: 200
+
+  # ============================================
+  # PRODUCT MODE LAYOUT
+  # ============================================
+  layout:
+    description: "Fullscreen Kanban board with columns and cards"
+    
+    structure:
+      mode_switcher:
+        position: "Top (32px height)"
+        always_visible: true
+        
+      kanban_board:
+        position: "Center (fills remaining space)"
+        fullscreen: true
+        layout: "Horizontal columns (To Do, In Progress, Done)"
+        scroll: "Horizontal scroll for many columns"
+        
+      roadmap_panel:
+        position: "Right sidebar (400px width, optional)"
+        toggle_key: "Cmd+R"
+        default_state: "hidden"
+        shows:
+          - "Eras list with completion %"
+          - "Milestones timeline"
+          - "Dependency graph"
+          
+      status_bar:
+        position: "Bottom (22px height)"
+        always_visible: true
+        shows: "Overall completion %, active era, tasks done/total"
+
+  # ============================================
+  # KANBAN BOARD SPECIFICATION
+  # ============================================
+  kanban_board:
+    description: "Visual board with columns and draggable cards"
+    
+    columns:
+      default:
+        - id: "not_started"
+          title: "To Do"
+          color: "Gray"
+          
+        - id: "in_progress"
+          title: "In Progress"
+          color: "Blue"
+          
+        - id: "completed"
+          title: "Done"
+          color: "Green"
+          
+      customizable: true
+      setting: "dendrite.product.kanban.columns"
+      
+    cards:
+      represents: "Tasks from BuildBook YAML files"
+      
+      displays:
+        - "Task ID (e.g., 5.2)"
+        - "Task name"
+        - "Status badge (not_started, in_progress, completed)"
+        - "File path (if specified)"
+        - "Dependencies indicator (blocked/blocking)"
+        
+      interactions:
+        drag_and_drop:
+          enabled: true
+          action: "Move card between columns → updates task status in YAML"
+          visual_feedback: "Card shadows, drop zone highlights"
+          
+        click:
+          action: "Jump to PRECISION mode at relevant file/code"
+          fallback: "If no file, show task details modal"
+          
+        right_click:
+          menu:
+            - "Edit Task"
+            - "View Dependencies"
+            - "Mark Complete"
+            - "Delete Task"
+            - "Copy Task ID"
+            
+      styling:
+        width: "300px"
+        height: "Auto (content-based)"
+        padding: "16px"
+        border_radius: "8px"
+        shadow: "Subtle"
+        hover_state: "Elevated shadow, border highlight"
+
+  # ============================================
+  # YAML INTEGRATION SPECIFICATION
+  # ============================================
+  yaml_integration:
+    description: "Read/write CATS and BuildBook YAML files as single source of truth"
+    
+    files_watched:
+      - pattern: "docs/build/rdmp.dendrite.yaml"
+        type: "roadmap"
+        
+      - pattern: "docs/build/cats/*.yaml"
+        type: "cats"
+        
+      - pattern: "docs/build/buildbook/*.yaml"
+        type: "buildbook"
+        
+    parsing:
+      library: "js-yaml"
+      validation: "Schema validation for CATS/BuildBook structure"
+      error_handling: "Show notification if invalid YAML"
+      
+    writing:
+      trigger: "Card drag-and-drop, task edit"
+      format: "Preserve YAML formatting and comments"
+      backup: "Create .bak file before write"
+      conflict_resolution: "Warn if file changed externally"
+      
+    sync:
+      file_watcher: true
+      auto_refresh: "Board updates when YAML files change externally"
+      debounce_ms: 500  # Avoid excessive refreshes
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/"
+        type: directory
+        description: "PRODUCT mode implementation"
+        task: "8.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/productMode.ts"
+        type: file
+        description: "PRODUCT mode view controller"
+        task: "8.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/kanban/"
+        type: directory
+        description: "Kanban board components"
+        task: "8.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanBoard.ts"
+        type: file
+        description: "Kanban board main component"
+        task: "8.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanColumn.ts"
+        type: file
+        description: "Kanban column component (To Do, In Progress, Done)"
+        task: "8.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/kanban/kanbanCard.ts"
+        type: file
+        description: "Kanban card component (draggable task)"
+        task: "8.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/yaml/"
+        type: directory
+        description: "YAML parsing and writing services"
+        task: "8.7"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlService.ts"
+        type: file
+        description: "YAML file reading and writing service"
+        task: "8.8"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/yaml/yamlParser.ts"
+        type: file
+        description: "Parse CATS/BuildBook YAML into task models"
+        task: "8.9"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/roadmap/"
+        type: directory
+        description: "Roadmap and milestone components"
+        task: "8.10"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/roadmap/roadmapPanel.ts"
+        type: file
+        description: "Roadmap sidebar with eras and milestones"
+        task: "8.11"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/product/README.md"
+        type: file
+        description: "PRODUCT mode documentation"
+        task: "8.28"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+        task: "8.12"
+        changes:
+          - action: "register"
+            description: "Register PRODUCT mode in mode registry"
+          - action: "add"
+            description: "Define PRODUCT mode descriptor (icon, name, shortcut)"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "8.13"
+        changes:
+          - action: "add"
+            description: "Register PRODUCT mode settings"
+          - action: "add"
+            description: "Register Cmd+R keybinding for roadmap panel toggle"
+
+  # ============================================
+  # CARD-TO-CODE JUMP SPECIFICATION
+  # ============================================
+  card_to_code_jump:
+    description: "Click card → jump to PRECISION mode at relevant code"
+    
+    workflow:
+      - step: 1
+        event: "User clicks card in Kanban board"
+        action: "Extract file path from task (from BuildBook YAML)"
+        
+      - step: 2
+        event: "File path found"
+        action: "Switch to PRECISION mode (Cmd+2)"
+        
+      - step: 3
+        event: "PRECISION mode activated"
+        action: "Open file in Monaco editor"
+        
+      - step: 4
+        event: "File opened"
+        action: "Position cursor at relevant line (if specified)"
+        
+      - step: 5
+        event: "If no file path"
+        action: "Show task details modal in PRODUCT mode"
+        
+    implementation:
+      - "TaskCard.onClick() → extract file path"
+      - "ModeService.switchMode('precision')"
+      - "EditorService.openEditor(uri, { selection: lineRange })"
+
+  # ============================================
+  # ROADMAP PANEL SPECIFICATION
+  # ============================================
+  roadmap_panel:
+    description: "Sidebar showing eras, milestones, and dependencies"
+    
+    toggle_key: "Cmd+R"
+    
+    ui_design:
+      width: "400px"
+      position: "Right sidebar"
+      animation: "Slide in/out (200ms)"
+      
+    sections:
+      eras_list:
+        position: "Top"
+        displays:
+          - "Era ID and name"
+          - "Completion % (progress bar)"
+          - "Tasks done / total"
+          - "Status badge (not_started, in_progress, completed)"
+          
+      milestones:
+        position: "Middle"
+        displays:
+          - "Milestone name"
+          - "Target date"
+          - "Associated eras"
+          - "Status (not_started, in_progress, completed)"
+          
+      dependency_graph:
+        position: "Bottom"
+        displays: "Visual graph of era dependencies"
+        library: "D3.js or Cytoscape.js"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.product"
+    
+    items:
+      - id: "dendrite.product.kanban.columns"
+        type: "array"
+        default: [
+          {id: "not_started", title: "To Do", color: "gray"},
+          {id: "in_progress", title: "In Progress", color: "blue"},
+          {id: "completed", title: "Done", color: "green"}
+        ]
+        description: "Kanban board columns"
+        task: "8.13"
+        
+      - id: "dendrite.product.roadmap.visible"
+        type: "boolean"
+        default: false
+        description: "Show roadmap panel by default"
+        task: "8.13"
+        
+      - id: "dendrite.product.yaml.autoRefresh"
+        type: "boolean"
+        default: true
+        description: "Auto-refresh board when YAML files change"
+        task: "8.13"
+        
+      - id: "dendrite.product.yaml.backupBeforeWrite"
+        type: "boolean"
+        default: true
+        description: "Create .bak file before writing YAML"
+        task: "8.13"
+
+  # ============================================
+  # PERFORMANCE REQUIREMENTS
+  # ============================================
+  performance:
+    board_rendering:
+      first_load_ms: 500
+      subsequent_loads_ms: 200
+      
+    card_dragging:
+      drag_fps: 60
+      latency_ms: 16
+      
+    yaml_operations:
+      parse_ms: 100
+      write_ms: 100
+      
+    mode_jump:
+      total_latency_ms: 200  # PRODUCT → PRECISION + file open
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "Kanban board rendering"
+        description: "Load board with 100+ tasks"
+        expected: "Renders within 500ms, smooth scrolling"
+        
+      - name: "Card drag-and-drop"
+        description: "Drag card between columns"
+        expected: "60fps drag, YAML updates correctly, no lag"
+        
+      - name: "Card-to-code jump"
+        description: "Click card with file path"
+        expected: "Switches to PRECISION mode, opens file, positions cursor"
+        
+      - name: "YAML file watching"
+        description: "Edit BuildBook YAML externally"
+        expected: "Board auto-refreshes, shows updated tasks"
+        
+      - name: "Roadmap panel"
+        description: "Toggle roadmap with Cmd+R"
+        expected: "Smooth slide in/out, eras and milestones displayed"
+        
+      - name: "Large project handling"
+        description: "Project with 10 eras, 200+ tasks"
+        expected: "Board performant, virtual scrolling if needed"
+
+  # ============================================
+  # INTEGRATION WITH MODE SYSTEM
+  # ============================================
+  mode_integration:
+    registration:
+      mode_id: "product"
+      mode_number: 3
+      keybinding: "Cmd+3"
+      icon: "ph-kanban"  # Phosphor Icons
+      
+    lifecycle:
+      on_activate:
+        - "Load CATS/BuildBook YAML files"
+        - "Parse tasks and eras"
+        - "Render Kanban board"
+        - "Hide file tree and terminal"
+        
+      on_deactivate:
+        - "Save board state (scroll position, etc.)"
+        
+    conflicts:
+      file_tree: "Must be hidden in PRODUCT mode"
+      terminal_panel: "Must be hidden in PRODUCT mode"
+      activity_bar: "Already hidden by mode system"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "IEditorService (for card-to-code jump)"
+      - "IFileService (for YAML file operations)"
+      - "IConfigurationService"
+      - "IStorageService"
+      
+    mode_system:
+      - "IModeService (from Era 5)"
+      - "ModeRegistry (from Era 5)"
+      - "PhosphorIcon (from Era 5)"
+      
+    external_libraries:
+      - name: "js-yaml"
+        version: "4.x"
+        usage: "YAML parsing and serialization"
+        
+      - name: "D3.js or Cytoscape.js"
+        usage: "Dependency graph visualization (optional)"
+        optional: true

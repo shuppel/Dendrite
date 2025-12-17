@@ -1,0 +1,514 @@
+# ============================================
+# DENDRITE IDE - PRECISION MODE (CODE EDITOR)
+# ============================================
+# Reference: cats.precision.dendrite
+# Era: 6
+# BuildBook: bldbk.precision.dendrite
+
+cats:
+  meta:
+    id: "cats.precision.dendrite"
+    name: "Dendrite PRECISION Mode"
+    version: "0.1.0"
+    domain: "code-editor-mode"
+    era: 6
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.precision.dendrite"
+    depends_on: ["cats.modesystem.dendrite"]
+    description: |
+      PRECISION mode - Fullscreen code editor:
+      - Monaco editor with fullscreen layout
+      - Collapsible file tree (Cmd+B toggle)
+      - Smart filtering (hide node_modules, .git, etc.)
+      - Cmd+P fuzzy file finder
+      - NO terminal (that's AGGREGATOR's job)
+      - Distraction-free coding experience
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Implement fullscreen Monaco editor layout"
+      - "Add collapsible file tree sidebar (Cmd+B)"
+      - "Smart file filtering (hide noise by default)"
+      - "Enhanced Cmd+P fuzzy file finder"
+      - "Seamless integration with mode switcher"
+      - "Virtual scrolling for large directories"
+    
+    metrics:
+      file_tree_toggle_latency_ms: 50
+      fuzzy_finder_latency_ms: 100
+      virtual_scroll_performance: "60fps with 10k+ files"
+      distraction_free: true
+
+  # ============================================
+  # PRECISION MODE LAYOUT
+  # ============================================
+  layout:
+    description: "Fullscreen editor with optional collapsible sidebar"
+    
+    structure:
+      mode_switcher:
+        position: "Top (32px height)"
+        always_visible: true
+        
+      file_tree_sidebar:
+        position: "Left"
+        width_default: "300px"
+        width_min: "200px"
+        width_max: "600px"
+        collapsible: true
+        toggle_key: "Cmd+B"
+        default_state: "visible"
+        animation: "Slide in/out (200ms)"
+        
+      monaco_editor:
+        position: "Center (fills remaining space)"
+        fullscreen: true
+        
+      status_bar:
+        position: "Bottom (22px height)"
+        always_visible: true
+        shows: "Line/col, language, encoding, git branch"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/"
+        type: directory
+        description: "PRECISION mode implementation"
+        task: "6.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/precisionMode.ts"
+        type: file
+        description: "PRECISION mode view controller"
+        task: "6.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/"
+        type: directory
+        description: "Enhanced file tree components"
+        task: "6.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/smartFileTree.ts"
+        type: file
+        description: "File tree with smart filtering"
+        task: "6.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/fileTreeFilter.ts"
+        type: file
+        description: "Smart filter logic for hiding noise"
+        task: "6.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/fileTree/virtualScroll.ts"
+        type: file
+        description: "Virtual scrolling for large directories"
+        task: "6.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/fuzzyFinder.ts"
+        type: file
+        description: "Enhanced Cmd+P fuzzy file finder"
+        task: "6.7"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/precision/README.md"
+        type: file
+        description: "PRECISION mode documentation"
+        task: "6.18"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+        task: "6.8"
+        changes:
+          - action: "register"
+            description: "Register PRECISION mode in mode registry"
+          - action: "add"
+            description: "Define PRECISION mode descriptor (icon, name, shortcut)"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "6.9"
+        changes:
+          - action: "add"
+            description: "Register PRECISION mode settings"
+          - action: "add"
+            description: "Register Cmd+B keybinding for file tree toggle"
+
+  # ============================================
+  # FILE TREE SPECIFICATION
+  # ============================================
+  file_tree:
+    description: "Enhanced file tree with smart filtering and performance"
+    
+    smart_filtering:
+      default_hidden:
+        - "node_modules/"
+        - ".git/"
+        - ".vscode/"
+        - "dist/"
+        - "build/"
+        - "out/"
+        - "target/"
+        - ".DS_Store"
+        - "*.log"
+        - "*.tmp"
+        
+      user_configurable: true
+      setting: "dendrite.precision.fileTree.hiddenPatterns"
+      
+      show_hidden_toggle:
+        enabled: true
+        keybinding: "Cmd+Shift+H"
+        state: "per-workspace"
+        
+    virtual_scrolling:
+      description: "Handle directories with 10k+ files"
+      algorithm: "Windowed rendering (render visible items + buffer)"
+      item_height: "22px"
+      buffer_size: "50 items above/below viewport"
+      performance_target: "60fps scrolling"
+      
+    features:
+      collapse_all:
+        keybinding: "Cmd+K Cmd+0"
+        action: "Collapse all folders in tree"
+        
+      expand_all:
+        keybinding: "Cmd+K Cmd+J"
+        action: "Expand all folders in tree"
+        
+      reveal_active_file:
+        keybinding: "Cmd+K R"
+        action: "Scroll to and highlight currently open file"
+        
+      copy_path:
+        keybinding: "Cmd+K P"
+        action: "Copy file path to clipboard"
+        context_menu: true
+        
+      copy_relative_path:
+        keybinding: "Cmd+K Cmd+Shift+P"
+        action: "Copy relative path to clipboard"
+        context_menu: true
+        
+    context_menu:
+      items:
+        - "New File"
+        - "New Folder"
+        - "Rename"
+        - "Delete"
+        - "Copy"
+        - "Cut"
+        - "Paste"
+        - "Copy Path"
+        - "Copy Relative Path"
+        - "Reveal in Finder/Explorer"
+        - "Open in Terminal"
+        
+    drag_and_drop:
+      enabled: true
+      actions:
+        - "Move files/folders within tree"
+        - "Copy files from OS file explorer"
+        - "Open dragged files in editor"
+
+  # ============================================
+  # FUZZY FINDER SPECIFICATION
+  # ============================================
+  fuzzy_finder:
+    description: "Enhanced Cmd+P file finder with smart scoring"
+    
+    keybinding: "Cmd+P"
+    
+    features:
+      fuzzy_matching:
+        algorithm: "Subsequence matching with path awareness"
+        example: "mts → myTestScript.ts"
+        scoring:
+          - "Exact match: highest score"
+          - "CamelCase match: high score (MyTestScript → mts)"
+          - "Path segment match: medium score (my/test/script → mts)"
+          - "Subsequence match: lower score"
+          
+      recent_files:
+        enabled: true
+        count: 10
+        position: "Top of results"
+        label: "Recent Files"
+        
+      smart_filtering:
+        respect_file_tree_filters: true
+        hide_by_default: ["node_modules", ".git", "dist", "build"]
+        show_all_toggle: "Cmd+Shift+P"
+        
+      performance:
+        debounce_ms: 50
+        max_results: 100
+        virtual_scroll: true
+        target_latency_ms: 100
+        
+    ui_design:
+      modal_size: "600px x 400px"
+      input_position: "Top"
+      results_position: "Below input"
+      result_item_displays:
+        - "File icon (language-specific)"
+        - "File name (bolded match characters)"
+        - "Relative path (dimmed)"
+        - "Match score indicator"
+        
+    actions:
+      - key: "Enter"
+        action: "Open file in current editor group"
+      - key: "Cmd+Enter"
+        action: "Open file in new editor group (split)"
+      - key: "Arrow Up/Down"
+        action: "Navigate results"
+      - key: "Esc"
+        action: "Close finder"
+
+  # ============================================
+  # PRECISION MODE VIEW CONTROLLER
+  # ============================================
+  precision_mode:
+    description: "Main controller for PRECISION mode"
+    
+    architecture:
+      class: "PrecisionModeView"
+      implements: "IModeView"
+      lifecycle: "Created on mode registration, kept in memory"
+      
+    state:
+      file_tree_visible:
+        type: "boolean"
+        default: true
+        persisted: true  # Remember state across sessions
+        
+      active_editor:
+        type: "ICodeEditor | null"
+        description: "Currently active Monaco editor instance"
+        
+      file_tree_width:
+        type: "number"
+        default: 300
+        persisted: true
+        
+    methods:
+      show:
+        signature: "() => Promise<void>"
+        description: "Show PRECISION mode (called by ModeService)"
+        actions:
+          - "Display file tree if fileTreeVisible = true"
+          - "Focus Monaco editor"
+          - "Hide terminal panel"
+          - "Update mode switcher indicator"
+          
+      hide:
+        signature: "() => Promise<void>"
+        description: "Hide PRECISION mode (called by ModeService)"
+        actions:
+          - "Save file tree state (width, scroll position)"
+          - "Blur editor"
+          
+      toggleFileTree:
+        signature: "() => void"
+        description: "Toggle file tree visibility (Cmd+B)"
+        animation: "Slide in/out (200ms)"
+        
+      openFile:
+        signature: "(uri: URI) => Promise<void>"
+        description: "Open file in Monaco editor"
+        
+    pseudo_code: |
+      class PrecisionModeView implements IModeView {
+        private fileTreeVisible: boolean = true;
+        private fileTree: SmartFileTree;
+        private editor: ICodeEditor;
+        
+        async show() {
+          // 1. Show file tree if enabled
+          if (this.fileTreeVisible) {
+            this.fileTree.show();
+          }
+          
+          // 2. Focus editor
+          this.editor.focus();
+          
+          // 3. Hide terminal panel (belongs to AGGREGATOR)
+          this.layoutService.setPartHidden(Parts.PANEL_PART, true);
+          
+          // 4. Update mode switcher
+          this.modeService.setCurrentMode('precision');
+        }
+        
+        async hide() {
+          // Save state for next show()
+          this.storageService.store('precision.fileTreeVisible', this.fileTreeVisible);
+          this.storageService.store('precision.fileTreeWidth', this.fileTree.width);
+        }
+        
+        toggleFileTree() {
+          this.fileTreeVisible = !this.fileTreeVisible;
+          
+          if (this.fileTreeVisible) {
+            this.fileTree.show({ animate: true, duration: 200 });
+          } else {
+            this.fileTree.hide({ animate: true, duration: 200 });
+          }
+        }
+      }
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.precision"
+    
+    items:
+      - id: "dendrite.precision.fileTree.visible"
+        type: "boolean"
+        default: true
+        description: "Show file tree sidebar in PRECISION mode"
+        task: "6.9"
+        
+      - id: "dendrite.precision.fileTree.width"
+        type: "number"
+        default: 300
+        description: "File tree sidebar width (pixels)"
+        range: [200, 600]
+        task: "6.9"
+        
+      - id: "dendrite.precision.fileTree.hiddenPatterns"
+        type: "array"
+        default: ["node_modules", ".git", ".vscode", "dist", "build", "out", "target"]
+        description: "Patterns to hide in file tree"
+        items:
+          type: "string"
+        task: "6.9"
+        
+      - id: "dendrite.precision.fileTree.virtualScroll"
+        type: "boolean"
+        default: true
+        description: "Enable virtual scrolling for large directories"
+        task: "6.9"
+        
+      - id: "dendrite.precision.fuzzyFinder.recentFilesCount"
+        type: "number"
+        default: 10
+        description: "Number of recent files to show in Cmd+P"
+        range: [0, 50]
+        task: "6.9"
+        
+      - id: "dendrite.precision.fuzzyFinder.maxResults"
+        type: "number"
+        default: 100
+        description: "Maximum results in fuzzy finder"
+        range: [10, 500]
+        task: "6.9"
+        
+      - id: "dendrite.precision.editor.minimap"
+        type: "boolean"
+        default: true
+        description: "Show minimap in editor"
+        task: "6.9"
+        
+      - id: "dendrite.precision.editor.lineNumbers"
+        type: "string"
+        default: "on"
+        enum: ["on", "off", "relative"]
+        description: "Line number display mode"
+        task: "6.9"
+
+  # ============================================
+  # PERFORMANCE REQUIREMENTS
+  # ============================================
+  performance:
+    file_tree:
+      toggle_latency_ms: 50
+      render_latency_ms: 100  # Time to render tree for 1000 files
+      virtual_scroll_fps: 60
+      
+    fuzzy_finder:
+      search_latency_ms: 100
+      results_render_ms: 50
+      
+    mode_activation:
+      show_latency_ms: 150  # Part of overall <200ms mode switch
+      hide_latency_ms: 50
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "File tree toggle"
+        description: "Press Cmd+B repeatedly"
+        expected: "Smooth slide in/out animation, < 50ms latency"
+        
+      - name: "Large directory handling"
+        description: "Open project with 10k+ files"
+        expected: "Virtual scrolling active, 60fps scrolling, no lag"
+        
+      - name: "Smart filtering"
+        description: "Verify node_modules, .git hidden by default"
+        expected: "Hidden patterns not visible, toggle shows them"
+        
+      - name: "Fuzzy finder performance"
+        description: "Search in large project (1000+ files)"
+        expected: "Results appear within 100ms, debouncing works"
+        
+      - name: "Mode switching to/from PRECISION"
+        description: "Switch between PRECISION and other modes"
+        expected: "File tree state preserved, editor focus restored"
+        
+      - name: "Drag and drop"
+        description: "Drag files within tree, from OS explorer"
+        expected: "Files move/copy correctly, visual feedback shown"
+
+  # ============================================
+  # INTEGRATION WITH MODE SYSTEM
+  # ============================================
+  mode_integration:
+    registration:
+      mode_id: "precision"
+      mode_number: 2
+      keybinding: "Cmd+2"
+      icon: "ph-code"  # Phosphor Icons
+      
+    lifecycle:
+      on_activate:
+        - "Show file tree (if enabled)"
+        - "Focus Monaco editor"
+        - "Hide terminal panel"
+        - "Restore saved state (tree width, scroll position)"
+        
+      on_deactivate:
+        - "Save file tree state"
+        - "Blur editor"
+        
+    conflicts:
+      terminal_panel: "Must be hidden in PRECISION mode"
+      activity_bar: "Already hidden by mode system"
+      menu_bar: "Already hidden by mode system"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "IEditorService"
+      - "IWorkbenchLayoutService"
+      - "IFileService"
+      - "IConfigurationService"
+      - "IStorageService"
+      - "ICommandService"
+      
+    mode_system:
+      - "IModeService (from Era 5)"
+      - "ModeRegistry (from Era 5)"
+      - "PhosphorIcon (from Era 5)"

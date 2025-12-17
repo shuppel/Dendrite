@@ -1,0 +1,408 @@
+# ============================================
+# DENDRITE IDE - AGGREGATOR MODE BUILD BOOK
+# ============================================
+# Reference: bldbk.aggregator.dendrite
+# Era: 7
+# CATS: cats.aggregator.dendrite
+
+meta:
+  id: "bldbk.aggregator.dendrite"
+  name: "Dendrite AGGREGATOR Mode (Terminal)"
+  cats_ref: "cats.aggregator.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 7
+  total_tasks: 22
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_7: { status: "not_started", tasks_done: 0, tasks_total: 22 }
+  overall_completion: 0
+  notes: "AGGREGATOR mode - fullscreen terminal with AI chat and diff viewer"
+
+# ============================================
+# ERA 7: AGGREGATOR Mode
+# ============================================
+era_7:
+  name: "AGGREGATOR Mode (Terminal)"
+  description: "Fullscreen terminal with OpenCode integration and AI chat"
+  assignee: "@shupp"
+  status: "not_started"
+  depends_on: ["bldbk.modesystem.dendrite:era_5"]
+  
+  goals:
+    - "Implement fullscreen terminal layout"
+    - "Integrate OpenCode (optional, with fallback)"
+    - "AI chat panel with LLM backend"
+    - "Diff viewer with approve/reject workflow"
+    - "Human-in-the-loop code review"
+  
+  performance_targets:
+    terminal_latency_ms: 16
+    ai_chat_toggle_ms: 200
+    diff_viewer_render_ms: 200
+  
+  tasks:
+    - id: "7.1"
+      name: "Scaffold AGGREGATOR mode structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/"
+      implements:
+        - "Create aggregator subdirectory"
+        - "Set up module structure"
+      validation:
+        - "Directory exists and is importable"
+    
+    - id: "7.2"
+      name: "Implement AggregatorModeView controller"
+      status: "not_started"
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+      implements:
+        - "AggregatorModeView class implementing IModeView"
+        - "show() method (fullscreen terminal, check OpenCode)"
+        - "hide() method (save AI chat state)"
+        - "toggleAIChat() method (Cmd+K handler)"
+        - "showDiffViewer() method (AI code change trigger)"
+      validation:
+        - "Mode activates correctly"
+        - "Terminal fullscreen"
+        - "AI chat toggles"
+    
+    - id: "7.3"
+      name: "Scaffold OpenCode integration components"
+      status: "not_started"
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/"
+      implements:
+        - "Create opencode subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "7.4"
+      name: "Implement OpenCodeService"
+      status: "not_started"
+      depends_on: ["7.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/opencodeService.ts"
+      implements:
+        - "OpenCodeService class"
+        - "isAvailable() method (check OpenCode CLI in PATH)"
+        - "startSession() method"
+        - "sendMessage() method (communicate with OpenCode)"
+        - "onCodeChange event (AI suggests code change)"
+        - "Graceful fallback to standard terminal"
+      validation:
+        - "Detection works correctly"
+        - "Standard terminal works without OpenCode"
+        - "OpenCode integration works when available"
+    
+    - id: "7.5"
+      name: "Scaffold AI chat components"
+      status: "not_started"
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/"
+      implements:
+        - "Create aiChat subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "7.6"
+      name: "Implement AIChatPanel"
+      status: "not_started"
+      depends_on: ["7.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/aiChatPanel.ts"
+      implements:
+        - "AIChatPanel class (UI component)"
+        - "Message list rendering (user + AI messages)"
+        - "Input box (multiline, Cmd+Enter to submit)"
+        - "Code block syntax highlighting"
+        - "Inline diff preview (clickable)"
+        - "Slide in/out animation (200ms)"
+      validation:
+        - "Chat UI renders correctly"
+        - "Messages sent and received"
+        - "Animation smooth"
+    
+    - id: "7.7"
+      name: "Implement LLMService"
+      status: "not_started"
+      depends_on: ["7.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/llmService.ts"
+      implements:
+        - "LLMService class (backend abstraction)"
+        - "Ollama backend (default)"
+        - "OpenAI backend (optional)"
+        - "Anthropic backend (optional)"
+        - "sendPrompt() method"
+        - "suggestCodeChange() method"
+        - "explainCode() method"
+      validation:
+        - "Ollama integration works"
+        - "API calls successful"
+        - "Backend switching works"
+    
+    - id: "7.8"
+      name: "Scaffold diff viewer components"
+      status: "not_started"
+      depends_on: ["7.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/"
+      implements:
+        - "Create diffViewer subdirectory"
+      validation:
+        - "Directory structure correct"
+    
+    - id: "7.9"
+      name: "Implement DiffPanel"
+      status: "not_started"
+      depends_on: ["7.8"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/diffPanel.ts"
+      implements:
+        - "DiffPanel class (modal overlay)"
+        - "Side-by-side diff view (before | after)"
+        - "Syntax highlighting"
+        - "Line-level diff highlights (green/red)"
+        - "Accept button (Cmd+Enter, applies change)"
+        - "Reject button (Esc, closes without applying)"
+        - "Edit button (Cmd+E, opens in PRECISION mode)"
+      validation:
+        - "Diff renders correctly"
+        - "Accept/reject functional"
+        - "Edit button switches to PRECISION mode"
+    
+    - id: "7.10"
+      name: "Register AGGREGATOR mode in ModeRegistry"
+      status: "not_started"
+      depends_on: ["7.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      implements:
+        - "Register AGGREGATOR mode descriptor"
+        - "Set icon: ph-terminal-window (Phosphor)"
+        - "Set keybinding: Cmd+1"
+        - "Set lifecycle: createView() → AggregatorModeView"
+      validation:
+        - "AGGREGATOR appears in mode switcher"
+        - "Cmd+1 switches to AGGREGATOR mode"
+        - "Icon renders correctly"
+    
+    - id: "7.11"
+      name: "Add AGGREGATOR mode settings"
+      status: "not_started"
+      depends_on: ["7.2", "7.4", "7.6", "7.7", "7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.aggregator.opencode.enabled (boolean)"
+        - "dendrite.aggregator.aiChat.visible (boolean)"
+        - "dendrite.aggregator.aiChat.width (number)"
+        - "dendrite.aggregator.llm.backend (string)"
+        - "dendrite.aggregator.llm.ollama.url (string)"
+        - "dendrite.aggregator.llm.ollama.model (string)"
+        - "dendrite.aggregator.diffViewer.autoOpen (boolean)"
+        - "dendrite.aggregator.diffViewer.width (number)"
+      validation:
+        - "All settings in Settings UI"
+        - "Changes apply immediately"
+    
+    - id: "7.12"
+      name: "Implement keybindings"
+      status: "not_started"
+      depends_on: ["7.6", "7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Cmd+K → Toggle AI chat"
+        - "Cmd+Enter (in diff viewer) → Accept change"
+        - "Esc (in diff viewer) → Reject change"
+        - "Cmd+E (in diff viewer) → Edit in PRECISION mode"
+      validation:
+        - "All keybindings work"
+        - "No conflicts"
+    
+    - id: "7.13"
+      name: "Implement AI chat conversation history"
+      status: "not_started"
+      depends_on: ["7.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/aiChatPanel.ts"
+      implements:
+        - "Persist conversation history (max 100 messages)"
+        - "Clear conversation button"
+        - "Restore history on mode activate"
+      validation:
+        - "History persists across sessions"
+        - "Clear button works"
+    
+    - id: "7.14"
+      name: "Implement code change workflow"
+      status: "not_started"
+      depends_on: ["7.6", "7.7", "7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+      implements:
+        - "User asks AI to modify code"
+        - "LLM suggests change"
+        - "Diff viewer auto-opens (if autoOpen enabled)"
+        - "User accepts/rejects"
+        - "On accept: apply change to file"
+        - "On reject: close diff viewer"
+        - "On edit: switch to PRECISION mode with file open"
+      validation:
+        - "Full workflow functional"
+        - "Changes apply correctly"
+        - "Mode switching smooth"
+    
+    - id: "7.15"
+      name: "Implement file tree hiding in AGGREGATOR mode"
+      status: "not_started"
+      depends_on: ["7.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+      implements:
+        - "On mode activate: hide file tree sidebar"
+        - "On mode deactivate: restore sidebar state"
+      validation:
+        - "Sidebar hidden when entering AGGREGATOR"
+        - "Sidebar restored when leaving AGGREGATOR"
+    
+    - id: "7.16"
+      name: "Implement AI chat animations"
+      status: "not_started"
+      depends_on: ["7.6"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/aiChatPanel.ts"
+      implements:
+        - "Slide in/out animation (200ms)"
+        - "Message fade-in animation"
+        - "Smooth scrolling on new message"
+      validation:
+        - "Animations smooth (60fps)"
+        - "No jank"
+    
+    - id: "7.17"
+      name: "Implement diff viewer animations"
+      status: "not_started"
+      depends_on: ["7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/diffPanel.ts"
+      implements:
+        - "Fade in animation (150ms)"
+        - "Backdrop blur effect"
+        - "Smooth close animation"
+      validation:
+        - "Animations smooth"
+        - "No flicker"
+    
+    - id: "7.18"
+      name: "Integrate with terminal from Era 4"
+      status: "not_started"
+      depends_on: ["7.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+      implements:
+        - "Use terminal with smooth cursor (from Era 4)"
+        - "GPU acceleration enabled"
+        - "Respect terminal velocity settings"
+      validation:
+        - "Terminal smooth cursor works"
+        - "GPU acceleration active"
+    
+    - id: "7.19"
+      name: "Implement OpenCode fallback messaging"
+      status: "not_started"
+      depends_on: ["7.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/opencodeService.ts"
+      implements:
+        - "Startup message if OpenCode not detected"
+        - "Disable AI features gracefully"
+        - "Show notification with install link"
+      validation:
+        - "Message appears when OpenCode missing"
+        - "Terminal still functional"
+    
+    - id: "7.20"
+      name: "Performance optimization and testing"
+      status: "not_started"
+      depends_on: ["7.2", "7.6", "7.9"]
+      implements:
+        - "Measure AI chat toggle latency (target < 200ms)"
+        - "Measure diff viewer render (target < 200ms)"
+        - "Test large diff files (1000+ lines)"
+        - "Profile LLM API call latency"
+      validation:
+        - "AI chat toggle < 200ms"
+        - "Diff viewer < 200ms"
+        - "No memory leaks"
+    
+    - id: "7.21"
+      name: "Integration with PRECISION mode (Edit button)"
+      status: "not_started"
+      depends_on: ["7.9"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/diffPanel.ts"
+      implements:
+        - "Edit button triggers mode switch to PRECISION"
+        - "Open suggested file in Monaco editor"
+        - "Position cursor at change location"
+      validation:
+        - "Mode switch works"
+        - "File opens correctly"
+        - "Cursor positioned correctly"
+    
+    - id: "7.22"
+      name: "Documentation"
+      status: "not_started"
+      depends_on: ["7.20"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/aggregator/README.md"
+      implements:
+        - "AGGREGATOR mode architecture"
+        - "OpenCode integration guide"
+        - "AI chat usage guide"
+        - "LLM backend configuration"
+        - "Diff viewer workflow"
+      validation:
+        - "Documentation complete"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/opencodeService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/aiChatPanel.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/llmService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/diffPanel.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/aggregator/README.md"
+    
+    testing:
+      - "OpenCode detection tests"
+      - "AI chat performance tests"
+      - "Diff viewer rendering tests"
+      - "Full workflow integration tests"
+      - "LLM backend tests"
+    
+    verification:
+      - "All 22 tasks completed"
+      - "AI chat toggle < 200ms"
+      - "Diff viewer render < 200ms"
+      - "OpenCode integration functional"
+      - "Fallback to standard terminal works"
+  
+  completion_criteria:
+    - "All 22 tasks completed"
+    - "AGGREGATOR mode registered and accessible via Cmd+1"
+    - "OpenCode integration with graceful fallback"
+    - "AI chat functional with LLM backend"
+    - "Diff viewer with approve/reject workflow"
+    - "Full code change workflow tested"
+    - "Performance targets met"

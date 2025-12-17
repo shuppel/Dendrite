@@ -1,0 +1,301 @@
+# ============================================
+# DENDRITE IDE - MODE SYSTEM BUILD BOOK
+# ============================================
+# Reference: bldbk.modesystem.dendrite
+# Era: 5
+# CATS: cats.modesystem.dendrite
+
+meta:
+  id: "bldbk.modesystem.dendrite"
+  name: "Dendrite Mode System Foundation"
+  cats_ref: "cats.modesystem.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 5
+  total_tasks: 12
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_5: { status: "not_started", tasks_done: 0, tasks_total: 12 }
+  overall_completion: 0
+  notes: "Mode system foundation - prerequisite for Eras 6-8"
+
+# ============================================
+# ERA 5: Mode System Foundation
+# ============================================
+era_5:
+  name: "Mode System Foundation"
+  description: "Mode switcher infrastructure, Phosphor icons, hide legacy UI"
+  assignee: "@shupp"
+  status: "not_started"
+  depends_on: ["bldbk.velocity.dendrite:era_4"]
+  
+  goals:
+    - "Implement mode switcher service with 4 modes"
+    - "Migrate from Codicons to Phosphor Icons (custom subset)"
+    - "Hide legacy UI elements (menus, sidebars, panels)"
+    - "Achieve <200ms mode switching performance"
+    - "Implement keyboard shortcuts (Cmd+1-4, Cmd+P)"
+  
+  performance_targets:
+    mode_switch_latency_ms: 200
+    memory_overhead_mb: 50
+    startup_overhead_ms: 100
+  
+  tasks:
+    - id: "5.1"
+      name: "Scaffold mode system structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/"
+      implements:
+        - "Create modes subdirectory under dendrite contrib"
+        - "Set up module structure for mode service"
+      validation:
+        - "Directory exists and is importable"
+        - "Module structure follows VS Code patterns"
+    
+    - id: "5.2"
+      name: "Implement ModeService"
+      status: "not_started"
+      depends_on: ["5.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeService.ts"
+      implements:
+        - "IModeService interface definition"
+        - "ModeService class (singleton)"
+        - "Mode state management (currentMode, modeHistory)"
+        - "switchMode() method with <200ms latency"
+        - "Pre-load cache for instant switching"
+        - "onDidChangeMode event emitter"
+      validation:
+        - "Mode switching works correctly"
+        - "Latency < 200ms measured with performance.mark"
+        - "Mode history stack works (Cmd+Tab)"
+        - "Events fire on mode change"
+    
+    - id: "5.3"
+      name: "Implement ModeSwitcher UI component"
+      status: "not_started"
+      depends_on: ["5.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeSwitcher.ts"
+      implements:
+        - "Top bar component (32px height)"
+        - "Current mode indicator (left side)"
+        - "4 mode tabs (center)"
+        - "Settings icon (right side)"
+        - "Click handlers for mode switching"
+        - "Active mode visual indicator"
+      validation:
+        - "Switcher appears in title bar area"
+        - "Clicking tabs switches modes"
+        - "Active mode visually highlighted"
+        - "Responsive to window resize"
+    
+    - id: "5.4"
+      name: "Implement ModeRegistry"
+      status: "not_started"
+      depends_on: ["5.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      implements:
+        - "ModeRegistry class for dynamic mode registration"
+        - "registerMode() method"
+        - "getModeDescriptor() method"
+        - "Built-in registration for 4 modes (AGGREGATOR, PRECISION, PRODUCT, GROWTH)"
+      validation:
+        - "All 4 modes registered on startup"
+        - "Mode descriptors contain correct metadata"
+        - "Dynamic mode registration works (for future extensions)"
+    
+    - id: "5.5"
+      name: "Implement ModePicker overlay (Cmd+P)"
+      status: "not_started"
+      depends_on: ["5.3", "5.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modePicker.ts"
+      implements:
+        - "Overlay modal component (600x400px)"
+        - "Search box for filtering modes"
+        - "2x2 grid layout for 4 modes"
+        - "Keyboard navigation (arrows, Enter, Esc)"
+        - "Direct switch shortcuts (Cmd+1-4)"
+      validation:
+        - "Cmd+P opens picker"
+        - "Arrow keys navigate grid"
+        - "Enter switches to selected mode"
+        - "Esc closes without switching"
+        - "Cmd+1-4 direct switch from picker"
+    
+    - id: "5.6"
+      name: "Phosphor Icons migration (custom subset)"
+      status: "not_started"
+      depends_on: ["5.1"]
+      files:
+        - "src/vs/base/common/phosphor/phosphorIcons.ts"
+        - "src/vs/base/common/phosphor/phosphorIcons.css"
+      implements:
+        - "Extract 150 Phosphor Icons from source"
+        - "Create PhosphorIcon class/registry"
+        - "Embed SVG in CSS (data URIs or inline)"
+        - "TypeScript API for icon usage"
+        - "Fallback to Codicons for unmapped icons"
+        - "Console warning on fallback"
+      icons_required:
+        core:
+          - "ph-terminal-window (AGGREGATOR)"
+          - "ph-code (PRECISION)"
+          - "ph-kanban (PRODUCT)"
+          - "ph-chart-line (GROWTH)"
+          - "ph-gear (Settings)"
+          - "ph-magnifying-glass (Search)"
+          - "ph-folder, ph-file (File tree)"
+          - "ph-x, ph-check (Actions)"
+        extended: 140  # File types, navigation, actions, status, git, debug, etc.
+      validation:
+        - "Core icons render correctly"
+        - "No missing icons in mode switcher"
+        - "Fallback mechanism works"
+        - "Performance: no visible lag on icon render"
+    
+    - id: "5.7"
+      name: "Hide legacy menu bar"
+      status: "not_started"
+      depends_on: ["5.3"]
+      files:
+        - "src/vs/workbench/browser/workbench.contribution.ts"
+      implements:
+        - "Hide File/Edit/View/Go/Run/Terminal/Help menus by default"
+        - "Keep menu logic active (for keybindings)"
+        - "Add dendrite.modes.hideMenuBar setting"
+        - "Toggle visibility based on setting"
+      validation:
+        - "Menu bar hidden by default"
+        - "Keybindings still work (Cmd+S, Cmd+P, etc.)"
+        - "Setting toggle shows/hides menu"
+    
+    - id: "5.8"
+      name: "Auto-hide sidebar and panel"
+      status: "not_started"
+      depends_on: ["5.2"]
+      files:
+        - "src/vs/workbench/browser/parts/sidebar/sidebarPart.ts"
+        - "src/vs/workbench/browser/parts/panel/panelPart.ts"
+      implements:
+        - "Hide Explorer sidebar by default (except PRECISION mode)"
+        - "Hide bottom panel by default (except AGGREGATOR mode)"
+        - "Auto-show/hide based on current mode"
+        - "Settings: dendrite.modes.autoHideSidebar, autoHidePanel"
+      validation:
+        - "Sidebar hidden in AGGREGATOR, PRODUCT, GROWTH modes"
+        - "Sidebar visible in PRECISION mode"
+        - "Panel hidden in PRECISION, PRODUCT, GROWTH modes"
+        - "Panel visible in AGGREGATOR mode"
+        - "Toggle settings work (Cmd+B for sidebar, Cmd+J for panel)"
+    
+    - id: "5.9"
+      name: "Add mode system settings"
+      status: "not_started"
+      depends_on: ["5.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.modes.defaultMode (string, default: 'aggregator')"
+        - "dendrite.modes.hideMenuBar (boolean, default: true)"
+        - "dendrite.modes.autoHideSidebar (boolean, default: true)"
+        - "dendrite.modes.autoHidePanel (boolean, default: true)"
+        - "dendrite.modes.hideActivityBar (boolean, default: true)"
+        - "dendrite.modes.preloadModes (boolean, default: true)"
+        - "dendrite.modes.modeSwitchAnimation (string, default: 'fade')"
+      validation:
+        - "All settings appear in Settings UI"
+        - "Defaults match specification"
+        - "Type validation works"
+        - "Changes apply immediately"
+    
+    - id: "5.10"
+      name: "Implement mode switching keybindings"
+      status: "not_started"
+      depends_on: ["5.2", "5.5"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Cmd+1 → Switch to AGGREGATOR"
+        - "Cmd+2 → Switch to PRECISION"
+        - "Cmd+3 → Switch to PRODUCT"
+        - "Cmd+4 → Switch to GROWTH"
+        - "Cmd+P → Open mode picker"
+        - "Cmd+Tab → Cycle mode history"
+      validation:
+        - "All shortcuts work without conflicts"
+        - "Cross-platform compatibility (Cmd on Mac, Ctrl on Windows/Linux)"
+        - "Shortcuts work from any mode"
+    
+    - id: "5.11"
+      name: "Performance optimization and pre-loading"
+      status: "not_started"
+      depends_on: ["5.2", "5.3", "5.8"]
+      implements:
+        - "Pre-load all 4 modes on startup (if preloadModes enabled)"
+        - "Keep mode views in memory (use display:none, not DOM removal)"
+        - "Lazy-load heavy resources per mode"
+        - "Measure and optimize mode switch latency"
+        - "Performance marks: 'mode-switch-start', 'mode-switch-end'"
+      validation:
+        - "Mode switching < 200ms (measured with performance.measure)"
+        - "Memory overhead < 50MB for all modes loaded"
+        - "Startup overhead < 100ms"
+        - "No memory leaks over 100 mode switches"
+    
+    - id: "5.12"
+      name: "Documentation and migration guide"
+      status: "not_started"
+      depends_on: ["5.11"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/README.md"
+      implements:
+        - "Mode system architecture documentation"
+        - "User guide: How to use 4 modes"
+        - "Developer guide: How to register custom modes"
+        - "Phosphor Icons migration guide"
+        - "Performance tuning guide"
+      validation:
+        - "Documentation is clear and complete"
+        - "Examples are accurate"
+        - "Migration path for users explained"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/modes/modeService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/modes/modeSwitcher.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/modes/modePicker.ts"
+      - "src/vs/base/common/phosphor/phosphorIcons.ts"
+      - "src/vs/base/common/phosphor/phosphorIcons.css"
+      - "src/vs/workbench/contrib/dendrite/browser/modes/README.md"
+    
+    testing:
+      - "Mode switching performance tests (< 200ms)"
+      - "Keyboard shortcut tests (Cmd+1-4, Cmd+P)"
+      - "UI hiding tests (menu, sidebar, panel)"
+      - "Phosphor icons rendering tests"
+      - "Memory leak tests (100+ switches)"
+    
+    verification:
+      - "All 12 tasks completed"
+      - "Mode switching < 200ms"
+      - "Phosphor icons render correctly"
+      - "Legacy UI hidden by default"
+      - "No keyboard shortcut conflicts"
+  
+  completion_criteria:
+    - "All 12 tasks completed"
+    - "Mode switching latency < 200ms measured"
+    - "4 modes registered and functional (AGGREGATOR, PRECISION, PRODUCT, GROWTH)"
+    - "Phosphor Icons (custom subset) integrated"
+    - "Legacy UI elements hidden by default"
+    - "Keyboard shortcuts working (Cmd+1-4, Cmd+P, Cmd+Tab)"
+    - "Memory overhead < 50MB"
+    - "No critical performance issues"

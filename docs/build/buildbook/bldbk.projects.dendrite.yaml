@@ -1,0 +1,304 @@
+# ============================================
+# DENDRITE IDE - PROJECTS/WORKSPACES BUILD BOOK
+# ============================================
+# Reference: bldbk.projects.dendrite
+# Era: 11
+# CATS: cats.projects.dendrite
+
+meta:
+  id: "bldbk.projects.dendrite"
+  name: "Dendrite Projects/Workspaces"
+  cats_ref: "cats.projects.dendrite"
+  roadmap_ref: "rdmp.dendrite"
+  era: 11
+  total_tasks: 15
+
+# ============================================
+# STATUS SUMMARY
+# ============================================
+status:
+  era_11: { status: "not_started", tasks_done: 0, tasks_total: 15 }
+  overall_completion: 0
+  notes: "Projects/Workspaces - multi-project management with left sidebar"
+
+# ============================================
+# ERA 11: Projects/Workspaces
+# ============================================
+era_11:
+  name: "Projects/Workspaces"
+  description: "Multi-project management with left sidebar and AI context"
+  assignee: "@shupp"
+  status: "not_started"
+  depends_on: ["bldbk.modesystem.dendrite:era_5", "bldbk.precision.dendrite:era_6"]
+  
+  goals:
+    - "Implement left sidebar for project management"
+    - "Project switcher with search"
+    - "Filesystem root display per project"
+    - "Recent projects list"
+    - "Project-specific settings and AI context"
+  
+  performance_targets:
+    project_switch_ms: 300
+    sidebar_toggle_ms: 50
+  
+  tasks:
+    - id: "11.1"
+      name: "Scaffold projects structure"
+      status: "not_started"
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/"
+      implements:
+        - "Create projects subdirectory"
+      validation:
+        - "Directory exists"
+    
+    - id: "11.2"
+      name: "Implement ProjectsService"
+      status: "not_started"
+      depends_on: ["11.1"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+      implements:
+        - "IProjectsService interface"
+        - "ProjectsService class (singleton)"
+        - "Project model (id, name, path, type, git, settings, metadata)"
+        - "getCurrentProject() method"
+        - "switchProject() method (< 300ms)"
+        - "addProject() method"
+        - "removeProject() method"
+        - "getRecentProjects() method (max 10)"
+        - "onDidChangeProject event"
+        - "Persistence (workspace storage)"
+      validation:
+        - "Project switching works"
+        - "Recent projects tracked"
+        - "Projects persist across sessions"
+    
+    - id: "11.3"
+      name: "Implement ProjectsSidebar component"
+      status: "not_started"
+      depends_on: ["11.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectsSidebar.ts"
+      implements:
+        - "ProjectsSidebar class (left sidebar UI)"
+        - "Project header (name, path, switcher button)"
+        - "File tree container (reuses SmartFileTree from Era 6)"
+        - "Git indicator (branch, status)"
+        - "Toggle animation (100ms)"
+        - "Resizable width (200-400px)"
+      validation:
+        - "Sidebar renders correctly"
+        - "File tree displays project root"
+        - "Header shows current project"
+    
+    - id: "11.4"
+      name: "Implement ProjectSwitcher dropdown"
+      status: "not_started"
+      depends_on: ["11.2", "11.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectSwitcher.ts"
+      implements:
+        - "ProjectSwitcher class (dropdown/modal)"
+        - "Search box (autofocus, debounce 100ms)"
+        - "Recent projects section (last 10)"
+        - "All projects section (virtual scroll)"
+        - "Actions: Open Folder, Manage Projects"
+        - "Keyboard navigation (arrows, Enter, Esc)"
+      validation:
+        - "Dropdown opens on header click"
+        - "Cmd+Shift+P opens switcher"
+        - "Search filters projects"
+        - "Enter switches project"
+    
+    - id: "11.5"
+      name: "Implement ProjectFileTree"
+      status: "not_started"
+      depends_on: ["11.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectFileTree.ts"
+      implements:
+        - "ProjectFileTree class (extends SmartFileTree from Era 6)"
+        - "Root set to currentProject.path"
+        - "Git status indicators (modified, added, deleted)"
+        - "Sync with active editor file"
+        - "Same smart filtering as PRECISION mode"
+      validation:
+        - "File tree shows project root"
+        - "Git status visible"
+        - "Active file highlighted"
+    
+    - id: "11.6"
+      name: "Implement ProjectContext (AI context)"
+      status: "not_started"
+      depends_on: ["11.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectContext.ts"
+      implements:
+        - "ProjectContext class"
+        - "detectLanguage() (from package.json, Cargo.toml, etc.)"
+        - "detectFramework() (from dependencies)"
+        - "generateDescription() (uses LLMService from Era 7)"
+        - "getRecentFiles() (last 10 edited)"
+      validation:
+        - "Language/framework detected correctly"
+        - "AI description generated on project add"
+    
+    - id: "11.7"
+      name: "Register projects sidebar in workbench"
+      status: "not_started"
+      depends_on: ["11.3"]
+      files:
+        - "src/vs/workbench/browser/workbench.contribution.ts"
+      implements:
+        - "Register ProjectsSidebar in workbench layout"
+        - "Position: left side"
+        - "Visible by default"
+      validation:
+        - "Sidebar appears in workbench"
+    
+    - id: "11.8"
+      name: "Add projects settings"
+      status: "not_started"
+      depends_on: ["11.2", "11.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "dendrite.projects.sidebar.visible (boolean)"
+        - "dendrite.projects.sidebar.width (number)"
+        - "dendrite.projects.recent.maxCount (number)"
+        - "dendrite.projects.autoDetectGit (boolean)"
+        - "dendrite.projects.aiContext.enabled (boolean)"
+        - "dendrite.projects.fileTree.syncWithActive (boolean)"
+      validation:
+        - "All settings in Settings UI"
+    
+    - id: "11.9"
+      name: "Implement keybindings"
+      status: "not_started"
+      depends_on: ["11.3", "11.4"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+      implements:
+        - "Cmd+0 → Toggle projects sidebar"
+        - "Cmd+Shift+P → Open project switcher"
+      validation:
+        - "Keybindings work"
+    
+    - id: "11.10"
+      name: "Implement project-specific settings"
+      status: "not_started"
+      depends_on: ["11.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+      implements:
+        - "Read .dendrite/settings.json from project root"
+        - "Override global settings per project"
+        - "Apply settings on project switch"
+      validation:
+        - "Project settings override globals"
+        - "Settings persist per project"
+    
+    - id: "11.11"
+      name: "Implement git detection"
+      status: "not_started"
+      depends_on: ["11.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+      implements:
+        - "Detect .git folder on project add"
+        - "Get current branch"
+        - "Get git status (clean/dirty)"
+        - "Update git info on file changes"
+      validation:
+        - "Git repos detected"
+        - "Branch shown in UI"
+    
+    - id: "11.12"
+      name: "Integrate with all 4 modes"
+      status: "not_started"
+      depends_on: ["11.3"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+      implements:
+        - "Projects sidebar visible in AGGREGATOR mode"
+        - "Projects sidebar replaces PRECISION file tree"
+        - "Projects sidebar visible in PRODUCT mode"
+        - "Projects sidebar visible in GROWTH mode"
+      validation:
+        - "Sidebar works in all modes"
+        - "No duplicate file trees in PRECISION"
+    
+    - id: "11.13"
+      name: "Implement persistence and sync"
+      status: "not_started"
+      depends_on: ["11.2"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+      implements:
+        - "Save all projects to workspace storage"
+        - "Load projects on startup"
+        - "Update metadata (lastOpened, openCount)"
+      validation:
+        - "Projects persist across restarts"
+        - "Metadata updates correctly"
+    
+    - id: "11.14"
+      name: "Performance optimization and testing"
+      status: "not_started"
+      depends_on: ["11.2", "11.3", "11.4"]
+      implements:
+        - "Measure project switch latency (target < 300ms)"
+        - "Measure sidebar toggle (target < 50ms)"
+        - "Test with 100+ projects (virtual scroll)"
+        - "Profile memory usage"
+      validation:
+        - "Project switch < 300ms"
+        - "Sidebar toggle < 50ms"
+        - "No memory leaks"
+    
+    - id: "11.15"
+      name: "Documentation"
+      status: "not_started"
+      depends_on: ["11.14"]
+      files:
+        - "src/vs/workbench/contrib/dendrite/browser/projects/README.md"
+      implements:
+        - "Projects/Workspaces architecture"
+        - "User guide: Managing projects"
+        - "User guide: Project-specific settings"
+        - "Developer guide: AI context integration"
+      validation:
+        - "Documentation complete"
+  
+  artifacts:
+    output:
+      - "src/vs/workbench/contrib/dendrite/browser/projects/projectsService.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/projects/projectsSidebar.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/projects/projectSwitcher.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/projects/projectFileTree.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/projects/projectContext.ts"
+      - "src/vs/workbench/contrib/dendrite/browser/projects/README.md"
+    
+    testing:
+      - "Project switching performance tests"
+      - "Sidebar toggle tests"
+      - "Multi-project tests (100+)"
+      - "Git detection tests"
+      - "AI context generation tests"
+    
+    verification:
+      - "All 15 tasks completed"
+      - "Project switching < 300ms"
+      - "Sidebar toggle < 50ms"
+      - "Integration with all 4 modes"
+  
+  completion_criteria:
+    - "All 15 tasks completed"
+    - "Projects sidebar visible in all modes"
+    - "Project switching functional and performant"
+    - "Recent projects tracked (max 10)"
+    - "Project-specific settings work"
+    - "Git detection and status functional"
+    - "AI context generation enabled"

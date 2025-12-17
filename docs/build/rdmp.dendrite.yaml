@@ -8,10 +8,10 @@ roadmap:
   meta:
     id: "rdmp.dendrite"
     name: "Dendrite IDE Roadmap"
-    version: "0.2.0"
+    version: "0.3.0"
     description: "Master roadmap tracking all Dendrite features and eras"
     owners: ["@shupp"]
-    last_updated: "2025-12-16"
+    last_updated: "2025-12-17"
 
   # ============================================
   # NAMING CONVENTION
@@ -32,20 +32,21 @@ roadmap:
   vision:
     tagline: "Where learning takes root"
     core_principles:
-      - "Terminal-first: The terminal is the primary workspace"
+      - "Mode-centric: 4 fullscreen modes (AGGREGATOR, PRECISION, PRODUCT, GROWTH)"
+      - "Terminal-first: The terminal (AGGREGATOR) is the primary workspace"
       - "Human at the helm: AI assists, human approves"
       - "Learning through doing: Commits become lessons"
-      - "Unified workflow: One workspace for all tools"
-      - "Opinionated by default: Curated, not chaotic"
+      - "Distraction-free: No sidebars, no clutter, fullscreen real estate"
+      - "Keyboard-driven: Cmd+1-4 mode switching, Cmd+P for quick actions"
     
     target_workflow: |
-      1. User works primarily in fullscreen terminal (OpenCode-like)
-      2. Quick swap to editor for larger edits (Ctrl+`)
-      3. After AI edits: diff panel auto-focuses, agent pauses
-      4. Human reviews, accepts/rejects changes
-      5. On commit: AI explains what was learned
-      6. All tools (TLDraw, Linear, GitHub) accessible in same workspace
-      7. AI context syncs across all panels
+      1. User works in AGGREGATOR mode (fullscreen terminal with OpenCode)
+      2. Quick swap to PRECISION mode for code editing (Cmd+2)
+      3. View progress in PRODUCT mode (Kanban board, Cmd+3)
+      4. Track growth in GROWTH mode (dashboard, Cmd+4)
+      5. All modes fullscreen, keyboard-driven, performative (<200ms switching)
+      6. AI context syncs across all modes
+      7. YAML files (CATS, BuildBook) are single source of truth
 
   # ============================================
   # ERA DEFINITIONS
@@ -68,57 +69,88 @@ roadmap:
       description: "Hyprland-inspired terminal fluidity with smooth cursor and GPU acceleration"
       cats_ref: "cats.velocity.dendrite"
       buildbook_ref: "bldbk.velocity.dendrite"
-      status: "not_started"
-      completion: 0
+      status: "completed"
+      completed_date: "2025-12-17"
+      completion: 87.5  # 7/8 tasks (manual testing pending)
       dependencies: ["core"]
       
-    - id: "terminalux"
+    - id: "modesystem"
       number: 5
-      name: "Terminal-First UX"
-      description: "Fullscreen terminal mode, quick editor swap, diff-focus workflow, agent checkpoints"
-      cats_ref: "cats.terminalux.dendrite"
-      buildbook_ref: "bldbk.terminalux.dendrite"
+      name: "Mode System Foundation"
+      description: "Mode switcher infrastructure, Phosphor icons migration, hide legacy UI elements"
+      cats_ref: "cats.modesystem.dendrite"
+      buildbook_ref: "bldbk.modesystem.dendrite"
       status: "not_started"
       completion: 0
       dependencies: ["velocity"]
       
-    - id: "commitmode"
+    - id: "precision"
       number: 6
-      name: "Code Commit Mode"
-      description: "AI explains user commits for learning, human-in-the-loop review"
-      cats_ref: "cats.commitmode.dendrite"
-      buildbook_ref: "bldbk.commitmode.dendrite"
+      name: "PRECISION Mode (Code Editor)"
+      description: "Fullscreen Monaco editor with collapsible file tree, smart filtering, distraction-free coding"
+      cats_ref: "cats.precision.dendrite"
+      buildbook_ref: "bldbk.precision.dendrite"
       status: "not_started"
       completion: 0
-      dependencies: ["core"]  # Can run parallel to velocity/terminalux
+      dependencies: ["modesystem"]
       
-    - id: "workspace"
+    - id: "aggregator"
       number: 7
-      name: "Unified Workspace"
-      description: "TLDraw, Linear, GitHub integration in consolidated panels"
-      cats_ref: "cats.workspace.dendrite"
-      buildbook_ref: "bldbk.workspace.dendrite"
+      name: "AGGREGATOR Mode (Terminal)"
+      description: "Fullscreen terminal tab with OpenCode integration, AI chat interface, diff approval workflow"
+      cats_ref: "cats.aggregator.dendrite"
+      buildbook_ref: "bldbk.aggregator.dendrite"
       status: "not_started"
       completion: 0
-      dependencies: ["terminalux"]
+      dependencies: ["modesystem"]
       
-    - id: "marketplace"
+    - id: "product"
       number: 8
-      name: "Opinionated Marketplace"
-      description: "Curated extensions, AI workflow sync hooks"
-      cats_ref: "cats.marketplace.dendrite"
-      buildbook_ref: "bldbk.marketplace.dendrite"
+      name: "PRODUCT Mode (Project Management)"
+      description: "Fullscreen Kanban GUI, CATS/BuildBook YAML integration, drag-drop cards, roadmap tracking"
+      cats_ref: "cats.product.dendrite"
+      buildbook_ref: "bldbk.product.dendrite"
       status: "not_started"
       completion: 0
-      dependencies: ["workspace"]
+      dependencies: ["modesystem"]
+      
+    - id: "aiautocomplete"
+      number: 9
+      name: "AI Autocomplete"
+      description: "Inline AI suggestions in PRECISION mode, configurable LLM backend (Ollama default)"
+      cats_ref: "cats.aiautocomplete.dendrite"
+      buildbook_ref: "bldbk.aiautocomplete.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["precision"]
+      
+    - id: "designer"
+      number: 10
+      name: "DESIGNER Mode (Wireframes)"
+      description: "Optional TLDraw integration for visual design and wireframing"
+      cats_ref: "cats.designer.dendrite"
+      buildbook_ref: "bldbk.designer.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["product"]
+      
+    - id: "projects"
+      number: 11
+      name: "Projects/Workspaces"
+      description: "Multi-project management with left sidebar, project switcher, AI context per project"
+      cats_ref: "cats.projects.dendrite"
+      buildbook_ref: "bldbk.projects.dendrite"
+      status: "not_started"
+      completion: 0
+      dependencies: ["modesystem", "precision"]
 
   # ============================================
   # STATUS DASHBOARD
   # ============================================
   status:
-    overall_completion: 31  # 42 done / 136 total tasks
-    total_tasks: 136
-    tasks_done: 42
+    overall_completion: 23  # 49 done / 212 total tasks (estimated)
+    total_tasks: 212  # Updated estimate with Era 11
+    tasks_done: 49  # 42 (Eras 1-3) + 7 (Era 4)
     
     by_era:
       core:
@@ -126,50 +158,74 @@ roadmap:
         era_2: { status: "completed", tasks_total: 7, tasks_done: 7 }
         era_3: { status: "completed", tasks_total: 27, tasks_done: 27 }
       velocity:
-        era_4: { status: "not_started", tasks_total: 8, tasks_done: 0 }
-      terminalux:
-        era_5: { status: "not_started", tasks_total: 15, tasks_done: 0 }
-      commitmode:
+        era_4: { status: "completed", tasks_total: 8, tasks_done: 7 }  # Manual testing pending
+      modesystem:
+        era_5: { status: "not_started", tasks_total: 12, tasks_done: 0 }
+      precision:
         era_6: { status: "not_started", tasks_total: 18, tasks_done: 0 }
-      workspace:
-        era_7: { status: "not_started", tasks_total: 35, tasks_done: 0 }
-      marketplace:
-        era_8: { status: "not_started", tasks_total: 20, tasks_done: 0 }
+      aggregator:
+        era_7: { status: "not_started", tasks_total: 22, tasks_done: 0 }
+      product:
+        era_8: { status: "not_started", tasks_total: 28, tasks_done: 0 }
+      aiautocomplete:
+        era_9: { status: "not_started", tasks_total: 15, tasks_done: 0 }
+      designer:
+        era_10: { status: "not_started", tasks_total: 10, tasks_done: 0 }
+      projects:
+        era_11: { status: "not_started", tasks_total: 15, tasks_done: 0 }
     
     milestones:
-      - name: "MVP: Learning Metrics"
+      - name: "MVP: Learning Metrics & Terminal UX"
         target_date: "2025-Q1"
-        eras: ["core"]
-        status: "in_progress"
+        eras: ["core", "velocity"]
+        status: "completed"
+        completed_date: "2025-12-17"
         
-      - name: "Terminal Excellence"
+      - name: "Mode-Centric Interface Foundation"
         target_date: "2025-Q2"
-        eras: ["velocity", "terminalux"]
+        eras: ["modesystem"]
         status: "not_started"
         
-      - name: "AI-Assisted Learning"
+      - name: "4-Mode Workspace Complete"
         target_date: "2025-Q2"
-        eras: ["commitmode"]
+        eras: ["precision", "aggregator", "product"]
         status: "not_started"
         
-      - name: "Unified Developer Experience"
+      - name: "AI-Enhanced Development"
         target_date: "2025-Q3"
-        eras: ["workspace", "marketplace"]
+        eras: ["aiautocomplete"]
+        status: "not_started"
+        
+      - name: "Design & Polish"
+        target_date: "2025-Q3"
+        eras: ["designer"]
+        status: "not_started"
+        
+      - name: "Multi-Project Workflows"
+        target_date: "2025-Q2"
+        eras: ["projects"]
         status: "not_started"
 
   # ============================================
   # DEPENDENCY GRAPH
   # ============================================
   dependency_graph: |
-    core (1-3) ─────┬──────────────────> velocity (4) ──> terminalux (5) ──> workspace (7) ──> marketplace (8)
-                    │
-                    └──────────────────> commitmode (6) ─────────────────────────────────────────────┘
+    core (1-3) ──> velocity (4) ──> modesystem (5) ──┬──> precision (6) ──┬──> aiautocomplete (9)
+                                                      │                    │
+                                                      ├──> aggregator (7)  └──> projects (11)
+                                                      │
+                                                      └──> product (8) ──> designer (10)
     
     Legend:
-    - core is prerequisite for everything
-    - commitmode can develop in parallel with velocity/terminalux
-    - workspace requires terminalux (terminal-first is base UX)
-    - marketplace requires workspace (extensions integrate with unified panels)
+    - core (1-3): Learning metrics foundation, Growth dashboard
+    - velocity (4): Smooth cursor, GPU acceleration
+    - modesystem (5): Mode switcher infrastructure, hide legacy UI
+    - precision (6): Fullscreen code editor mode
+    - aggregator (7): Fullscreen terminal mode (parallel to precision)
+    - product (8): Kanban project management mode (parallel to precision/aggregator)
+    - aiautocomplete (9): AI suggestions (requires precision)
+    - designer (10): TLDraw wireframes (optional, requires product)
+    - projects (11): Multi-project management sidebar (requires modesystem + precision)
 
   # ============================================
   # FILE MANIFEST
@@ -186,18 +242,27 @@ roadmap:
       - path: "docs/build/cats/cats.velocity.dendrite.yaml"
         ref: "cats.velocity.dendrite"
         eras: [4]
-      - path: "docs/build/cats/cats.terminalux.dendrite.yaml"
-        ref: "cats.terminalux.dendrite"
+      - path: "docs/build/cats/cats.modesystem.dendrite.yaml"
+        ref: "cats.modesystem.dendrite"
         eras: [5]
-      - path: "docs/build/cats/cats.commitmode.dendrite.yaml"
-        ref: "cats.commitmode.dendrite"
+      - path: "docs/build/cats/cats.precision.dendrite.yaml"
+        ref: "cats.precision.dendrite"
         eras: [6]
-      - path: "docs/build/cats/cats.workspace.dendrite.yaml"
-        ref: "cats.workspace.dendrite"
+      - path: "docs/build/cats/cats.aggregator.dendrite.yaml"
+        ref: "cats.aggregator.dendrite"
         eras: [7]
-      - path: "docs/build/cats/cats.marketplace.dendrite.yaml"
-        ref: "cats.marketplace.dendrite"
+      - path: "docs/build/cats/cats.product.dendrite.yaml"
+        ref: "cats.product.dendrite"
         eras: [8]
+      - path: "docs/build/cats/cats.aiautocomplete.dendrite.yaml"
+        ref: "cats.aiautocomplete.dendrite"
+        eras: [9]
+      - path: "docs/build/cats/cats.designer.dendrite.yaml"
+        ref: "cats.designer.dendrite"
+        eras: [10]
+      - path: "docs/build/cats/cats.projects.dendrite.yaml"
+        ref: "cats.projects.dendrite"
+        eras: [11]
     
     buildbooks:
       - path: "docs/build/buildbook/bldbk.core.dendrite.yaml"
@@ -206,18 +271,43 @@ roadmap:
       - path: "docs/build/buildbook/bldbk.velocity.dendrite.yaml"
         ref: "bldbk.velocity.dendrite"
         eras: [4]
-      - path: "docs/build/buildbook/bldbk.terminalux.dendrite.yaml"
-        ref: "bldbk.terminalux.dendrite"
+      - path: "docs/build/buildbook/bldbk.modesystem.dendrite.yaml"
+        ref: "bldbk.modesystem.dendrite"
         eras: [5]
-      - path: "docs/build/buildbook/bldbk.commitmode.dendrite.yaml"
-        ref: "bldbk.commitmode.dendrite"
+      - path: "docs/build/buildbook/bldbk.precision.dendrite.yaml"
+        ref: "bldbk.precision.dendrite"
         eras: [6]
-      - path: "docs/build/buildbook/bldbk.workspace.dendrite.yaml"
-        ref: "bldbk.workspace.dendrite"
+      - path: "docs/build/buildbook/bldbk.aggregator.dendrite.yaml"
+        ref: "bldbk.aggregator.dendrite"
         eras: [7]
-      - path: "docs/build/buildbook/bldbk.marketplace.dendrite.yaml"
-        ref: "bldbk.marketplace.dendrite"
+      - path: "docs/build/buildbook/bldbk.product.dendrite.yaml"
+        ref: "bldbk.product.dendrite"
         eras: [8]
+      - path: "docs/build/buildbook/bldbk.aiautocomplete.dendrite.yaml"
+        ref: "bldbk.aiautocomplete.dendrite"
+        eras: [9]
+      - path: "docs/build/buildbook/bldbk.designer.dendrite.yaml"
+        ref: "bldbk.designer.dendrite"
+        eras: [10]
+      - path: "docs/build/buildbook/bldbk.projects.dendrite.yaml"
+        ref: "bldbk.projects.dendrite"
+        eras: [11]
+    
+    deprecated:
+      note: "Legacy files from original roadmap (terminalux, commitmode, workspace, marketplace) deprecated in favor of mode-centric approach"
+      files:
+        - path: "docs/build/cats/cats.terminalux.dendrite.yaml"
+          status: "deprecated"
+          replaced_by: "cats.aggregator.dendrite"
+        - path: "docs/build/cats/cats.commitmode.dendrite.yaml"
+          status: "deprecated"
+          replaced_by: "Integrated into aggregator/precision modes"
+        - path: "docs/build/cats/cats.workspace.dendrite.yaml"
+          status: "deprecated"
+          replaced_by: "cats.product.dendrite"
+        - path: "docs/build/cats/cats.marketplace.dendrite.yaml"
+          status: "deprecated"
+          note: "Deferred to future era"
 
   # ============================================
   # LEGACY FILE MIGRATION

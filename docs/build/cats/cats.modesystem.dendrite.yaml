@@ -1,0 +1,562 @@
+# ============================================
+# DENDRITE IDE - MODE SYSTEM FOUNDATION
+# ============================================
+# Reference: cats.modesystem.dendrite
+# Era: 5
+# BuildBook: bldbk.modesystem.dendrite
+
+cats:
+  meta:
+    id: "cats.modesystem.dendrite"
+    name: "Dendrite Mode System Foundation"
+    version: "0.1.0"
+    domain: "mode-centric-interface"
+    era: 5
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.modesystem.dendrite"
+    depends_on: ["cats.velocity.dendrite"]
+    description: |
+      Foundation for mode-centric interface:
+      - Mode switcher infrastructure (Cmd+1-4)
+      - Phosphor icons migration
+      - Hide legacy UI elements (File/Edit/View menus, Explorer sidebar)
+      - Performative mode switching (<200ms)
+      - Keyboard-first navigation
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Implement mode switcher service with 4 modes (AGGREGATOR, PRECISION, PRODUCT, GROWTH)"
+      - "Migrate from Codicons to Phosphor Icons (custom subset)"
+      - "Hide legacy UI elements (menus, sidebars, panels)"
+      - "Achieve <200ms mode switching performance"
+      - "Implement Cmd+1-4 keyboard shortcuts for direct mode switching"
+      - "Implement Cmd+P mode picker (visual overlay)"
+    
+    metrics:
+      mode_switch_latency_ms: 200
+      icon_count: 150  # Custom Phosphor subset
+      keyboard_first: true
+      sidebar_hidden: true
+
+  # ============================================
+  # THE 4 MODES
+  # ============================================
+  modes:
+    aggregator:
+      id: "aggregator"
+      number: 1
+      name: "AGGREGATOR"
+      shortcut: "Cmd+1"
+      description: "Fullscreen terminal workspace (primary mode)"
+      icon: "ph-terminal-window"
+      features:
+        - "Terminal with OpenCode integration"
+        - "AI chat-style interface for code changes"
+        - "Diff viewer with approve/reject workflow"
+        - "Human-in-the-loop code review"
+      era: 7  # Implemented in Era 7
+    
+    precision:
+      id: "precision"
+      number: 2
+      name: "PRECISION"
+      shortcut: "Cmd+2"
+      description: "Fullscreen code editor"
+      icon: "ph-code"
+      features:
+        - "Monaco editor (fullscreen)"
+        - "Collapsible file tree (Cmd+B)"
+        - "Smart filtering (hide node_modules, .git)"
+        - "Cmd+P fuzzy file finder"
+      era: 6  # Implemented in Era 6
+    
+    product:
+      id: "product"
+      number: 3
+      name: "PRODUCT"
+      shortcut: "Cmd+3"
+      description: "Fullscreen project management"
+      icon: "ph-kanban"
+      features:
+        - "Kanban board (GUI, not TUI)"
+        - "CATS/BuildBook YAML integration"
+        - "Drag-drop cards update YAML files"
+        - "Click card → jump to PRECISION mode at code"
+      era: 8  # Implemented in Era 8
+    
+    growth:
+      id: "growth"
+      number: 4
+      name: "GROWTH"
+      shortcut: "Cmd+4"
+      description: "Fullscreen growth dashboard"
+      icon: "ph-chart-line"
+      features:
+        - "Session tracking heatmaps"
+        - "Cornell notes panel"
+        - "RedFlags panel"
+        - "Learning metrics visualization"
+      era: 3  # Already implemented!
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/"
+        type: directory
+        description: "Mode system infrastructure"
+        task: "5.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeService.ts"
+        type: file
+        description: "Core mode switching service"
+        task: "5.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeSwitcher.ts"
+        type: file
+        description: "UI component for mode switcher (top bar)"
+        task: "5.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+        type: file
+        description: "Registry for registering modes dynamically"
+        task: "5.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modePicker.ts"
+        type: file
+        description: "Cmd+P mode picker overlay"
+        task: "5.5"
+        
+      - path: "src/vs/base/common/phosphor/"
+        type: directory
+        description: "Phosphor Icons integration"
+        task: "5.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/README.md"
+        type: file
+        description: "Mode system documentation"
+        task: "5.12"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/browser/workbench.contribution.ts"
+        task: "5.7"
+        changes:
+          - action: "hide"
+            description: "Hide legacy File/Edit/View menu bar by default"
+          - action: "add"
+            description: "Register mode switcher in title bar"
+            
+      - path: "src/vs/workbench/browser/parts/sidebar/sidebarPart.ts"
+        task: "5.8"
+        changes:
+          - action: "hide"
+            description: "Hide Explorer sidebar by default in all modes except PRECISION"
+            
+      - path: "src/vs/workbench/browser/parts/panel/panelPart.ts"
+        task: "5.8"
+        changes:
+          - action: "hide"
+            description: "Hide bottom panel by default in all modes except AGGREGATOR"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "5.9"
+        changes:
+          - action: "add"
+            description: "Register mode system settings"
+          - action: "add"
+            description: "Register mode switching keybindings (Cmd+1-4, Cmd+P)"
+
+  # ============================================
+  # MODE SERVICE SPECIFICATION
+  # ============================================
+  mode_service:
+    description: "Central service managing mode state and transitions"
+    
+    architecture:
+      class: "ModeService"
+      implements: "IModeService"
+      singleton: true
+      
+    state:
+      current_mode:
+        type: "ModeId"
+        values: ["aggregator", "precision", "product", "growth"]
+        default: "aggregator"
+        
+      mode_history:
+        type: "ModeId[]"
+        description: "Stack of previously visited modes for Cmd+Tab navigation"
+        max_size: 10
+        
+      preload_cache:
+        type: "Map<ModeId, ModeView>"
+        description: "Pre-loaded mode views for instant switching"
+        
+    methods:
+      switchMode:
+        signature: "(modeId: ModeId, options?: ModeSwitchOptions) => Promise<void>"
+        description: "Switch to specified mode, hide current, show target"
+        performance: "<200ms latency"
+        
+      getCurrentMode:
+        signature: "() => ModeId"
+        description: "Get current active mode"
+        
+      registerMode:
+        signature: "(mode: ModeDescriptor) => IDisposable"
+        description: "Register a new mode dynamically"
+        
+      onDidChangeMode:
+        signature: "Event<ModeChangeEvent>"
+        description: "Event fired when mode changes"
+        
+    pseudo_code: |
+      class ModeService implements IModeService {
+        private currentMode: ModeId = 'aggregator';
+        private modeRegistry: Map<ModeId, ModeView> = new Map();
+        private preloadCache: Map<ModeId, ModeView> = new Map();
+        
+        async switchMode(modeId: ModeId, options?: ModeSwitchOptions) {
+          const start = performance.now();
+          
+          // 1. Pre-load target mode if not cached (parallel to hide current)
+          if (!this.preloadCache.has(modeId)) {
+            await this.preloadMode(modeId);
+          }
+          
+          // 2. Hide current mode
+          const currentView = this.modeRegistry.get(this.currentMode);
+          currentView?.hide();
+          
+          // 3. Show target mode (from cache)
+          const targetView = this.preloadCache.get(modeId);
+          targetView?.show();
+          
+          // 4. Update state
+          this.currentMode = modeId;
+          this._onDidChangeMode.fire({ from: this.currentMode, to: modeId });
+          
+          // 5. Performance check
+          const latency = performance.now() - start;
+          if (latency > 200) {
+            console.warn(`Mode switch exceeded 200ms: ${latency}ms`);
+          }
+        }
+        
+        private async preloadMode(modeId: ModeId): Promise<void> {
+          const descriptor = this.modeRegistry.get(modeId);
+          const view = await descriptor.createView();
+          this.preloadCache.set(modeId, view);
+        }
+      }
+
+  # ============================================
+  # MODE SWITCHER UI SPECIFICATION
+  # ============================================
+  mode_switcher_ui:
+    description: "Minimal top bar showing current mode and quick switcher"
+    
+    design:
+      type: "Hybrid (Option D from design discussion)"
+      layout: "Horizontal bar at top of window"
+      height: "32px"
+      background: "Subtle (matches title bar)"
+      
+    components:
+      current_mode_indicator:
+        position: "Left side"
+        displays: "Current mode name + icon"
+        example: "[🖥️ AGGREGATOR]"
+        clickable: true
+        action: "Opens mode picker (same as Cmd+P)"
+        
+      mode_tabs:
+        position: "Center"
+        displays: "4 tabs (AGGREGATOR, PRECISION, PRODUCT, GROWTH)"
+        style: "Minimal, text-based with icons"
+        active_indicator: "Underline or background highlight"
+        hover_state: "Subtle background change"
+        click_action: "Switch to clicked mode"
+        
+      settings_icon:
+        position: "Right side"
+        displays: "Gear icon (Phosphor ph-gear)"
+        action: "Opens settings (existing behavior)"
+        
+    keyboard_shortcuts:
+      - key: "Cmd+1"
+        action: "Switch to AGGREGATOR"
+      - key: "Cmd+2"
+        action: "Switch to PRECISION"
+      - key: "Cmd+3"
+        action: "Switch to PRODUCT"
+      - key: "Cmd+4"
+        action: "Switch to GROWTH"
+      - key: "Cmd+P"
+        action: "Open mode picker overlay"
+      - key: "Cmd+Tab"
+        action: "Cycle through mode history"
+
+  # ============================================
+  # MODE PICKER SPECIFICATION
+  # ============================================
+  mode_picker:
+    description: "Visual overlay for discovering and switching modes (Cmd+P)"
+    
+    design:
+      type: "Overlay modal (center of screen)"
+      dimensions: "600px x 400px"
+      background: "Semi-transparent backdrop"
+      
+    layout:
+      - component: "Search box"
+        position: "Top"
+        placeholder: "Type to filter modes..."
+        autofocus: true
+        
+      - component: "Mode grid"
+        position: "Below search"
+        layout: "2x2 grid"
+        item_displays:
+          - "Mode icon (large Phosphor icon)"
+          - "Mode name (AGGREGATOR, PRECISION, etc.)"
+          - "Mode description (one-liner)"
+          - "Keyboard shortcut (Cmd+1, etc.)"
+        
+      - component: "Footer"
+        position: "Bottom"
+        displays: "Hint: Use Cmd+1-4 for direct switching"
+        
+    interactions:
+      - input: "Arrow keys"
+        action: "Navigate between modes"
+      - input: "Enter"
+        action: "Switch to selected mode"
+      - input: "Esc"
+        action: "Close picker without switching"
+      - input: "Cmd+1-4"
+        action: "Direct switch and close picker"
+      - input: "Type text"
+        action: "Filter modes by name/description"
+
+  # ============================================
+  # PHOSPHOR ICONS MIGRATION
+  # ============================================
+  phosphor_icons:
+    description: "Migrate from Codicons to Phosphor Icons (Custom Subset - Option C)"
+    
+    strategy:
+      approach: "Custom Subset"
+      icon_count: 150  # Curated essential icons
+      format: "SVG embedded in CSS/TypeScript"
+      fallback: "Codicons for unmapped icons (temporary)"
+      
+    migration_plan:
+      - phase: "Phase 1: Core icons"
+        task: "5.6"
+        icons:
+          - "ph-terminal-window (AGGREGATOR mode)"
+          - "ph-code (PRECISION mode)"
+          - "ph-kanban (PRODUCT mode)"
+          - "ph-chart-line (GROWTH mode)"
+          - "ph-gear (Settings)"
+          - "ph-magnifying-glass (Search)"
+          - "ph-folder (File tree)"
+          - "ph-file (File)"
+          - "ph-x (Close)"
+          - "ph-check (Confirm)"
+          
+      - phase: "Phase 2: Extended icons"
+        task: "5.6"
+        count: 140
+        categories:
+          - "File types (20 icons)"
+          - "Navigation (15 icons)"
+          - "Actions (25 icons)"
+          - "Status indicators (20 icons)"
+          - "Git/version control (15 icons)"
+          - "Debug/run (15 icons)"
+          - "Extensions (10 icons)"
+          - "Editor features (20 icons)"
+          
+    implementation:
+      file_structure:
+        - path: "src/vs/base/common/phosphor/phosphorIcons.ts"
+          description: "TypeScript icon registry"
+        - path: "src/vs/base/common/phosphor/phosphorIcons.css"
+          description: "CSS icon definitions (embedded SVG)"
+          
+      api:
+        class: "PhosphorIcon"
+        usage_example: |
+          import { PhosphorIcon } from 'vs/base/common/phosphor/phosphorIcons';
+          
+          const icon = PhosphorIcon.get('terminal-window');
+          const element = renderIcon(icon);
+          
+      backward_compatibility:
+        - "Codicons remain available during transition"
+        - "Fallback to Codicon if Phosphor icon not found"
+        - "Console warning when fallback used"
+
+  # ============================================
+  # HIDE LEGACY UI ELEMENTS
+  # ============================================
+  ui_hiding:
+    description: "Hide traditional IDE clutter for distraction-free experience"
+    
+    elements_to_hide:
+      menu_bar:
+        paths: ["File", "Edit", "View", "Go", "Run", "Terminal", "Help"]
+        action: "Hide by default (logic remains for keybindings)"
+        setting: "dendrite.modes.hideMenuBar"
+        default: true
+        
+      explorer_sidebar:
+        action: "Hide by default (shown only in PRECISION mode)"
+        toggle: "Cmd+B in PRECISION mode"
+        setting: "dendrite.modes.autoHideSidebar"
+        default: true
+        
+      bottom_panel:
+        action: "Hide by default (shown only in AGGREGATOR mode)"
+        toggle: "Cmd+J in AGGREGATOR mode"
+        setting: "dendrite.modes.autoHidePanel"
+        default: true
+        
+      activity_bar:
+        action: "Hide (replaced by mode switcher)"
+        setting: "dendrite.modes.hideActivityBar"
+        default: true
+        
+      status_bar:
+        action: "Keep visible (shows important context)"
+        setting: "dendrite.modes.hideStatusBar"
+        default: false
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.modes"
+    
+    items:
+      - id: "dendrite.modes.defaultMode"
+        type: "string"
+        default: "aggregator"
+        enum: ["aggregator", "precision", "product", "growth"]
+        description: "Default mode on startup"
+        task: "5.9"
+        
+      - id: "dendrite.modes.hideMenuBar"
+        type: "boolean"
+        default: true
+        description: "Hide File/Edit/View menu bar"
+        task: "5.9"
+        
+      - id: "dendrite.modes.autoHideSidebar"
+        type: "boolean"
+        default: true
+        description: "Auto-hide sidebar in non-PRECISION modes"
+        task: "5.9"
+        
+      - id: "dendrite.modes.autoHidePanel"
+        type: "boolean"
+        default: true
+        description: "Auto-hide panel in non-AGGREGATOR modes"
+        task: "5.9"
+        
+      - id: "dendrite.modes.hideActivityBar"
+        type: "boolean"
+        default: true
+        description: "Hide activity bar (replaced by mode switcher)"
+        task: "5.9"
+        
+      - id: "dendrite.modes.preloadModes"
+        type: "boolean"
+        default: true
+        description: "Pre-load all modes for instant switching"
+        task: "5.9"
+        
+      - id: "dendrite.modes.modeSwitchAnimation"
+        type: "string"
+        default: "fade"
+        enum: ["none", "fade", "slide"]
+        description: "Mode transition animation"
+        task: "5.9"
+
+  # ============================================
+  # PERFORMANCE REQUIREMENTS
+  # ============================================
+  performance:
+    mode_switching:
+      target_latency_ms: 200
+      measurement: "performance.mark/measure from switchMode call to UI visible"
+      optimization:
+        - "Pre-load all 4 modes on startup (if preloadModes enabled)"
+        - "Keep mode views in memory (don't destroy on hide)"
+        - "Use CSS display:none for hiding (not DOM removal)"
+        - "Lazy-load mode-specific heavy resources"
+        
+    memory_overhead:
+      target: "< 50MB for all 4 modes loaded"
+      measurement: "Chrome DevTools Memory Profiler"
+      
+    startup_impact:
+      target: "< 100ms additional startup time"
+      measurement: "VS Code startup profiler"
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "Mode switching performance"
+        description: "Switch between all 4 modes rapidly"
+        expected: "Each switch < 200ms"
+        
+      - name: "Keyboard shortcuts"
+        description: "Test Cmd+1-4 direct switching"
+        expected: "Immediate mode switch, no lag"
+        
+      - name: "Mode picker overlay"
+        description: "Open with Cmd+P, navigate with arrows, select with Enter"
+        expected: "Smooth overlay, instant navigation"
+        
+      - name: "UI hiding"
+        description: "Verify menu bar, sidebar, panel hidden in appropriate modes"
+        expected: "Clean fullscreen experience in each mode"
+        
+      - name: "Phosphor icons"
+        description: "Verify new icons render correctly"
+        expected: "No missing icons, consistent styling"
+        
+      - name: "Backward compatibility"
+        description: "Ensure legacy keybindings still work"
+        expected: "Cmd+Shift+E (Explorer), Cmd+Shift+F (Search), etc. still functional"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "IWorkbenchLayoutService"
+      - "IConfigurationService"
+      - "IKeybindingService"
+      - "ICommandService"
+      - "IViewsService"
+      
+    external_libraries:
+      - name: "Phosphor Icons"
+        version: "2.x"
+        usage: "SVG icon source (subset extracted)"
+        license: "MIT"

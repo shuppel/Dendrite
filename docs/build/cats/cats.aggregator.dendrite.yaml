@@ -1,0 +1,606 @@
+# ============================================
+# DENDRITE IDE - AGGREGATOR MODE (TERMINAL)
+# ============================================
+# Reference: cats.aggregator.dendrite
+# Era: 7
+# BuildBook: bldbk.aggregator.dendrite
+
+cats:
+  meta:
+    id: "cats.aggregator.dendrite"
+    name: "Dendrite AGGREGATOR Mode"
+    version: "0.1.0"
+    domain: "terminal-workspace-mode"
+    era: 7
+    owners: ["@shupp"]
+    roadmap_ref: "rdmp.dendrite"
+    buildbook_ref: "bldbk.aggregator.dendrite"
+    depends_on: ["cats.modesystem.dendrite"]
+    description: |
+      AGGREGATOR mode - Fullscreen terminal workspace:
+      - Terminal with OpenCode integration (works without OpenCode too)
+      - AI chat-style interface for code changes
+      - Diff viewer with approve/reject workflow
+      - Human-in-the-loop code review
+      - Primary workspace for development
+      - Fullscreen, distraction-free terminal
+
+  # ============================================
+  # GOALS
+  # ============================================
+  goals:
+    primary:
+      - "Implement fullscreen terminal layout"
+      - "Integrate OpenCode (optional, graceful fallback)"
+      - "AI chat interface for code suggestions"
+      - "Diff viewer with approve/reject buttons"
+      - "Human-in-the-loop review workflow"
+      - "Seamless mode switcher integration"
+    
+    metrics:
+      terminal_latency_ms: 16  # Inherited from Era 4
+      diff_viewer_render_ms: 200
+      ai_chat_responsive: true
+      opencode_optional: true
+
+  # ============================================
+  # AGGREGATOR MODE LAYOUT
+  # ============================================
+  layout:
+    description: "Fullscreen terminal workspace with integrated AI chat and diff viewer"
+    
+    structure:
+      mode_switcher:
+        position: "Top (32px height)"
+        always_visible: true
+        
+      terminal_area:
+        position: "Center (fills remaining space)"
+        fullscreen: true
+        features:
+          - "xterm.js terminal with smooth cursor (from Era 4)"
+          - "OpenCode integration (if available)"
+          - "Standard terminal if OpenCode not installed"
+          
+      ai_chat_panel:
+        position: "Overlay (right side, 400px width)"
+        toggle_key: "Cmd+K"
+        default_state: "hidden"
+        animation: "Slide in from right (200ms)"
+        features:
+          - "Chat-style AI conversation"
+          - "Code change suggestions"
+          - "Inline diff preview"
+          - "Accept/reject buttons"
+          
+      diff_viewer_panel:
+        position: "Overlay (center, 80% width)"
+        trigger: "AI suggests code change"
+        default_state: "hidden"
+        animation: "Fade in (150ms)"
+        features:
+          - "Side-by-side diff view"
+          - "Syntax highlighting"
+          - "Accept/reject buttons"
+          - "Keyboard shortcuts (Accept: Cmd+Enter, Reject: Esc)"
+          
+      status_bar:
+        position: "Bottom (22px height)"
+        always_visible: true
+        shows: "Terminal status, OpenCode connection, git branch"
+
+  # ============================================
+  # FILE STRUCTURE
+  # ============================================
+  structure:
+    tree:
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/"
+        type: directory
+        description: "AGGREGATOR mode implementation"
+        task: "7.1"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/aggregatorMode.ts"
+        type: file
+        description: "AGGREGATOR mode view controller"
+        task: "7.2"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/"
+        type: directory
+        description: "OpenCode integration components"
+        task: "7.3"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/opencode/opencodeService.ts"
+        type: file
+        description: "OpenCode detection and integration service"
+        task: "7.4"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/"
+        type: directory
+        description: "AI chat panel components"
+        task: "7.5"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/aiChatPanel.ts"
+        type: file
+        description: "AI chat UI panel"
+        task: "7.6"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/aiChat/llmService.ts"
+        type: file
+        description: "LLM backend service (Ollama default)"
+        task: "7.7"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/"
+        type: directory
+        description: "Diff viewer components"
+        task: "7.8"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/diffViewer/diffPanel.ts"
+        type: file
+        description: "Diff viewer panel with approve/reject"
+        task: "7.9"
+        
+      - path: "src/vs/workbench/contrib/dendrite/browser/aggregator/README.md"
+        type: file
+        description: "AGGREGATOR mode documentation"
+        task: "7.22"
+
+  # ============================================
+  # MUTATIONS
+  # ============================================
+  mutations:
+    files_modified:
+      - path: "src/vs/workbench/contrib/dendrite/browser/modes/modeRegistry.ts"
+        task: "7.10"
+        changes:
+          - action: "register"
+            description: "Register AGGREGATOR mode in mode registry"
+          - action: "add"
+            description: "Define AGGREGATOR mode descriptor (icon, name, shortcut)"
+            
+      - path: "src/vs/workbench/contrib/dendrite/browser/dendrite.contribution.ts"
+        task: "7.11"
+        changes:
+          - action: "add"
+            description: "Register AGGREGATOR mode settings"
+          - action: "add"
+            description: "Register Cmd+K keybinding for AI chat toggle"
+
+  # ============================================
+  # OPENCODE INTEGRATION
+  # ============================================
+  opencode_integration:
+    description: "Optional integration with OpenCode CLI"
+    
+    detection:
+      method: "Check for OpenCode CLI in PATH"
+      fallback: "Standard terminal if not found"
+      startup_message: "OpenCode not detected. Using standard terminal. Install OpenCode for AI features."
+      
+    features_when_available:
+      - "AI chat integration"
+      - "Code change suggestions"
+      - "Diff approval workflow"
+      - "Agent conversation history"
+      
+    features_without_opencode:
+      - "Standard xterm.js terminal"
+      - "Smooth cursor (from Era 4)"
+      - "GPU acceleration (from Era 4)"
+      - "All standard terminal features"
+      
+    service_spec:
+      class: "OpenCodeService"
+      methods:
+        isAvailable:
+          signature: "() => Promise<boolean>"
+          description: "Check if OpenCode CLI is installed"
+          
+        startSession:
+          signature: "() => Promise<void>"
+          description: "Start OpenCode session in terminal"
+          
+        sendMessage:
+          signature: "(message: string) => Promise<string>"
+          description: "Send message to OpenCode AI"
+          
+        onCodeChange:
+          signature: "Event<CodeChangeEvent>"
+          description: "Event fired when AI suggests code change"
+
+  # ============================================
+  # AI CHAT PANEL SPECIFICATION
+  # ============================================
+  ai_chat_panel:
+    description: "Chat-style interface for AI code assistance"
+    
+    toggle_key: "Cmd+K"
+    
+    ui_design:
+      width: "400px"
+      height: "100% (fills vertical space)"
+      position: "Right side overlay"
+      animation: "Slide in/out from right (200ms)"
+      
+    components:
+      message_list:
+        position: "Top (scrollable)"
+        displays:
+          - "User messages (right-aligned, blue)"
+          - "AI messages (left-aligned, gray)"
+          - "Code blocks with syntax highlighting"
+          - "Inline diffs (clickable to open diff viewer)"
+          
+      input_box:
+        position: "Bottom"
+        placeholder: "Ask AI to modify code..."
+        multiline: true
+        max_height: "200px"
+        submit_key: "Cmd+Enter"
+        
+      header:
+        position: "Top"
+        displays: "Chat with AI (Ollama)"
+        close_button: true
+        
+    features:
+      message_types:
+        user_message:
+          example: "Add error handling to the login function"
+          
+        ai_response:
+          example: "I'll add try-catch error handling. Here's the change:"
+          includes_diff: true
+          
+        code_block:
+          syntax_highlighted: true
+          language_detection: true
+          copy_button: true
+          
+      diff_preview:
+        inline: true
+        clickable: true
+        action: "Opens full diff viewer"
+        
+      conversation_history:
+        persisted: true
+        max_messages: 100
+        clear_button: true
+
+  # ============================================
+  # LLM SERVICE SPECIFICATION
+  # ============================================
+  llm_service:
+    description: "Configurable LLM backend service"
+    
+    default_backend: "Ollama"
+    
+    backends:
+      ollama:
+        name: "Ollama"
+        url_setting: "dendrite.aggregator.llm.ollama.url"
+        default_url: "http://localhost:11434"
+        model_setting: "dendrite.aggregator.llm.ollama.model"
+        default_model: "codellama"
+        
+      openai:
+        name: "OpenAI"
+        api_key_setting: "dendrite.aggregator.llm.openai.apiKey"
+        model_setting: "dendrite.aggregator.llm.openai.model"
+        default_model: "gpt-4"
+        note: "Requires API key"
+        
+      anthropic:
+        name: "Anthropic Claude"
+        api_key_setting: "dendrite.aggregator.llm.anthropic.apiKey"
+        model_setting: "dendrite.aggregator.llm.anthropic.model"
+        default_model: "claude-3-sonnet"
+        note: "Requires API key"
+        
+    service_spec:
+      class: "LLMService"
+      methods:
+        sendPrompt:
+          signature: "(prompt: string, context?: CodeContext) => Promise<string>"
+          description: "Send prompt to LLM backend"
+          
+        suggestCodeChange:
+          signature: "(request: string, file: URI) => Promise<CodeChange>"
+          description: "Request code modification suggestion"
+          
+        explainCode:
+          signature: "(code: string) => Promise<string>"
+          description: "Get explanation of code"
+
+  # ============================================
+  # DIFF VIEWER SPECIFICATION
+  # ============================================
+  diff_viewer:
+    description: "Side-by-side diff viewer with approve/reject workflow"
+    
+    trigger: "AI suggests code change"
+    keybinding_open: "None (auto-opens on AI suggestion)"
+    
+    ui_design:
+      width: "80% of window"
+      height: "80% of window"
+      position: "Center overlay"
+      background: "Semi-transparent backdrop"
+      
+    layout:
+      header:
+        position: "Top"
+        displays: "Code Change Suggestion"
+        shows_file_path: true
+        close_button: true
+        
+      diff_area:
+        position: "Center (fills space)"
+        layout: "Side-by-side (before | after)"
+        features:
+          - "Syntax highlighting"
+          - "Line numbers"
+          - "Added lines (green highlight)"
+          - "Removed lines (red highlight)"
+          - "Unchanged lines (dimmed)"
+          - "Scroll sync between sides"
+          
+      action_bar:
+        position: "Bottom"
+        buttons:
+          accept:
+            label: "Accept Change"
+            keybinding: "Cmd+Enter"
+            action: "Apply diff to file"
+            color: "Green"
+            
+          reject:
+            label: "Reject Change"
+            keybinding: "Esc"
+            action: "Close diff viewer without applying"
+            color: "Red"
+            
+          modify:
+            label: "Edit Before Applying"
+            keybinding: "Cmd+E"
+            action: "Open in PRECISION mode for manual edit"
+            color: "Blue"
+            
+    workflow:
+      - step: 1
+        event: "AI suggests code change"
+        action: "Diff viewer opens automatically"
+        
+      - step: 2
+        event: "User reviews diff"
+        action: "Scroll through changes, inspect code"
+        
+      - step: 3
+        event: "User decides"
+        options:
+          - "Accept (Cmd+Enter) → Apply changes to file"
+          - "Reject (Esc) → Close viewer, no changes"
+          - "Edit (Cmd+E) → Switch to PRECISION mode for manual tweaks"
+          
+      - step: 4
+        event: "After accept/reject"
+        action: "Return to AGGREGATOR mode, continue chat"
+
+  # ============================================
+  # AGGREGATOR MODE VIEW CONTROLLER
+  # ============================================
+  aggregator_mode:
+    description: "Main controller for AGGREGATOR mode"
+    
+    architecture:
+      class: "AggregatorModeView"
+      implements: "IModeView"
+      lifecycle: "Created on mode registration, kept in memory"
+      
+    state:
+      ai_chat_visible:
+        type: "boolean"
+        default: false
+        
+      opencode_available:
+        type: "boolean"
+        computed: true  # Based on OpenCodeService.isAvailable()
+        
+      diff_viewer_visible:
+        type: "boolean"
+        default: false
+        
+      terminal_instance:
+        type: "ITerminalInstance | null"
+        
+    methods:
+      show:
+        signature: "() => Promise<void>"
+        description: "Show AGGREGATOR mode"
+        actions:
+          - "Display fullscreen terminal"
+          - "Check OpenCode availability"
+          - "Show AI chat if previously visible"
+          - "Hide file tree sidebar"
+          - "Update mode switcher indicator"
+          
+      hide:
+        signature: "() => Promise<void>"
+        description: "Hide AGGREGATOR mode"
+        actions:
+          - "Save AI chat state"
+          - "Blur terminal"
+          
+      toggleAIChat:
+        signature: "() => void"
+        description: "Toggle AI chat panel (Cmd+K)"
+        animation: "Slide in/out (200ms)"
+        
+      showDiffViewer:
+        signature: "(diff: CodeChange) => Promise<void>"
+        description: "Show diff viewer with code change"
+        
+      acceptChange:
+        signature: "(diff: CodeChange) => Promise<void>"
+        description: "Apply code change to file"
+        
+      rejectChange:
+        signature: "() => void"
+        description: "Close diff viewer without applying"
+
+  # ============================================
+  # SETTINGS
+  # ============================================
+  settings:
+    prefix: "dendrite.aggregator"
+    
+    items:
+      - id: "dendrite.aggregator.opencode.enabled"
+        type: "boolean"
+        default: true
+        description: "Enable OpenCode integration (if available)"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.aiChat.visible"
+        type: "boolean"
+        default: false
+        description: "Show AI chat panel by default"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.aiChat.width"
+        type: "number"
+        default: 400
+        range: [300, 600]
+        description: "AI chat panel width (pixels)"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.llm.backend"
+        type: "string"
+        default: "ollama"
+        enum: ["ollama", "openai", "anthropic"]
+        description: "LLM backend to use"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.llm.ollama.url"
+        type: "string"
+        default: "http://localhost:11434"
+        description: "Ollama API URL"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.llm.ollama.model"
+        type: "string"
+        default: "codellama"
+        description: "Ollama model to use"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.diffViewer.autoOpen"
+        type: "boolean"
+        default: true
+        description: "Auto-open diff viewer when AI suggests changes"
+        task: "7.11"
+        
+      - id: "dendrite.aggregator.diffViewer.width"
+        type: "number"
+        default: 80
+        range: [50, 100]
+        description: "Diff viewer width (% of window)"
+        task: "7.11"
+
+  # ============================================
+  # PERFORMANCE REQUIREMENTS
+  # ============================================
+  performance:
+    terminal:
+      latency_ms: 16  # Inherited from Era 4
+      fps: 60  # Inherited from Era 4
+      
+    ai_chat:
+      toggle_animation_ms: 200
+      message_render_ms: 50
+      
+    diff_viewer:
+      open_latency_ms: 200
+      render_latency_ms: 150
+      scroll_fps: 60
+
+  # ============================================
+  # TESTING SCENARIOS
+  # ============================================
+  testing:
+    scenarios:
+      - name: "OpenCode detection"
+        description: "Test with and without OpenCode installed"
+        expected: "Graceful fallback to standard terminal"
+        
+      - name: "AI chat toggle"
+        description: "Press Cmd+K repeatedly"
+        expected: "Smooth slide in/out animation, < 200ms"
+        
+      - name: "AI code suggestion workflow"
+        description: "Ask AI to modify code, review diff, accept/reject"
+        expected: "Full workflow smooth, diff viewer responsive"
+        
+      - name: "Diff viewer performance"
+        description: "Large file diff (1000+ lines)"
+        expected: "Renders within 200ms, scrolling smooth at 60fps"
+        
+      - name: "Mode switching to/from AGGREGATOR"
+        description: "Switch between AGGREGATOR and other modes"
+        expected: "AI chat state preserved, terminal functional"
+        
+      - name: "LLM backend switching"
+        description: "Switch between Ollama, OpenAI, Anthropic"
+        expected: "Backend switches correctly, API calls work"
+
+  # ============================================
+  # INTEGRATION WITH MODE SYSTEM
+  # ============================================
+  mode_integration:
+    registration:
+      mode_id: "aggregator"
+      mode_number: 1
+      keybinding: "Cmd+1"
+      icon: "ph-terminal-window"  # Phosphor Icons
+      
+    lifecycle:
+      on_activate:
+        - "Show fullscreen terminal"
+        - "Check OpenCode availability"
+        - "Restore AI chat state"
+        - "Hide file tree sidebar"
+        
+      on_deactivate:
+        - "Save AI chat state"
+        - "Blur terminal"
+        
+    conflicts:
+      file_tree: "Must be hidden in AGGREGATOR mode"
+      activity_bar: "Already hidden by mode system"
+      menu_bar: "Already hidden by mode system"
+
+  # ============================================
+  # DEPENDENCIES
+  # ============================================
+  dependencies:
+    vscode_apis:
+      - "ITerminalService"
+      - "IEditorService"
+      - "IFileService"
+      - "IConfigurationService"
+      - "IStorageService"
+      
+    mode_system:
+      - "IModeService (from Era 5)"
+      - "ModeRegistry (from Era 5)"
+      - "PhosphorIcon (from Era 5)"
+      
+    era_4:
+      - "SmoothCursorAddon (smooth terminal cursor)"
+      - "Terminal velocity features"
+      
+    external:
+      - name: "OpenCode CLI"
+        optional: true
+        fallback: "Standard terminal"
+      - name: "Ollama"
+        optional: true
+        fallback: "Other LLM backends or disabled"
