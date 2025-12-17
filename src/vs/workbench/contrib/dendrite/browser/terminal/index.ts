@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
 
 // Terminal Velocity - Era 4
 // Hyprland-inspired terminal fluidity with smooth cursor and GPU acceleration

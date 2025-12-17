@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 import { SessionStats, LifetimeStats, HeatmapData, LanguageStat, SessionHandle } from '../common/types.js';
 

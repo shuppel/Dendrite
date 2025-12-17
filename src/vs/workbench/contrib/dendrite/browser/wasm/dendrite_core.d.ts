@@ -1,7 +1,8 @@
-/* tslint:disable */
-/* eslint-disable */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-export function add_commit_to_session(handle: bigint, commit_json: string): void;
 
 export function create_empty_profile(): string;
 

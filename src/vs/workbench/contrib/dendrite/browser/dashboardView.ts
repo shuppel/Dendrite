@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Dendrite IDE. All rights reserved.
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
 
 import { IViewletViewOptions } from '../../../browser/parts/views/viewsViewlet.js';
 import { ViewPane } from '../../../browser/parts/views/viewPane.js';

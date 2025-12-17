@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 import { localize } from '../../../../nls.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
@@ -8,7 +13,11 @@ import { SyncDescriptor } from '../../../../platform/instantiation/common/descri
 import { IViewContainersRegistry, Extensions as ViewExtensions, ViewContainerLocation, IViewsRegistry } from '../../../common/views.js';
 import { GrowthViewPaneContainer } from './growthViewPaneContainer.js';
 import { DendriteDashboardView } from './dashboardView.js';
+import { CornellNotePanel } from './notes/cornellNotePanel.js';
+import { RedFlagPanel } from './redFlags/redFlagPanel.js';
 import { DendriteSessionLifecycleService } from './sessionLifecycleService.js';
+import { DendriteStatusBarService } from './statusBarService.js';
+import { DendriteStorageService } from './storageService.js';
 import { DENDRITE_VIEW_CONTAINER_ID, DENDRITE_DASHBOARD_VIEW_ID, ConfigKeys } from '../common/constants.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { Codicon } from '../../../../base/common/codicons.js';
@@ -17,19 +26,27 @@ import { registerAllCommands, setSessionCommandContext } from './commands/index.
 
 // 1. Service Instantiation Contribution
 export class DendriteContribution extends Disposable implements IWorkbenchContribution {
-    private lifecycleService: DendriteSessionLifecycleService;
+	private lifecycleService: DendriteSessionLifecycleService;
+	private storageService: DendriteStorageService;
+	private statusBarService: DendriteStatusBarService;
 
-    constructor(
-        @IInstantiationService private readonly instantiationService: IInstantiationService
-    ) {
-        super();
-        // Eagerly create the lifecycle service to start tracking
-        this.lifecycleService = this.instantiationService.createInstance(DendriteSessionLifecycleService);
-        
-        // Set up command context and register all commands
-        setSessionCommandContext({ lifecycleService: this.lifecycleService });
-        registerAllCommands();
-    }
+	constructor(
+		@IInstantiationService private readonly instantiationService: IInstantiationService
+	) {
+		super();
+		// Eagerly create services
+		this.storageService = this.instantiationService.createInstance(DendriteStorageService);
+		this.lifecycleService = this.instantiationService.createInstance(DendriteSessionLifecycleService);
+		this.statusBarService = this.instantiationService.createInstance(
+			DendriteStatusBarService,
+			this.lifecycleService,
+			this.storageService
+		);
+		
+		// Set up command context and register all commands
+		setSessionCommandContext({ lifecycleService: this.lifecycleService });
+		registerAllCommands();
+	}
 }
 
 // Register Workbench Contribution
@@ -49,14 +66,35 @@ const growthViewContainer = viewContainerRegistry.registerViewContainer({
 
 // 3. View Registration
 const viewsRegistry = Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry);
-viewsRegistry.registerViews([{
-    id: DENDRITE_DASHBOARD_VIEW_ID,
-    name: { value: localize('dendrite.dashboard', "Dashboard"), original: 'Dashboard' },
-    containerIcon: Codicon.pulse,
-    canToggleVisibility: true,
-    canMoveView: true,
-    ctorDescriptor: new SyncDescriptor(DendriteDashboardView)
-}], growthViewContainer);
+viewsRegistry.registerViews([
+	{
+		id: DENDRITE_DASHBOARD_VIEW_ID,
+		name: { value: localize('dendrite.dashboard', "Dashboard"), original: 'Dashboard' },
+		containerIcon: Codicon.pulse,
+		canToggleVisibility: true,
+		canMoveView: true,
+		ctorDescriptor: new SyncDescriptor(DendriteDashboardView),
+		order: 1
+	},
+	{
+		id: CornellNotePanel.ID,
+		name: { value: localize('dendrite.cornellNotes', "Cornell Notes"), original: 'Cornell Notes' },
+		containerIcon: Codicon.note,
+		canToggleVisibility: true,
+		canMoveView: true,
+		ctorDescriptor: new SyncDescriptor(CornellNotePanel),
+		order: 2
+	},
+	{
+		id: RedFlagPanel.ID,
+		name: { value: localize('dendrite.redFlags', "Red Flags"), original: 'Red Flags' },
+		containerIcon: Codicon.warning,
+		canToggleVisibility: true,
+		canMoveView: true,
+		ctorDescriptor: new SyncDescriptor(RedFlagPanel),
+		order: 3
+	}
+], growthViewContainer);
 
 // 4. Configuration Registration
 const configurationRegistry = Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration);

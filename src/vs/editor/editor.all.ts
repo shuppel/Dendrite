@@ -45,6 +45,7 @@ import './contrib/middleScroll/browser/middleScroll.contribution.js';
 import './contrib/multicursor/browser/multicursor.js';
 import './contrib/parameterHints/browser/parameterHints.js';
 import './contrib/placeholderText/browser/placeholderText.contribution.js';
+import './contrib/dendriteCursor/browser/dendriteCursor.contribution.js';
 import './contrib/rename/browser/rename.js';
 import './contrib/sectionHeaders/browser/sectionHeaders.js';
 import './contrib/semanticTokens/browser/documentSemanticTokens.js';

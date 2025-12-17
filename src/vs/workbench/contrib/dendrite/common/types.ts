@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 export interface Session {
     id: number; // u64 in Rust becomes number (or bigint, but number usually safe for IDs if not huge) or string if serialized

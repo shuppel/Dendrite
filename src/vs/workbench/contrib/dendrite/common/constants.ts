@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Thoughtful App Company / Erikk Shupp. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 export const DENDRITE_VIEW_CONTAINER_ID = 'growth';
 export const DENDRITE_DASHBOARD_VIEW_ID = 'dendrite.dashboard';
