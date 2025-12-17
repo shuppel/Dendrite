@@ -34,7 +34,7 @@ export class PythonAnalyzer extends BaseLanguageAnalyzer {
 		/\bsettings\.\w+/i
 	];
 
-	extractFunctions(tree: SyntaxTree, source: string): ExtractedFunction[] {
+	override extractFunctions(tree: SyntaxTree, source: string): ExtractedFunction[] {
 		const functions: ExtractedFunction[] = [];
 		const lines = source.split('\n');
 
@@ -109,7 +109,7 @@ export class PythonAnalyzer extends BaseLanguageAnalyzer {
 		const sequenceBreaks = (body.match(/\b(return|raise|break|continue)\b/g) || []).length;
 
 		// Check for feature flags
-		const hasFeatureFlags = this.checkFeatureFlags(body);
+		const hasFeatureFlags = this.featureFlagPatterns.some(pattern => new RegExp(pattern).test(body));
 
 		const metrics: CodeMetrics = {
 			cyclomaticComplexity: calculateCyclomaticComplexity(decisionPoints),
